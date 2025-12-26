@@ -1,0 +1,26 @@
+[package]
+name = "ferment"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88"
+authors = ["InferaDB Team"]
+description = "A Rust-native terminal UI framework following the Elm Architecture, inspired by Charm.sh's Bubble Tea"
+license = "Apache-2.0"
+repository = "https://github.com/inferadb/cli"
+readme = "README.md"
+keywords = ["tui", "terminal", "elm", "bubble-tea", "cli", "ferment"]
+categories = ["command-line-interface", "gui"]
+
+[dependencies]
+# Terminal backend
+crossterm = "0.28"
+
+# Unicode handling
+unicode-width = "0.2"
+unicode-segmentation = "1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["test-util", "macros", "rt"] }
+
+[features]
+default = []
