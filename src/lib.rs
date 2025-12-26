@@ -76,15 +76,16 @@
 //!
 //! The `components` module provides reusable UI widgets:
 //!
-//! - [`Spinner`](components::Spinner) - Animated loading indicators
-//! - [`Progress`](components::Progress) - Progress bars
-//! - [`TextInput`](components::TextInput) - Single-line text input
-//! - [`Select`](components::Select) - Single option selection
-//! - [`MultiSelect`](components::MultiSelect) - Multiple option selection
-//! - [`Confirm`](components::Confirm) - Yes/No confirmation
-//! - [`List`](components::List) - Filterable, paginated list
-//! - [`Table`](components::Table) - Scrollable data table
-//! - [`MultiProgress`](components::MultiProgress) - Multiple parallel progress bars
+//! - [`Spinner`] - Animated loading indicators
+//! - [`Progress`] - Progress bars
+//! - [`TextInput`] - Single-line text input
+//! - [`TextArea`] - Multi-line text input
+//! - [`Select`] - Single option selection
+//! - [`MultiSelect`] - Multiple option selection
+//! - [`Confirm`] - Yes/No confirmation
+//! - [`List`] - Filterable, paginated list
+//! - [`Table`] - Scrollable data table
+//! - [`MultiProgress`] - Multiple parallel progress bars
 //!
 //! ## Forms
 //!
@@ -124,7 +125,8 @@ pub use terminal::{Event, KeyCode, KeyEvent, KeyModifiers, MouseEvent};
 
 // Re-export commonly used components
 pub use components::{
-    Column, Confirm, List, MultiProgress, MultiSelect, Progress, Select, Spinner, Table, TextInput,
+    Column, Confirm, List, MultiProgress, MultiSelect, Progress, Select, Spinner, Table, TextArea,
+    TextInput,
 };
 
 // Re-export style types
