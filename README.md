@@ -1,8 +1,6 @@
 # Ferment
 
-A Rust-native terminal UI framework following the Elm Architecture, inspired by the Charm.sh ecosystem (Bubble Tea, Bubbles, Huh).
-
-The name "Ferment" is a nod to the bubbly nature of Bubble Tea—fermentation creates bubbles, after all.
+A Rust-native terminal UI framework inspired by [Bubble Tea](https://github.com/charmbracelet/bubbletea).
 
 ## Overview
 
