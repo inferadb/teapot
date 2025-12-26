@@ -1,0 +1,31 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected instead.
+      placeholder: |
+        When I do X, Y happens instead of Z.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Minimal code or steps to reproduce (if applicable).
+      render: rust
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: "Ferment version, Rust version, OS, terminal (if relevant)."
+      placeholder: "ferment 0.1.0, Rust 1.88, macOS, iTerm2"
+    validations:
+      required: false

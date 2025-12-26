@@ -82,6 +82,9 @@
 //! - [`Select`](components::Select) - Single option selection
 //! - [`MultiSelect`](components::MultiSelect) - Multiple option selection
 //! - [`Confirm`](components::Confirm) - Yes/No confirmation
+//! - [`List`](components::List) - Filterable, paginated list
+//! - [`Table`](components::Table) - Scrollable data table
+//! - [`MultiProgress`](components::MultiProgress) - Multiple parallel progress bars
 //!
 //! ## Forms
 //!
@@ -116,11 +119,13 @@ pub mod terminal;
 pub mod util;
 
 // Re-export core types at crate root
-pub use runtime::{Cmd, Model, Program, ProgramOptions};
+pub use runtime::{Cmd, Model, Program, ProgramOptions, Sub};
 pub use terminal::{Event, KeyCode, KeyEvent, KeyModifiers, MouseEvent};
 
 // Re-export commonly used components
-pub use components::{Confirm, MultiSelect, Progress, Select, Spinner, TextInput};
+pub use components::{
+    Column, Confirm, List, MultiProgress, MultiSelect, Progress, Select, Spinner, Table, TextInput,
+};
 
 // Re-export style types
 pub use style::{Border, Color, Style};

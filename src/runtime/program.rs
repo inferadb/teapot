@@ -10,13 +10,23 @@ use crossterm::{
     terminal::{self, ClearType},
 };
 
+use std::collections::HashMap;
+
 use super::command::CmdResult;
+use super::subscription::SubEntry;
 use super::Model;
 use crate::terminal::Event;
 use crate::Cmd;
 
 /// Type alias for pending tick entries: (scheduled_time, interval, message_generator)
 type PendingTick<M> = (Instant, Duration, Box<dyn Fn(Instant) -> M + Send>);
+
+/// Active subscription with next scheduled fire time
+struct ActiveSub<M> {
+    next_fire: Instant,
+    interval: Duration,
+    msg_fn: Box<dyn Fn() -> M + Send>,
+}
 
 /// Options for configuring the program runtime.
 #[derive(Debug, Clone)]
@@ -199,12 +209,17 @@ impl<M: Model> Program<M> {
         self.render(&mut stdout)?;
 
         let mut pending_ticks: Vec<PendingTick<M::Message>> = Vec::new();
+        let mut active_subs: HashMap<String, ActiveSub<M::Message>> = HashMap::new();
+
+        // Initialize subscriptions
+        self.refresh_subscriptions(&mut active_subs);
 
         loop {
-            // Check for pending ticks
             let now = Instant::now();
             let mut messages = Vec::new();
+            let mut needs_sub_refresh = false;
 
+            // Check for pending ticks (from Cmd::tick)
             pending_ticks.retain(|(scheduled, _, msg_fn)| {
                 if now >= *scheduled {
                     messages.push(msg_fn(now));
@@ -214,20 +229,44 @@ impl<M: Model> Program<M> {
                 }
             });
 
-            // Process tick messages
+            // Check for subscription fires
+            for sub in active_subs.values_mut() {
+                if now >= sub.next_fire {
+                    messages.push((sub.msg_fn)());
+                    sub.next_fire = now + sub.interval;
+                }
+            }
+
+            // Process accumulated messages
             for msg in messages {
                 if let Some(cmd) = self.model.update(msg) {
-                    if self.process_command(cmd)? {
+                    if self.process_command_with_ticks(cmd, &mut pending_ticks)? {
                         return Ok(());
                     }
                 }
+                needs_sub_refresh = true;
                 self.render(&mut stdout)?;
             }
 
-            // Calculate poll timeout
-            let timeout = pending_ticks
+            // Refresh subscriptions if model was updated
+            if needs_sub_refresh {
+                self.refresh_subscriptions(&mut active_subs);
+            }
+
+            // Calculate poll timeout (min of ticks, subs, and frame duration)
+            let tick_timeout = pending_ticks
                 .iter()
                 .map(|(scheduled, _, _)| scheduled.saturating_duration_since(now))
+                .min();
+
+            let sub_timeout = active_subs
+                .values()
+                .map(|sub| sub.next_fire.saturating_duration_since(now))
+                .min();
+
+            let timeout = [tick_timeout, sub_timeout]
+                .into_iter()
+                .flatten()
                 .min()
                 .unwrap_or(frame_duration)
                 .min(frame_duration);
@@ -244,6 +283,8 @@ impl<M: Model> Program<M> {
                             return Ok(());
                         }
                     }
+                    // Refresh subscriptions after update
+                    self.refresh_subscriptions(&mut active_subs);
                     self.render(&mut stdout)?;
                 }
 
@@ -266,6 +307,28 @@ impl<M: Model> Program<M> {
                     _ => {}
                 }
             }
+        }
+    }
+
+    /// Refresh active subscriptions based on current model state.
+    fn refresh_subscriptions(&self, active_subs: &mut HashMap<String, ActiveSub<M::Message>>) {
+        let new_subs = self.model.subscriptions();
+        let entries: Vec<SubEntry<M::Message>> = new_subs.into_entries();
+
+        // Collect new subscription IDs
+        let new_ids: std::collections::HashSet<_> = entries.iter().map(|e| e.id.clone()).collect();
+
+        // Remove subscriptions that are no longer active
+        active_subs.retain(|id, _| new_ids.contains(id));
+
+        // Add or update subscriptions
+        let now = Instant::now();
+        for entry in entries {
+            active_subs.entry(entry.id).or_insert_with(|| ActiveSub {
+                next_fire: now + entry.interval,
+                interval: entry.interval,
+                msg_fn: entry.msg_fn,
+            });
         }
     }
 

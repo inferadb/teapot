@@ -1,0 +1,210 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs for PRs, queue for main
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Default to read-only permissions
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  # Check code formatting
+  fmt:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Rust nightly toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
+
+      - name: Check formatting
+        run: cargo +nightly fmt --all -- --check
+
+  # Run Clippy for linting
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: clippy
+
+      - name: Run clippy (default features)
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Run clippy (all features)
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Run clippy (no default features)
+        run: cargo clippy --all-targets --no-default-features -- -D warnings
+
+  # Check MSRV (Minimum Supported Rust Version)
+  msrv:
+    name: MSRV (${{ matrix.msrv }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        msrv: ["1.88"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Rust ${{ matrix.msrv }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.msrv }}
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: msrv-${{ matrix.msrv }}
+
+      - name: Check compilation
+        run: cargo check --all-features
+
+  # Run tests on multiple platforms
+  test:
+    name: Test (${{ matrix.os }})
+    needs: [fmt, clippy]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: test-${{ matrix.os }}
+
+      - name: Run unit tests (default features)
+        run: cargo test --lib
+
+      - name: Run unit tests (all features)
+        run: cargo test --lib --all-features
+
+      - name: Run doc tests
+        run: cargo test --doc --all-features
+
+  # Code coverage
+  coverage:
+    name: Code Coverage
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: coverage
+
+      - name: Generate coverage
+        run: |
+          cargo llvm-cov --lib \
+            --codecov \
+            --output-path codecov.json
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./codecov.json
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  # Build documentation
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Rust nightly toolchain
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: docs
+
+      - name: Build documentation
+        env:
+          RUSTDOCFLAGS: -D warnings --cfg docsrs
+        run: cargo +nightly doc --no-deps --all-features
+
+  # Overall status check
+  ci-success:
+    name: CI Success
+    needs: [fmt, clippy, msrv, test, coverage, docs]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check all jobs
+        env:
+          FMT_RESULT: ${{ needs.fmt.result }}
+          CLIPPY_RESULT: ${{ needs.clippy.result }}
+          MSRV_RESULT: ${{ needs.msrv.result }}
+          TEST_RESULT: ${{ needs.test.result }}
+          DOCS_RESULT: ${{ needs.docs.result }}
+          COVERAGE_RESULT: ${{ needs.coverage.result }}
+        run: |
+          results="$FMT_RESULT $CLIPPY_RESULT $MSRV_RESULT $TEST_RESULT $DOCS_RESULT"
+
+          for result in $results; do
+            if [[ "$result" != "success" && "$result" != "skipped" ]]; then
+              echo "One or more jobs failed"
+              exit 1
+            fi
+          done
+
+          # Coverage is optional
+          if [[ "$COVERAGE_RESULT" == "failure" ]]; then
+            echo "Coverage failed (non-blocking)"
+          fi
+
+          echo "All required checks passed!"

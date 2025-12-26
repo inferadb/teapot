@@ -1,0 +1,71 @@
+# Documentation
+"kind/documentation":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+
+# CI/CD
+"area/ci":
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**/*"
+
+# Configuration
+"area/config":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.toml"
+          - "**/*.yaml"
+          - "**/*.yml"
+          - "!.github/**/*"
+
+# Dependencies
+"area/deps":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "Cargo.toml"
+          - "Cargo.lock"
+
+# Testing
+"area/testing":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/tests/**/*"
+          - "**/*_test.rs"
+          - "**/*_tests.rs"
+
+# Core runtime (program, commands, messages, subscriptions)
+"area/runtime":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/runtime/**/*"
+
+# Components (list, select, text_input, progress, spinner, viewport, etc.)
+"area/components":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/components/**/*"
+
+# Forms (field, validation, group, form)
+"area/forms":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/forms/**/*"
+
+# Styles (color, border, text)
+"area/style":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/style/**/*"
+
+# Terminal backend and I/O
+"area/terminal":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/terminal/**/*"
+
+# Utilities (keys, size)
+"area/util":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/util/**/*"

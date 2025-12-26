@@ -3,15 +3,18 @@
 //! This module provides:
 //! - [`Model`] - The core trait for application state
 //! - [`Cmd`] - Commands for side effects
+//! - [`Sub`] - Subscriptions for recurring events
 //! - [`Program`] - The runtime that manages the event loop
 
 mod command;
 mod message;
 mod program;
+mod subscription;
 
 pub use command::Cmd;
 pub use message::CommonMsg;
 pub use program::{Program, ProgramOptions};
+pub use subscription::Sub;
 
 use crate::terminal::Event;
 
@@ -24,20 +27,24 @@ use crate::terminal::Event;
 /// 2. `handle_event()` - Convert terminal events to messages
 /// 3. `update()` - Handle messages and update state
 /// 4. `view()` - Render the current state
+/// 5. `subscriptions()` - Declare recurring event sources
 ///
 /// # Example
 ///
 /// ```rust
-/// use ferment::{Model, Cmd, Event, KeyCode};
+/// use ferment::{Model, Cmd, Sub, Event, KeyCode};
+/// use std::time::Duration;
 ///
 /// struct App {
 ///     text: String,
+///     animate: bool,
 /// }
 ///
 /// enum Msg {
 ///     Append(char),
 ///     Clear,
 ///     Quit,
+///     Tick,
 /// }
 ///
 /// impl Model for App {
@@ -52,6 +59,7 @@ use crate::terminal::Event;
 ///             Msg::Append(c) => self.text.push(c),
 ///             Msg::Clear => self.text.clear(),
 ///             Msg::Quit => return Some(Cmd::quit()),
+///             Msg::Tick => { /* animation frame */ }
 ///         }
 ///         None
 ///     }
@@ -71,6 +79,14 @@ use crate::terminal::Event;
 ///                 _ => None,
 ///             },
 ///             _ => None,
+///         }
+///     }
+///
+///     fn subscriptions(&self) -> Sub<Self::Message> {
+///         if self.animate {
+///             Sub::every_millis("animation", 16, || Msg::Tick)
+///         } else {
+///             Sub::none()
 ///         }
 ///     }
 /// }
@@ -96,7 +112,7 @@ pub trait Model: Sized {
     /// This is the core of your application logic. Messages come from:
     /// - User input (via `handle_event`)
     /// - Command completions
-    /// - Timers
+    /// - Timers and subscriptions
     ///
     /// Return an optional command for side effects.
     fn update(&mut self, msg: Self::Message) -> Option<Cmd<Self::Message>>;
@@ -122,10 +138,35 @@ pub trait Model: Sized {
         None
     }
 
+    /// Declare subscriptions for recurring events.
+    ///
+    /// Subscriptions are re-evaluated after every update. Return different
+    /// subscriptions based on model state to start/stop timers dynamically.
+    ///
+    /// # Example
+    ///
+    /// ```rust,ignore
+    /// fn subscriptions(&self) -> Sub<Self::Message> {
+    ///     if self.is_loading {
+    ///         // Animate spinner while loading
+    ///         Sub::every_millis("spinner", 80, || Msg::SpinnerTick)
+    ///     } else {
+    ///         Sub::none()
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// The default implementation returns no subscriptions.
+    fn subscriptions(&self) -> Sub<Self::Message> {
+        Sub::none()
+    }
+
     /// Whether this model should receive tick updates.
     ///
     /// If true, the model will receive periodic tick messages.
     /// Override this if your model needs animation frames.
+    ///
+    /// Note: Consider using `subscriptions()` instead for more control.
     fn wants_tick(&self) -> bool {
         false
     }
