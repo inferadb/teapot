@@ -5,6 +5,7 @@
 //! - [`Spinner`] - Animated loading indicator
 //! - [`Progress`] - Progress bar
 //! - [`TextInput`] - Single-line text input
+//! - [`TextArea`] - Multi-line text input
 //! - [`Select`] - Single option selection
 //! - [`MultiSelect`] - Multiple option selection
 //! - [`Confirm`] - Yes/No confirmation
@@ -21,6 +22,7 @@ pub mod progress;
 pub mod select;
 pub mod spinner;
 pub mod table;
+pub mod text_area;
 pub mod text_input;
 pub mod viewport;
 
@@ -32,6 +34,7 @@ pub use progress::{Progress, ProgressMsg};
 pub use select::{Select, SelectMsg};
 pub use spinner::{Spinner, SpinnerMsg, SpinnerStyle};
 pub use table::{Align, Column, Table, TableMsg};
+pub use text_area::{CursorPos, TextArea, TextAreaMsg};
 pub use text_input::{TextInput, TextInputMsg};
 pub use viewport::{Viewport, ViewportMsg};
 
