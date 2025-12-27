@@ -244,7 +244,7 @@ pub fn join_vertical_with(pos: Position, strs: &[&str]) -> String {
     let max_width = strs
         .iter()
         .flat_map(|s| s.lines())
-        .map(|l| width(l))
+        .map(width)
         .max()
         .unwrap_or(0);
 
@@ -486,7 +486,7 @@ mod tests {
         let placed = place(5, 3, Position::Center, Position::Center, content);
         let lines: Vec<&str> = placed.lines().collect();
         assert_eq!(lines.len(), 3);
-        assert_eq!(width(&placed.lines().next().unwrap().to_string()), 5);
+        assert_eq!(width(placed.lines().next().unwrap()), 5);
         // X should be on the middle line
         assert!(lines[1].contains("X"));
     }

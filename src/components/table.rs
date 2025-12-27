@@ -662,7 +662,7 @@ impl Model for Table {
     fn view(&self) -> String {
         if self.columns.is_empty() {
             return format!(
-                "{}(no columns defined){}",
+                " {}Nothing to display.{} ",
                 Color::BrightBlack.to_ansi_fg(),
                 "\x1b[0m"
             );
@@ -700,7 +700,11 @@ impl Model for Table {
                     "\x1b[0m"
                 ));
                 if self.show_borders {
-                    header_line.push_str(&format!("{}│{}", self.border_color.to_ansi_fg(), "\x1b[0m"));
+                    header_line.push_str(&format!(
+                        "{}│{}",
+                        self.border_color.to_ansi_fg(),
+                        "\x1b[0m"
+                    ));
                 }
             }
             if needs_scroll {

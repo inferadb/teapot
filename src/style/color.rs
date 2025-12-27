@@ -5,9 +5,10 @@
 use std::env;
 
 /// A terminal color.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub enum Color {
     /// Use the terminal's default color.
+    #[default]
     Default,
     /// Black (ANSI 0).
     Black,
@@ -61,12 +62,6 @@ pub enum Color {
         /// ANSI 16 (4-bit) value.
         ansi: u8,
     },
-}
-
-impl Default for Color {
-    fn default() -> Self {
-        Color::Default
-    }
 }
 
 impl Color {

@@ -72,6 +72,7 @@ pub struct TabBar {
     tabs: Vec<Tab>,
     selected: String,
     active_color: Color,
+    active_bg_color: Option<Color>,
     inactive_color: Color,
     key_color: Color,
     separator: String,
@@ -84,6 +85,7 @@ impl Default for TabBar {
             tabs: Vec::new(),
             selected: String::new(),
             active_color: Color::Cyan,
+            active_bg_color: None,
             inactive_color: Color::BrightBlack,
             key_color: Color::Cyan,
             separator: " ".to_string(),
@@ -116,6 +118,12 @@ impl TabBar {
     /// Set the active tab color.
     pub fn active_color(mut self, color: Color) -> Self {
         self.active_color = color;
+        self
+    }
+
+    /// Set the active tab background color.
+    pub fn active_bg_color(mut self, color: Color) -> Self {
+        self.active_bg_color = Some(color);
         self
     }
 
@@ -235,9 +243,15 @@ impl Model for TabBar {
             let is_active = tab.id == self.selected;
 
             if is_active {
-                // Active tab: entire label in active color
+                // Active tab: entire label in active color (with optional background)
+                let bg = self
+                    .active_bg_color
+                    .as_ref()
+                    .map(|c| c.to_ansi_bg())
+                    .unwrap_or_default();
                 output.push_str(&format!(
-                    "{}{}{}",
+                    "{}{}{}{}",
+                    bg,
                     self.active_color.to_ansi_fg(),
                     tab.label,
                     "\x1b[0m",
@@ -290,11 +304,8 @@ impl Model for TabBar {
                 KeyCode::BackTab => Some(TabBarMsg::Previous),
                 KeyCode::Char(c) => {
                     // Check if character matches any tab's key
-                    if let Some(id) = self.tab_for_key(c) {
-                        Some(TabBarMsg::Select(id.to_string()))
-                    } else {
-                        None
-                    }
+                    self.tab_for_key(c)
+                        .map(|id| TabBarMsg::Select(id.to_string()))
                 }
                 _ => None,
             },

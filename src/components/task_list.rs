@@ -69,7 +69,10 @@ impl TaskState {
 
     /// Is this state a terminal state (completed)?
     pub fn is_terminal(&self) -> bool {
-        matches!(self, TaskState::Success | TaskState::Failure | TaskState::Skipped)
+        matches!(
+            self,
+            TaskState::Success | TaskState::Failure | TaskState::Skipped
+        )
     }
 }
 
@@ -157,7 +160,11 @@ impl TaskList {
     }
 
     /// Add a task with a detail.
-    pub fn add_task_with_detail(mut self, name: impl Into<String>, detail: impl Into<String>) -> Self {
+    pub fn add_task_with_detail(
+        mut self,
+        name: impl Into<String>,
+        detail: impl Into<String>,
+    ) -> Self {
         self.tasks.push(TaskItem::new(name).with_detail(detail));
         self
     }
@@ -241,7 +248,9 @@ impl TaskList {
 
     /// Get the index of the current running task.
     pub fn current_task_index(&self) -> Option<usize> {
-        self.tasks.iter().position(|t| t.state == TaskState::Running)
+        self.tasks
+            .iter()
+            .position(|t| t.state == TaskState::Running)
     }
 
     /// Update the completion status.
@@ -289,7 +298,9 @@ impl TaskList {
             count += 1; // Task line
 
             // Detail line
-            if task.detail.is_some() && (task.state.is_terminal() || task.state == TaskState::Running) {
+            if task.detail.is_some()
+                && (task.state.is_terminal() || task.state == TaskState::Running)
+            {
                 count += 1;
             }
 
@@ -332,7 +343,9 @@ impl Model for TaskList {
     fn subscriptions(&self) -> Sub<Self::Message> {
         // Only animate if there are running tasks
         if self.is_running() {
-            Sub::interval("task-spinner", Duration::from_millis(80), || TaskListMsg::Tick)
+            Sub::interval("task-spinner", Duration::from_millis(80), || {
+                TaskListMsg::Tick
+            })
         } else {
             Sub::none()
         }
@@ -345,9 +358,7 @@ mod tests {
 
     #[test]
     fn test_task_list_creation() {
-        let list = TaskList::new()
-            .add_task("Task 1")
-            .add_task("Task 2");
+        let list = TaskList::new().add_task("Task 1").add_task("Task 2");
 
         assert_eq!(list.len(), 2);
         assert!(!list.is_all_complete());
@@ -355,9 +366,7 @@ mod tests {
 
     #[test]
     fn test_task_state_transitions() {
-        let mut list = TaskList::new()
-            .add_task("Task 1")
-            .add_task("Task 2");
+        let mut list = TaskList::new().add_task("Task 1").add_task("Task 2");
 
         // Initially pending
         assert_eq!(list.get(0).unwrap().state, TaskState::Pending);

@@ -95,6 +95,8 @@ pub struct Modal {
     hint_key_color: Color,
     /// Hint description color.
     hint_desc_color: Color,
+    /// Horizontal padding (applied to left and right of content).
+    padding: usize,
 }
 
 impl Modal {
@@ -113,7 +115,14 @@ impl Modal {
             content_color: Color::Default,
             hint_key_color: Color::Default,
             hint_desc_color: Color::BrightBlack,
+            padding: 1,
         }
+    }
+
+    /// Set horizontal padding (applied to left and right of content).
+    pub fn padding(mut self, padding: usize) -> Self {
+        self.padding = padding;
+        self
     }
 
     /// Set the title.
@@ -141,7 +150,11 @@ impl Modal {
     }
 
     /// Add a footer hint.
-    pub fn footer_hint(mut self, shortcut: impl Into<String>, description: impl Into<String>) -> Self {
+    pub fn footer_hint(
+        mut self,
+        shortcut: impl Into<String>,
+        description: impl Into<String>,
+    ) -> Self {
         self.hints.push(ModalHint::new(shortcut, description));
         self
     }
@@ -205,50 +218,61 @@ impl Modal {
         // Top border
         lines.push(format!(
             "{}{}{}{}{}",
-            border_fg, tl, h.repeat(inner_w), tr, reset
+            border_fg,
+            tl,
+            h.repeat(inner_w),
+            tr,
+            reset
         ));
 
         // Title line (if title is set)
         if !self.title.is_empty() {
-            // Format: // Title ////////
+            // Format: (pad) // Title //////// (pad)
             let fill_char = self.title_fill.to_string();
+            let title_w = inner_w.saturating_sub(self.padding * 2);
             let title_content = format!(
                 "{}{} {} {}{}",
                 fill_char,
                 fill_char,
                 self.title,
-                fill_char.repeat(inner_w.saturating_sub(self.title.len() + 5)),
+                fill_char.repeat(title_w.saturating_sub(self.title.len() + 5)),
                 fill_char
             );
-            let truncated = if title_content.len() > inner_w {
-                title_content[..inner_w].to_string()
+            let truncated = if title_content.len() > title_w {
+                title_content[..title_w].to_string()
             } else {
                 title_content
             };
+            let left_pad = " ".repeat(self.padding);
+            let right_pad = " ".repeat(self.padding);
             lines.push(format!(
-                "{}{}{}{}{}{}{}",
-                border_fg, left, reset, title_fg,
-                truncated,
-                border_fg, right
+                "{}{}{}{}{}{}{}{}{}",
+                border_fg, left, reset, left_pad, title_fg, truncated, right_pad, border_fg, right
             ));
 
             // Blank line after title
             lines.push(format!(
                 "{}{}{}{}{}",
-                border_fg, left, " ".repeat(inner_w), right, reset
+                border_fg,
+                left,
+                " ".repeat(inner_w),
+                right,
+                reset
             ));
         }
 
-        // Content lines
+        // Content lines (with horizontal padding)
         let content_start = lines.len();
+        let content_w = inner_w.saturating_sub(self.padding * 2);
+        let left_pad = " ".repeat(self.padding);
         for line in &self.content {
-            let display_line = if measure_text(line) > inner_w {
+            let display_line = if measure_text(line) > content_w {
                 // Truncate if too long
                 let mut truncated = String::new();
                 let mut width = 0;
                 for c in line.chars() {
                     let cw = unicode_width::UnicodeWidthChar::width(c).unwrap_or(0);
-                    if width + cw > inner_w - 1 {
+                    if width + cw > content_w.saturating_sub(1) {
                         truncated.push('…');
                         break;
                     }
@@ -260,13 +284,18 @@ impl Modal {
                 line.clone()
             };
 
-            let padding = inner_w.saturating_sub(measure_text(&display_line));
+            let right_pad = inner_w.saturating_sub(self.padding + measure_text(&display_line));
             lines.push(format!(
-                "{}{}{}{}{}{}{}{}",
-                border_fg, left, reset, content_fg,
+                "{}{}{}{}{}{}{}{}{}",
+                border_fg,
+                left,
+                reset,
+                left_pad,
+                content_fg,
                 display_line,
-                " ".repeat(padding),
-                border_fg, right
+                " ".repeat(right_pad),
+                border_fg,
+                right
             ));
         }
 
@@ -276,7 +305,11 @@ impl Modal {
         for _ in 0..remaining {
             lines.push(format!(
                 "{}{}{}{}{}",
-                border_fg, left, " ".repeat(inner_w), right, reset
+                border_fg,
+                left,
+                " ".repeat(inner_w),
+                right,
+                reset
             ));
         }
 
@@ -285,7 +318,11 @@ impl Modal {
             // Blank line before hints
             lines.push(format!(
                 "{}{}{}{}{}",
-                border_fg, left, " ".repeat(inner_w), right, reset
+                border_fg,
+                left,
+                " ".repeat(inner_w),
+                right,
+                reset
             ));
 
             // Hints line (right-aligned)
@@ -306,18 +343,30 @@ impl Modal {
                 hint_len += hint.shortcut.len() + 1 + hint.description.len();
             }
             let hints_str: String = hint_parts.concat();
-            let padding = inner_w.saturating_sub(hint_len);
+            // Right-align hints with padding on both sides
+            let left_fill = inner_w.saturating_sub(hint_len + self.padding);
 
             lines.push(format!(
-                "{}{}{}{}{}{}{}",
-                border_fg, left, " ".repeat(padding), hints_str, reset, border_fg, right
+                "{}{}{}{}{}{}{}{}",
+                border_fg,
+                left,
+                " ".repeat(left_fill),
+                hints_str,
+                reset,
+                " ".repeat(self.padding),
+                border_fg,
+                right
             ));
         }
 
         // Bottom border
         lines.push(format!(
             "{}{}{}{}{}",
-            border_fg, bl, h.repeat(inner_w), br, reset
+            border_fg,
+            bl,
+            h.repeat(inner_w),
+            br,
+            reset
         ));
 
         lines
@@ -425,9 +474,7 @@ mod tests {
 
     #[test]
     fn test_modal_creation() {
-        let modal = Modal::new(40, 10)
-            .title("Test")
-            .content("Hello world");
+        let modal = Modal::new(40, 10).title("Test").content("Hello world");
 
         assert_eq!(modal.width, 40);
         assert_eq!(modal.height, 10);

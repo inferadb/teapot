@@ -556,11 +556,7 @@ impl<M: Model> Program<M> {
         let mut stdout = io::stdout();
 
         if self.options.alt_screen {
-            execute!(
-                stdout,
-                terminal::EnterAlternateScreen,
-                cursor::MoveTo(0, 0)
-            )?;
+            execute!(stdout, terminal::EnterAlternateScreen, cursor::MoveTo(0, 0))?;
         }
 
         if self.options.mouse {
