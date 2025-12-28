@@ -336,7 +336,10 @@ impl Model for TextInput {
                         before.push(c);
                     }
                 }
-                let cursor_char: String = after_chars.next().map(|c| c.to_string()).unwrap_or_else(|| " ".to_string());
+                let cursor_char: String = after_chars
+                    .next()
+                    .map(|c| c.to_string())
+                    .unwrap_or_else(|| " ".to_string());
                 let after: String = after_chars.collect();
 
                 output.push_str(&format!("{}{}", self.text_color.to_ansi_fg(), before));
