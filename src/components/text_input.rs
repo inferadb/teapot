@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::TextInput;
+//! use teapot::components::TextInput;
 //!
 //! let input = TextInput::new()
 //!     .placeholder("Enter your name...")

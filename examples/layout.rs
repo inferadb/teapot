@@ -2,13 +2,13 @@
 //!
 //! Run with: cargo run --example layout
 
-use ferment::style::{
+use teapot::style::{
     BorderStyle, Color, Position, Style, join_horizontal, join_horizontal_with, join_vertical_with,
     place, place_horizontal, place_vertical,
 };
 
 fn main() {
-    println!("\n=== Ferment Layout Composition Demo ===\n");
+    println!("\n=== Teapot Layout Composition Demo ===\n");
 
     // Dashboard-style layout
     demo_dashboard();
@@ -37,7 +37,7 @@ fn demo_dashboard() {
     // Create main content area
     let main_style = Style::new().border(BorderStyle::Rounded).fg(Color::White);
 
-    let main_content = "Welcome to Ferment!\n\n\
+    let main_content = "Welcome to Teapot!\n\n\
         This is the main content area.\n\
         It can contain any text or\n\
         rendered components.\n\n\

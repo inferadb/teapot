@@ -6,7 +6,7 @@
 //! # Example
 //!
 //! ```rust,ignore
-//! use ferment::components::{TaskList, TaskItem, TaskState};
+//! use teapot::components::{TaskList, TaskItem, TaskState};
 //!
 //! let mut list = TaskList::new()
 //!     .add_task("Clone repository")

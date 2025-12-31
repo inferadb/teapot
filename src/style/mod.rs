@@ -13,7 +13,7 @@
 //! Common ANSI escape sequences are provided as constants for convenience:
 //!
 //! ```rust
-//! use ferment::style::{RESET, CLEAR_LINE, Color};
+//! use teapot::style::{RESET, CLEAR_LINE, Color};
 //!
 //! // Use Color for foreground colors
 //! let green = Color::Green.to_ansi_fg();
@@ -203,7 +203,7 @@ pub fn join_horizontal(strs: &[&str]) -> String {
 ///
 /// # Example
 /// ```
-/// use ferment::style::{join_horizontal_with, Position};
+/// use teapot::style::{join_horizontal_with, Position};
 ///
 /// let left = "A\nB\nC";
 /// let right = "X";
@@ -296,7 +296,7 @@ pub fn join_vertical(strs: &[&str]) -> String {
 ///
 /// # Example
 /// ```
-/// use ferment::style::{join_vertical_with, Position};
+/// use teapot::style::{join_vertical_with, Position};
 ///
 /// let top = "Short";
 /// let bottom = "A longer line";
@@ -350,7 +350,7 @@ pub fn join_vertical_with(pos: Position, strs: &[&str]) -> String {
 ///
 /// # Example
 /// ```
-/// use ferment::style::{place, Position};
+/// use teapot::style::{place, Position};
 ///
 /// let content = "Hello";
 /// let placed = place(20, 5, Position::Center, Position::Center, content);

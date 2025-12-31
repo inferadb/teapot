@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::FilePicker;
+//! use teapot::components::FilePicker;
 //!
 //! let picker = FilePicker::new()
 //!     .title("Select a file")

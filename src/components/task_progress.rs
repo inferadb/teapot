@@ -11,7 +11,7 @@
 //! # Example
 //!
 //! ```rust,ignore
-//! use ferment::components::{TaskProgressView, TaskStep};
+//! use teapot::components::{TaskProgressView, TaskStep};
 //!
 //! let steps = vec![
 //!     TaskStep::with_executor("Clone repository", || {

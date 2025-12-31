@@ -19,7 +19,7 @@ use std::{
 /// # Example
 ///
 /// ```rust
-/// use ferment::Cmd;
+/// use teapot::Cmd;
 /// use std::time::Duration;
 ///
 /// enum Msg {
@@ -73,7 +73,7 @@ impl<M> Cmd<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Cmd;
+    /// use teapot::Cmd;
     ///
     /// enum Msg { Quit }
     ///
@@ -94,7 +94,7 @@ impl<M> Cmd<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Cmd;
+    /// use teapot::Cmd;
     /// use std::time::Duration;
     ///
     /// enum Msg { Tick }
@@ -115,7 +115,7 @@ impl<M> Cmd<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Cmd;
+    /// use teapot::Cmd;
     ///
     /// enum Msg { Data(String) }
     ///
@@ -135,7 +135,7 @@ impl<M> Cmd<M> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use ferment::Cmd;
+    /// use teapot::Cmd;
     ///
     /// enum Msg { Data(String) }
     ///
@@ -165,7 +165,7 @@ impl<M> Cmd<M> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use ferment::Cmd;
+    /// use teapot::Cmd;
     /// use std::process::Command;
     ///
     /// enum Msg { EditorClosed(bool) }
@@ -190,7 +190,7 @@ impl<M> Cmd<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Cmd;
+    /// use teapot::Cmd;
     ///
     /// enum Msg { A, B }
     ///
@@ -210,7 +210,7 @@ impl<M> Cmd<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Cmd;
+    /// use teapot::Cmd;
     ///
     /// enum Msg { First, Second }
     ///
@@ -230,7 +230,7 @@ impl<M> Cmd<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Cmd;
+    /// use teapot::Cmd;
     ///
     /// enum ChildMsg { Done }
     /// enum ParentMsg { Child(ChildMsg) }
@@ -348,11 +348,11 @@ pub(crate) enum CmdResult<M> {
 /// # Example
 ///
 /// ```rust
-/// use ferment::cmd;
+/// use teapot::cmd;
 ///
 /// enum Msg { Done }
 ///
-/// let cmd: ferment::Cmd<Msg> = cmd::none();
+/// let cmd: teapot::Cmd<Msg> = cmd::none();
 /// ```
 pub fn none<M>() -> Cmd<M> {
     Cmd::none()
@@ -365,11 +365,11 @@ pub fn none<M>() -> Cmd<M> {
 /// # Example
 ///
 /// ```rust
-/// use ferment::cmd;
+/// use teapot::cmd;
 ///
 /// enum Msg { Quit }
 ///
-/// let cmd: ferment::Cmd<Msg> = cmd::quit();
+/// let cmd: teapot::Cmd<Msg> = cmd::quit();
 /// ```
 pub fn quit<M>() -> Cmd<M> {
     Cmd::quit()
@@ -382,11 +382,11 @@ pub fn quit<M>() -> Cmd<M> {
 /// # Example
 ///
 /// ```rust
-/// use ferment::cmd;
+/// use teapot::cmd;
 ///
 /// enum Msg { A, B }
 ///
-/// let cmd: ferment::Cmd<Msg> = cmd::batch(vec![
+/// let cmd: teapot::Cmd<Msg> = cmd::batch(vec![
 ///     cmd::none(),
 ///     cmd::quit(),
 /// ]);
@@ -402,11 +402,11 @@ pub fn batch<M>(cmds: Vec<Cmd<M>>) -> Cmd<M> {
 /// # Example
 ///
 /// ```rust
-/// use ferment::cmd;
+/// use teapot::cmd;
 ///
 /// enum Msg { First, Second }
 ///
-/// let cmd: ferment::Cmd<Msg> = cmd::sequence(vec![
+/// let cmd: teapot::Cmd<Msg> = cmd::sequence(vec![
 ///     cmd::none(),
 ///     cmd::quit(),
 /// ]);
@@ -422,12 +422,12 @@ pub fn sequence<M>(cmds: Vec<Cmd<M>>) -> Cmd<M> {
 /// # Example
 ///
 /// ```rust
-/// use ferment::cmd;
+/// use teapot::cmd;
 /// use std::time::Duration;
 ///
 /// enum Msg { Tick }
 ///
-/// let cmd: ferment::Cmd<Msg> = cmd::tick(Duration::from_millis(100), |_| Msg::Tick);
+/// let cmd: teapot::Cmd<Msg> = cmd::tick(Duration::from_millis(100), |_| Msg::Tick);
 /// ```
 pub fn tick<M, F>(duration: Duration, msg_fn: F) -> Cmd<M>
 where
@@ -443,12 +443,12 @@ where
 /// # Example
 ///
 /// ```rust,ignore
-/// use ferment::cmd;
+/// use teapot::cmd;
 /// use std::process::Command;
 ///
 /// enum Msg { EditorClosed(bool) }
 ///
-/// let cmd: ferment::Cmd<Msg> = cmd::run_process(
+/// let cmd: teapot::Cmd<Msg> = cmd::run_process(
 ///     Command::new("vim").arg("file.txt"),
 ///     |result| Msg::EditorClosed(result.map(|s| s.success()).unwrap_or(false))
 /// );

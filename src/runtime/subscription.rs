@@ -10,7 +10,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::Sub;
+//! use teapot::Sub;
 //! use std::time::Duration;
 //!
 //! enum Msg {
@@ -65,7 +65,7 @@ impl<M> Sub<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Sub;
+    /// use teapot::Sub;
     ///
     /// enum Msg {}
     ///
@@ -88,7 +88,7 @@ impl<M> Sub<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Sub;
+    /// use teapot::Sub;
     /// use std::time::Duration;
     ///
     /// enum Msg { Tick }
@@ -113,7 +113,7 @@ impl<M> Sub<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Sub;
+    /// use teapot::Sub;
     ///
     /// enum Msg { Tick }
     ///
@@ -133,7 +133,7 @@ impl<M> Sub<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Sub;
+    /// use teapot::Sub;
     ///
     /// enum Msg { AutoSave }
     ///
@@ -153,7 +153,7 @@ impl<M> Sub<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Sub;
+    /// use teapot::Sub;
     /// use std::time::Duration;
     ///
     /// enum Msg { FastTick, SlowTick }
@@ -188,7 +188,7 @@ impl<M> Sub<M> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::Sub;
+    /// use teapot::Sub;
     /// use std::time::Duration;
     ///
     /// enum ChildMsg { Tick }

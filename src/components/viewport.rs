@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::Viewport;
+//! use teapot::components::Viewport;
 //!
 //! let viewport = Viewport::new(80, 20)
 //!     .content("Long content here...");

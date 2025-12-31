@@ -11,7 +11,7 @@
 /// # Example
 ///
 /// ```rust
-/// use ferment::util::ScrollState;
+/// use teapot::util::ScrollState;
 ///
 /// let mut scroll = ScrollState::new();
 ///

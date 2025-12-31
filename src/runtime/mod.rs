@@ -24,15 +24,15 @@ pub use subscription::Sub;
 /// This module provides top-level functions as alternatives to `Cmd::` methods:
 ///
 /// ```rust
-/// use ferment::cmd;
+/// use teapot::cmd;
 ///
 /// enum Msg { Done }
 ///
 /// // Instead of Cmd::quit(), you can use:
-/// let quit_cmd: ferment::Cmd<Msg> = cmd::quit();
+/// let quit_cmd: teapot::Cmd<Msg> = cmd::quit();
 ///
 /// // Instead of Cmd::batch(), you can use:
-/// let batch_cmd: ferment::Cmd<Msg> = cmd::batch(vec![cmd::none()]);
+/// let batch_cmd: teapot::Cmd<Msg> = cmd::batch(vec![cmd::none()]);
 /// ```
 pub mod cmd {
     pub use super::command::{batch, none, quit, run_process, sequence, tick};
@@ -54,7 +54,7 @@ use crate::terminal::Event;
 /// # Example
 ///
 /// ```rust
-/// use ferment::{Model, Cmd, Sub, Event, KeyCode};
+/// use teapot::{Model, Cmd, Sub, Event, KeyCode};
 /// use std::time::Duration;
 ///
 /// struct App {
@@ -93,7 +93,7 @@ use crate::terminal::Event;
 ///     fn handle_event(&self, event: Event) -> Option<Self::Message> {
 ///         match event {
 ///             Event::Key(key) => match key.code {
-///                 KeyCode::Char('c') if key.modifiers.contains(ferment::KeyModifiers::CONTROL) => {
+///                 KeyCode::Char('c') if key.modifiers.contains(teapot::KeyModifiers::CONTROL) => {
 ///                     Some(Msg::Clear)
 ///                 }
 ///                 KeyCode::Char(c) => Some(Msg::Append(c)),

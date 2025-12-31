@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::TextArea;
+//! use teapot::components::TextArea;
 //!
 //! let textarea = TextArea::new()
 //!     .placeholder("Enter your message...")
@@ -537,7 +537,7 @@ impl TextArea {
 
         // Create temp file with content
         let temp_path =
-            std::env::temp_dir().join(format!("ferment_edit_{}.{}", std::process::id(), extension));
+            std::env::temp_dir().join(format!("teapot_edit_{}.{}", std::process::id(), extension));
 
         // Write content to temp file
         if std::fs::write(&temp_path, &content).is_err() {

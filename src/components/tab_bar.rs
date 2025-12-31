@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::{TabBar, Tab};
+//! use teapot::components::{TabBar, Tab};
 //!
 //! let tab_bar = TabBar::new()
 //!     .tabs(vec![

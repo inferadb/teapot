@@ -1,13 +1,10 @@
 // Library crate: public API may not be used internally
 #![allow(dead_code)]
 
-//! # Ferment
+//! # Teapot
 //!
 //! A Rust-native terminal UI framework following the Elm Architecture,
 //! inspired by the Charm.sh ecosystem (Bubble Tea, Bubbles, Huh).
-//!
-//! The name "Ferment" is a nod to the bubbly nature of Bubble Tea—fermentation
-//! creates bubbles, after all.
 //!
 //! ## Architecture
 //!
@@ -20,7 +17,7 @@
 //! ## Quick Start
 //!
 //! ```rust,no_run
-//! use ferment::{Model, Program, Cmd, KeyCode, Event};
+//! use teapot::{Model, Program, Cmd, KeyCode, Event};
 //!
 //! struct Counter {
 //!     count: i32,
@@ -92,7 +89,7 @@
 //! The `forms` module provides declarative form building:
 //!
 //! ```rust,ignore
-//! use ferment::forms::{Form, Group, Input, Select, Confirm};
+//! use teapot::forms::{Form, Group, Input, Select, Confirm};
 //!
 //! let form = Form::new()
 //!     .group(

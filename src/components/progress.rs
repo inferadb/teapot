@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::Progress;
+//! use teapot::components::Progress;
 //!
 //! let progress = Progress::new()
 //!     .total(100)

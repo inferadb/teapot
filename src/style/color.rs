@@ -69,7 +69,7 @@ impl Color {
     ///
     /// # Example
     /// ```
-    /// use ferment::style::Color;
+    /// use teapot::style::Color;
     ///
     /// let color = Color::adaptive(Color::Black, Color::White);
     /// ```
@@ -81,7 +81,7 @@ impl Color {
     ///
     /// # Example
     /// ```
-    /// use ferment::style::Color;
+    /// use teapot::style::Color;
     ///
     /// let color = Color::complete((255, 0, 0), 196, 1);
     /// ```

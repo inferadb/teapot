@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::{Spinner, SpinnerStyle};
+//! use teapot::components::{Spinner, SpinnerStyle};
 //!
 //! let spinner = Spinner::new()
 //!     .style(SpinnerStyle::Dots)

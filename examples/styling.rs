@@ -2,13 +2,13 @@
 //!
 //! Run with: cargo run --example styling
 
-use ferment::style::{
+use teapot::style::{
     BorderStyle, Color, Position, Style, join_horizontal, join_horizontal_with, join_vertical,
     join_vertical_with, place, place_horizontal,
 };
 
 fn main() {
-    println!("\n=== Ferment Styling Demo ===\n");
+    println!("\n=== Teapot Styling Demo ===\n");
 
     // Basic styling
     demo_basic_styling();
@@ -133,7 +133,7 @@ fn demo_adaptive_colors() {
     println!("--- Adaptive Colors ---\n");
 
     // Detect terminal background
-    let has_dark = ferment::style::has_dark_background();
+    let has_dark = teapot::style::has_dark_background();
     println!("Terminal background: {}", if has_dark { "dark" } else { "light" });
 
     // Adaptive color (changes based on background)

@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust,ignore
-//! use ferment::forms::{Form, Group, Input, Select, Confirm};
+//! use teapot::forms::{Form, Group, Input, Select, Confirm};
 //!
 //! let form = Form::new()
 //!     .title("User Registration")

@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::{Table, Column};
+//! use teapot::components::{Table, Column};
 //!
 //! let table = Table::new()
 //!     .columns(vec![
@@ -288,7 +288,7 @@ impl Table {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::components::{Column, Table};
+    /// use teapot::components::{Column, Table};
     ///
     /// let table = Table::new()
     ///     .columns(vec![Column::new("Name"), Column::new("Value")])

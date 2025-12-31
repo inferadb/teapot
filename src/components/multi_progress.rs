@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::MultiProgress;
+//! use teapot::components::MultiProgress;
 //!
 //! let mp = MultiProgress::new()
 //!     .add_task("download", "Downloading files...", 100)

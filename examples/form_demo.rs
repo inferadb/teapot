@@ -8,13 +8,13 @@
 //! - Dynamic content (title_fn, description_fn)
 //! - Form results extraction
 
-use ferment::forms::{
+use teapot::forms::{
     ConfirmField, FilePickerField, Form, FormLayout, Group, InputField, MultiSelectField,
     NoteField, SelectField,
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("\n=== Ferment Form Demo ===\n");
+    println!("\n=== Teapot Form Demo ===\n");
 
     // Demo 1: Basic form with all field types
     demo_all_field_types()?;

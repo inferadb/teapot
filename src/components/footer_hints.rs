@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::FooterHints;
+//! use teapot::components::FooterHints;
 //!
 //! // Simple footer with hints
 //! let footer = FooterHints::new()

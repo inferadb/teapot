@@ -50,16 +50,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ferment-tui"
-version = "0.1.0-alpha.1"
-dependencies = [
- "crossterm",
- "tokio",
- "unicode-segmentation",
- "unicode-width",
-]
-
-[[package]]
 name = "libc"
 version = "0.2.178"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -219,6 +209,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "teapot"
+version = "0.1.0-alpha.1"
+dependencies = [
+ "crossterm",
+ "tokio",
+ "unicode-segmentation",
+ "unicode-width",
 ]
 
 [[package]]

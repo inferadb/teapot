@@ -1,14 +1,14 @@
 [package]
-name = "ferment-tui"
+name = "teapot"
 version = "0.1.0-alpha.1"
 edition = "2021"
 rust-version = "1.88"
 authors = ["InferaDB Team"]
 description = "A Rust-native terminal UI framework following the Elm Architecture, inspired by Bubble Tea"
 license = "Apache-2.0"
-repository = "https://github.com/inferadb/ferment"
+repository = "https://github.com/inferadb/teapot"
 readme = "README.md"
-keywords = ["tui", "terminal", "bubble-tea", "cli", "ferment"]
+keywords = ["tui", "terminal", "bubble-tea", "cli", "teapot", "elm"]
 categories = ["command-line-interface", "gui"]
 
 [dependencies]

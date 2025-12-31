@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::{StatusBadge, BadgeVariant};
+//! use teapot::components::{StatusBadge, BadgeVariant};
 //!
 //! // Using preset variants
 //! let online = StatusBadge::online();

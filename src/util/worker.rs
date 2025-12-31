@@ -6,7 +6,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::util::WorkerHandle;
+//! use teapot::util::WorkerHandle;
 //!
 //! // Spawn a worker that returns a String
 //! let mut worker: Option<WorkerHandle<String>> = Some(
@@ -45,7 +45,7 @@ impl<T: Send + 'static> WorkerHandle<T> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::util::WorkerHandle;
+    /// use teapot::util::WorkerHandle;
     ///
     /// let handle = WorkerHandle::spawn(|| {
     ///     // Do some work...
@@ -72,7 +72,7 @@ impl<T: Send + 'static> WorkerHandle<T> {
     /// # Example
     ///
     /// ```rust
-    /// use ferment::util::WorkerHandle;
+    /// use teapot::util::WorkerHandle;
     ///
     /// let handle = WorkerHandle::spawn(|| "done");
     /// // In an event loop:

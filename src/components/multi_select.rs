@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::MultiSelect;
+//! use teapot::components::MultiSelect;
 //!
 //! let select = MultiSelect::new("Choose colors")
 //!     .options(vec!["Red", "Green", "Blue"]);

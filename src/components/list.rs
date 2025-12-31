@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::List;
+//! use teapot::components::List;
 //!
 //! let list = List::new("Select a file")
 //!     .items(vec!["main.rs", "lib.rs", "Cargo.toml"])

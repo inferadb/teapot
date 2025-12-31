@@ -2,10 +2,10 @@
 //!
 //! Run with: cargo run --example theming
 
-use ferment::style::{BorderStyle, Color, ColorProfile, Style, has_dark_background};
+use teapot::style::{BorderStyle, Color, ColorProfile, Style, has_dark_background};
 
 fn main() {
-    println!("\n=== Ferment Adaptive Theming Demo ===\n");
+    println!("\n=== Teapot Adaptive Theming Demo ===\n");
 
     // Detect terminal capabilities
     demo_detection();

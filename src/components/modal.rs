@@ -6,7 +6,7 @@
 //! # Example
 //!
 //! ```rust,ignore
-//! use ferment::components::Modal;
+//! use teapot::components::Modal;
 //!
 //! let modal = Modal::new(60, 10)
 //!     .title("Error")

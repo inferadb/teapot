@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::TitleBar;
+//! use teapot::components::TitleBar;
 //!
 //! // Title only
 //! let bar = TitleBar::new("My Application").width(80);

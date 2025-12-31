@@ -102,7 +102,7 @@ pub type MessageFilter<M, Msg> = Box<dyn Fn(&M, Msg) -> Option<Msg> + Send>;
 /// # Example
 ///
 /// ```rust,no_run
-/// use ferment::{Model, Program, Cmd, Event, KeyCode};
+/// use teapot::{Model, Program, Cmd, Event, KeyCode};
 ///
 /// struct App { count: i32 }
 /// enum Msg { Inc, Quit }
@@ -165,7 +165,7 @@ impl<M: Model> Program<M> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use ferment::Program;
+    /// use teapot::Program;
     ///
     /// Program::new(model)
     ///     .with_filter(|model, msg| {

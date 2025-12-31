@@ -5,7 +5,7 @@
 //! # Example
 //!
 //! ```rust
-//! use ferment::components::Confirm;
+//! use teapot::components::Confirm;
 //!
 //! let confirm = Confirm::new("Are you sure?")
 //!     .default(false);

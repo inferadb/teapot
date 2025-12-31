@@ -1,6 +1,6 @@
 <div align="center">
     <p><a href="https://inferadb.com"><img src=".github/inferadb.png" width="100" /></a></p>
-    <h1>Ferment</h1>
+    <h1>Teapot</h1>
     <p>A Rust Terminal UI framework inspired by Bubble Tea</p>
 </div>
 
@@ -8,7 +8,7 @@
 
 ## Overview
 
-`ferment` provides a functional, declarative approach to building terminal user interfaces:
+`teapot` provides a functional, declarative approach to building terminal user interfaces:
 
 - **Model-Update-View** - Core architecture based on The Elm Architecture
 - **Composable Components** - Reusable widgets like spinners, inputs, and selectors
@@ -20,13 +20,13 @@
 Run the following Cargo command in your project directory:
 
 ```bash
-cargo add ferment-tui
+cargo add teapot
 ```
 
 ## Quick Start
 
 ```rust
-use ferment::{Model, Program, Cmd, Event, KeyCode};
+use teapot::{Model, Program, Cmd, Event, KeyCode};
 
 struct Counter {
     count: i32,
@@ -84,7 +84,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 Single-line text input with cursor support, placeholder text, and optional password masking.
 
 ```rust
-use ferment::components::TextInput;
+use teapot::components::TextInput;
 
 let input = TextInput::new()
     .placeholder("Enter your name...")
@@ -96,7 +96,7 @@ let input = TextInput::new()
 Multi-line text editor with cursor navigation, scrolling, and line editing.
 
 ```rust
-use ferment::components::TextArea;
+use teapot::components::TextArea;
 
 let textarea = TextArea::new()
     .placeholder("Enter your message...")
@@ -122,7 +122,7 @@ let textarea = TextArea::new()
 Single-choice selection from a list of options.
 
 ```rust
-use ferment::components::Select;
+use teapot::components::Select;
 
 let select = Select::new("Choose a color")
     .options(vec!["Red", "Green", "Blue"]);
@@ -133,7 +133,7 @@ let select = Select::new("Choose a color")
 Multiple-choice selection with checkboxes and optional min/max constraints.
 
 ```rust
-use ferment::components::MultiSelect;
+use teapot::components::MultiSelect;
 
 let select = MultiSelect::new("Choose colors")
     .options(vec!["Red", "Green", "Blue"])
@@ -146,7 +146,7 @@ let select = MultiSelect::new("Choose colors")
 Yes/No confirmation prompt with customizable default.
 
 ```rust
-use ferment::components::Confirm;
+use teapot::components::Confirm;
 
 let confirm = Confirm::new("Are you sure?")
     .default(false);
@@ -157,7 +157,7 @@ let confirm = Confirm::new("Are you sure?")
 Filterable, paginated list with keyboard navigation and search.
 
 ```rust
-use ferment::components::List;
+use teapot::components::List;
 
 let list = List::new("Select a file")
     .items(vec!["main.rs", "lib.rs", "Cargo.toml"])
@@ -172,7 +172,7 @@ let list = List::new("Select a file")
 Animated loading indicator for indeterminate operations.
 
 ```rust
-use ferment::components::{Spinner, SpinnerStyle};
+use teapot::components::{Spinner, SpinnerStyle};
 
 let spinner = Spinner::new()
     .style(SpinnerStyle::Dots)
@@ -184,7 +184,7 @@ let spinner = Spinner::new()
 Progress bar for operations with known completion percentage.
 
 ```rust
-use ferment::components::Progress;
+use teapot::components::Progress;
 
 let progress = Progress::new()
     .total(100)
@@ -197,7 +197,7 @@ let progress = Progress::new()
 Parallel progress bars for tracking multiple concurrent tasks.
 
 ```rust
-use ferment::components::MultiProgress;
+use teapot::components::MultiProgress;
 
 let mp = MultiProgress::new()
     .add_task("download", "Downloading files...", 100)
@@ -212,7 +212,7 @@ let mp = MultiProgress::new()
 Scrollable container for long content with keyboard navigation.
 
 ```rust
-use ferment::components::Viewport;
+use teapot::components::Viewport;
 
 let viewport = Viewport::new(80, 20)
     .content("Long scrollable content here...");
@@ -223,7 +223,7 @@ let viewport = Viewport::new(80, 20)
 Data table with columns, alignment options, and row selection.
 
 ```rust
-use ferment::components::{Table, Column};
+use teapot::components::{Table, Column};
 
 let table = Table::new()
     .columns(vec![
@@ -245,7 +245,7 @@ Build multi-step forms with validation, inspired by [Huh](https://github.com/cha
 ### Basic Form
 
 ```rust
-use ferment::forms::{Form, Group, InputField, SelectField, ConfirmField};
+use teapot::forms::{Form, Group, InputField, SelectField, ConfirmField};
 
 let form = Form::new()
     .title("User Registration")
@@ -269,7 +269,7 @@ let form = Form::new()
 Control how form groups are displayed:
 
 ```rust
-use ferment::forms::{Form, FormLayout};
+use teapot::forms::{Form, FormLayout};
 
 // Default: one group at a time (wizard-style)
 let wizard = Form::new().layout(FormLayout::Default);
@@ -284,7 +284,7 @@ let columns = Form::new().layout(FormLayout::Columns(2));
 ### All Field Types
 
 ```rust
-use ferment::forms::{
+use teapot::forms::{
     InputField, SelectField, MultiSelectField, ConfirmField,
     NoteField, FilePickerField
 };
@@ -351,7 +351,7 @@ InputField::new("password")
 Browse and select files/directories:
 
 ```rust
-use ferment::components::FilePicker;
+use teapot::components::FilePicker;
 
 let picker = FilePicker::new()
     .title("Select a file")
@@ -368,12 +368,12 @@ let dir_picker = FilePicker::new()
 
 ## Styling
 
-Ferment includes a comprehensive styling system inspired by [Lip Gloss](https://github.com/charmbracelet/lipgloss).
+Teapot includes a comprehensive styling system inspired by [Lip Gloss](https://github.com/charmbracelet/lipgloss).
 
 ### Basic Styling
 
 ```rust
-use ferment::style::{Style, Color, Border};
+use teapot::style::{Style, Color, Border};
 
 let styled = Style::new()
     .fg(Color::Cyan)
@@ -389,7 +389,7 @@ let styled = Style::new()
 Padding and margin support CSS-style shorthand (1, 2, 3, or 4 values):
 
 ```rust
-use ferment::style::Style;
+use teapot::style::Style;
 
 // All sides: 2
 Style::new().padding(&[2]);
@@ -409,7 +409,7 @@ Style::new().margin(&[1, 2, 3, 4]);
 Control width, height, and alignment:
 
 ```rust
-use ferment::style::{Style, Position};
+use teapot::style::{Style, Position};
 
 let box_style = Style::new()
     .width(40)
@@ -424,7 +424,7 @@ let box_style = Style::new()
 Compose blocks horizontally or vertically:
 
 ```rust
-use ferment::style::{join_horizontal_with, join_vertical_with, place, Position};
+use teapot::style::{join_horizontal_with, join_vertical_with, place, Position};
 
 // Side-by-side blocks (aligned at top)
 let combined = join_horizontal_with(Position::Top, &[left_block, right_block]);
@@ -441,7 +441,7 @@ let centered = place(80, 24, Position::Center, Position::Center, "Centered!");
 Colors that adapt to light/dark terminal backgrounds:
 
 ```rust
-use ferment::style::Color;
+use teapot::style::Color;
 
 // Different colors for light vs dark backgrounds
 let adaptive = Color::Adaptive {
@@ -462,7 +462,7 @@ let complete = Color::Complete {
 Build styles incrementally:
 
 ```rust
-use ferment::style::Style;
+use teapot::style::Style;
 
 let base = Style::new()
     .fg(Color::White)
@@ -483,7 +483,7 @@ let plain = highlight.unset_bold().unset_bg();
 Configure the program with a fluent builder API:
 
 ```rust
-use ferment::{Program, Model};
+use teapot::{Program, Model};
 use std::time::Duration;
 
 Program::new(my_model)
@@ -518,7 +518,7 @@ Program::new(my_model)
 The `cmd` module provides Bubble Tea-style command functions:
 
 ```rust
-use ferment::cmd;
+use teapot::cmd;
 use std::time::Duration;
 
 // Quit the program
@@ -542,7 +542,7 @@ cmd::none()
 Spawn external processes (editors, etc.) with terminal teardown/restore:
 
 ```rust
-use ferment::Cmd;
+use teapot::Cmd;
 use std::process::Command;
 
 let mut cmd = Command::new("vim");
@@ -601,7 +601,7 @@ The framework automatically detects non-interactive environments:
 
 ## Accessibility
 
-Ferment supports accessible mode for screen reader users and other assistive technologies.
+Teapot supports accessible mode for screen reader users and other assistive technologies.
 
 ### Enabling Accessible Mode
 
@@ -623,7 +623,7 @@ ACCESSIBLE=1 ./my-app
 Use `Form::run_accessible()` for a fully accessible form experience:
 
 ```rust
-use ferment::forms::{Form, Group, InputField, SelectField, ConfirmField};
+use teapot::forms::{Form, Group, InputField, SelectField, ConfirmField};
 
 let mut form = Form::new()
     .title("User Survey")
@@ -674,7 +674,7 @@ Form completed!
 Components can implement the `Accessible` trait for custom accessible rendering:
 
 ```rust
-use ferment::{Accessible, Model};
+use teapot::{Accessible, Model};
 
 impl Accessible for MyComponent {
     type Message = MyMsg;
