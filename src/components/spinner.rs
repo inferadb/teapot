@@ -14,9 +14,11 @@
 
 use std::time::Duration;
 
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::Event;
+use crate::{
+    runtime::{Cmd, Model},
+    style::Color,
+    terminal::Event,
+};
 
 /// Predefined spinner animation styles.
 #[derive(Debug, Clone, Copy, Default)]
@@ -171,15 +173,15 @@ impl Model for Spinner {
                 } else {
                     None
                 }
-            }
+            },
             SpinnerMsg::SetMessage(message) => {
                 self.message = message;
                 None
-            }
+            },
             SpinnerMsg::Stop => {
                 self.running = false;
                 None
-            }
+            },
         }
     }
 
@@ -216,9 +218,7 @@ pub struct MultiSpinner {
 impl MultiSpinner {
     /// Create a new multi-spinner.
     pub fn new() -> Self {
-        Self {
-            spinners: Vec::new(),
-        }
+        Self { spinners: Vec::new() }
     }
 
     /// Add a spinner with a key.
@@ -228,10 +228,7 @@ impl MultiSpinner {
 
     /// Get a spinner by key.
     pub fn get_mut(&mut self, key: &str) -> Option<&mut Spinner> {
-        self.spinners
-            .iter_mut()
-            .find(|(k, _)| k == key)
-            .map(|(_, s)| s)
+        self.spinners.iter_mut().find(|(k, _)| k == key).map(|(_, s)| s)
     }
 
     /// Stop all spinners.
@@ -250,11 +247,7 @@ impl MultiSpinner {
 
     /// Render all spinners.
     pub fn view(&self) -> String {
-        self.spinners
-            .iter()
-            .map(|(_, spinner)| spinner.view())
-            .collect::<Vec<_>>()
-            .join("\n")
+        self.spinners.iter().map(|(_, spinner)| spinner.view()).collect::<Vec<_>>().join("\n")
     }
 }
 

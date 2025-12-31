@@ -2,12 +2,15 @@
 
 use std::collections::HashMap;
 
-use super::field::FieldValue;
-use super::group::{Group, GroupMsg};
-use crate::runtime::accessible::Accessible;
-use crate::runtime::{Cmd, Model};
-use crate::style::{join_horizontal_with, Color, Position};
-use crate::terminal::{Event, KeyCode};
+use super::{
+    field::FieldValue,
+    group::{Group, GroupMsg},
+};
+use crate::{
+    runtime::{Cmd, Model, accessible::Accessible},
+    style::{Color, Position, join_horizontal_with},
+    terminal::{Event, KeyCode},
+};
 
 /// Form layout options.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -243,9 +246,8 @@ impl Model for Form {
                 // Update the group and capture state before releasing borrow
                 let (result, is_complete, is_cancelled) = {
                     if let Some(group) = self.groups.get_mut(idx) {
-                        let result = group
-                            .update(group_msg)
-                            .map(|c| c.map(move |m| FormMsg::Group(idx, m)));
+                        let result =
+                            group.update(group_msg).map(|c| c.map(move |m| FormMsg::Group(idx, m)));
                         (result, group.is_complete(), group.is_cancelled())
                     } else {
                         return None;
@@ -264,7 +266,7 @@ impl Model for Form {
                 }
 
                 result
-            }
+            },
             FormMsg::NextGroup => {
                 if self.is_last_group() {
                     self.submitted = true;
@@ -272,19 +274,19 @@ impl Model for Form {
                     self.next_group();
                 }
                 None
-            }
+            },
             FormMsg::PrevGroup => {
                 self.prev_group();
                 None
-            }
+            },
             FormMsg::Submit => {
                 self.submitted = true;
                 Some(Cmd::quit())
-            }
+            },
             FormMsg::Cancel => {
                 self.cancelled = true;
                 Some(Cmd::quit())
-            }
+            },
         }
     }
 
@@ -297,21 +299,12 @@ impl Model for Form {
 
         // Form title
         if let Some(title) = &self.title {
-            output.push_str(&format!(
-                "{}\x1b[1m{}\x1b[0m\n",
-                Color::Cyan.to_ansi_fg(),
-                title
-            ));
+            output.push_str(&format!("{}\x1b[1m{}\x1b[0m\n", Color::Cyan.to_ansi_fg(), title));
         }
 
         // Form description
         if let Some(desc) = &self.description {
-            output.push_str(&format!(
-                "{}{}{}\n",
-                Color::BrightBlack.to_ansi_fg(),
-                desc,
-                "\x1b[0m"
-            ));
+            output.push_str(&format!("{}{}{}\n", Color::BrightBlack.to_ansi_fg(), desc, "\x1b[0m"));
         }
 
         if self.title.is_some() || self.description.is_some() {
@@ -336,7 +329,7 @@ impl Model for Form {
                         "\x1b[0m"
                     ));
                 }
-            }
+            },
             FormLayout::Stack => {
                 // Show all groups stacked vertically
                 for (i, group) in self.groups.iter().enumerate() {
@@ -345,7 +338,7 @@ impl Model for Form {
                     }
                     output.push_str(&group.view());
                 }
-            }
+            },
             FormLayout::Columns(cols) => {
                 // Show groups in columns
                 let cols = cols.max(1);
@@ -363,7 +356,7 @@ impl Model for Form {
                         output.push_str(&join_horizontal_with(Position::Top, &strs));
                     }
                 }
-            }
+            },
         }
 
         output
@@ -392,11 +385,7 @@ impl Form {
     fn view_results(&self) -> String {
         let mut output = String::new();
 
-        output.push_str(&format!(
-            "{}✓ Form completed{}\n\n",
-            Color::Green.to_ansi_fg(),
-            "\x1b[0m"
-        ));
+        output.push_str(&format!("{}✓ Form completed{}\n\n", Color::Green.to_ansi_fg(), "\x1b[0m"));
 
         for group in &self.groups {
             for field in group.fields() {
@@ -408,7 +397,7 @@ impl Form {
                         } else {
                             "No".to_string()
                         }
-                    }
+                    },
                     FieldValue::StringList(list) => list.join(", "),
                     FieldValue::Int(n) => n.to_string(),
                     FieldValue::Path(p) => p.display().to_string(),
@@ -447,11 +436,7 @@ impl Accessible for Form {
 
         // Progress indicator
         if self.groups.len() > 1 {
-            prompt.push_str(&format!(
-                "Page {}/{}\n",
-                self.current_group + 1,
-                self.groups.len()
-            ));
+            prompt.push_str(&format!("Page {}/{}\n", self.current_group + 1, self.groups.len()));
         }
 
         prompt.push('\n');
@@ -467,9 +452,7 @@ impl Accessible for Form {
     fn parse_accessible_input(&self, input: &str) -> Option<Self::Message> {
         if let Some(group) = self.groups.get(self.current_group) {
             let idx = self.current_group;
-            group
-                .parse_accessible_input(input)
-                .map(|m| FormMsg::Group(idx, m))
+            group.parse_accessible_input(input).map(|m| FormMsg::Group(idx, m))
         } else {
             None
         }
@@ -600,9 +583,7 @@ mod tests {
     fn test_note_field() {
         use crate::forms::NoteField;
 
-        let note_field = NoteField::new("This is an important note!")
-            .title("Notice")
-            .build();
+        let note_field = NoteField::new("This is an important note!").title("Notice").build();
 
         // Notes should not produce a value
         assert!(matches!(note_field.value(), FieldValue::None));
@@ -612,8 +593,10 @@ mod tests {
 
     #[test]
     fn test_dynamic_title() {
-        use std::sync::atomic::{AtomicUsize, Ordering};
-        use std::sync::Arc;
+        use std::sync::{
+            Arc,
+            atomic::{AtomicUsize, Ordering},
+        };
 
         let counter = Arc::new(AtomicUsize::new(0));
         let counter_clone = counter.clone();
@@ -632,8 +615,10 @@ mod tests {
 
     #[test]
     fn test_dynamic_description() {
-        use std::sync::atomic::{AtomicBool, Ordering};
-        use std::sync::Arc;
+        use std::sync::{
+            Arc,
+            atomic::{AtomicBool, Ordering},
+        };
 
         let show_hint = Arc::new(AtomicBool::new(false));
         let show_hint_clone = show_hint.clone();
@@ -650,16 +635,10 @@ mod tests {
             .build();
 
         // Initially no hint
-        assert_eq!(
-            field.get_description(),
-            Some("Enter your password".to_string())
-        );
+        assert_eq!(field.get_description(), Some("Enter your password".to_string()));
 
         // Show hint
         show_hint.store(true, Ordering::SeqCst);
-        assert_eq!(
-            field.get_description(),
-            Some("Hint: It's your birthday!".to_string())
-        );
+        assert_eq!(field.get_description(), Some("Hint: It's your birthday!".to_string()));
     }
 }

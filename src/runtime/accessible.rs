@@ -204,7 +204,7 @@ pub fn strip_ansi(s: &str) -> String {
                             break;
                         }
                     }
-                }
+                },
                 Some(']') => {
                     // OSC sequence: ESC ] ... (BEL or ESC \)
                     chars.next();
@@ -216,8 +216,8 @@ pub fn strip_ansi(s: &str) -> String {
                             break;
                         }
                     }
-                }
-                _ => {}
+                },
+                _ => {},
             }
         } else {
             result.push(c);
@@ -241,34 +241,16 @@ mod tests {
             AccessibleInput::parse_text("  hello  "),
             AccessibleInput::Text(s) if s == "hello"
         ));
-        assert!(matches!(
-            AccessibleInput::parse_text(""),
-            AccessibleInput::Empty
-        ));
+        assert!(matches!(AccessibleInput::parse_text(""), AccessibleInput::Empty));
     }
 
     #[test]
     fn test_parse_selection() {
-        assert!(matches!(
-            AccessibleInput::parse_selection("1", 3),
-            AccessibleInput::Selection(1)
-        ));
-        assert!(matches!(
-            AccessibleInput::parse_selection("3", 3),
-            AccessibleInput::Selection(3)
-        ));
-        assert!(matches!(
-            AccessibleInput::parse_selection("4", 3),
-            AccessibleInput::Empty
-        )); // Out of range
-        assert!(matches!(
-            AccessibleInput::parse_selection("0", 3),
-            AccessibleInput::Empty
-        )); // Out of range
-        assert!(matches!(
-            AccessibleInput::parse_selection("q", 3),
-            AccessibleInput::Cancel
-        ));
+        assert!(matches!(AccessibleInput::parse_selection("1", 3), AccessibleInput::Selection(1)));
+        assert!(matches!(AccessibleInput::parse_selection("3", 3), AccessibleInput::Selection(3)));
+        assert!(matches!(AccessibleInput::parse_selection("4", 3), AccessibleInput::Empty)); // Out of range
+        assert!(matches!(AccessibleInput::parse_selection("0", 3), AccessibleInput::Empty)); // Out of range
+        assert!(matches!(AccessibleInput::parse_selection("q", 3), AccessibleInput::Cancel));
     }
 
     #[test]
@@ -289,34 +271,13 @@ mod tests {
 
     #[test]
     fn test_parse_confirm() {
-        assert!(matches!(
-            AccessibleInput::parse_confirm("yes", None),
-            AccessibleInput::Yes
-        ));
-        assert!(matches!(
-            AccessibleInput::parse_confirm("y", None),
-            AccessibleInput::Yes
-        ));
-        assert!(matches!(
-            AccessibleInput::parse_confirm("no", None),
-            AccessibleInput::No
-        ));
-        assert!(matches!(
-            AccessibleInput::parse_confirm("n", None),
-            AccessibleInput::No
-        ));
-        assert!(matches!(
-            AccessibleInput::parse_confirm("", Some(true)),
-            AccessibleInput::Yes
-        ));
-        assert!(matches!(
-            AccessibleInput::parse_confirm("", Some(false)),
-            AccessibleInput::No
-        ));
-        assert!(matches!(
-            AccessibleInput::parse_confirm("", None),
-            AccessibleInput::Empty
-        ));
+        assert!(matches!(AccessibleInput::parse_confirm("yes", None), AccessibleInput::Yes));
+        assert!(matches!(AccessibleInput::parse_confirm("y", None), AccessibleInput::Yes));
+        assert!(matches!(AccessibleInput::parse_confirm("no", None), AccessibleInput::No));
+        assert!(matches!(AccessibleInput::parse_confirm("n", None), AccessibleInput::No));
+        assert!(matches!(AccessibleInput::parse_confirm("", Some(true)), AccessibleInput::Yes));
+        assert!(matches!(AccessibleInput::parse_confirm("", Some(false)), AccessibleInput::No));
+        assert!(matches!(AccessibleInput::parse_confirm("", None), AccessibleInput::Empty));
     }
 
     #[test]
@@ -325,15 +286,9 @@ mod tests {
         assert_eq!(strip_ansi("\x1b[31mRed\x1b[0m"), "Red");
         assert_eq!(strip_ansi("\x1b[1;32mBold Green\x1b[0m"), "Bold Green");
         assert_eq!(strip_ansi("No codes"), "No codes");
-        assert_eq!(
-            strip_ansi("\x1b[38;2;255;0;0mTruecolor\x1b[0m"),
-            "Truecolor"
-        );
+        assert_eq!(strip_ansi("\x1b[38;2;255;0;0mTruecolor\x1b[0m"), "Truecolor");
 
         // OSC 8 hyperlinks
-        assert_eq!(
-            strip_ansi("\x1b]8;;https://example.com\x07link\x1b]8;;\x07"),
-            "link"
-        );
+        assert_eq!(strip_ansi("\x1b]8;;https://example.com\x07link\x1b]8;;\x07"), "link");
     }
 }

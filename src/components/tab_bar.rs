@@ -17,9 +17,11 @@
 //!     .selected("urls");
 //! ```
 
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode};
+use crate::{
+    runtime::{Cmd, Model},
+    style::Color,
+    terminal::{Event, KeyCode},
+};
 
 /// A single tab in the tab bar.
 #[derive(Debug, Clone)]
@@ -35,11 +37,7 @@ pub struct Tab {
 impl Tab {
     /// Create a new tab with an ID and label.
     pub fn new(id: impl Into<String>, label: impl Into<String>) -> Self {
-        Self {
-            id: id.into(),
-            label: label.into(),
-            key: None,
-        }
+        Self { id: id.into(), label: label.into(), key: None }
     }
 
     /// Set the keyboard shortcut for this tab.
@@ -187,21 +185,14 @@ impl TabBar {
     /// Select the previous tab.
     fn select_previous(&mut self) {
         if let Some(idx) = self.selected_index() {
-            let prev_idx = if idx == 0 {
-                self.tabs.len() - 1
-            } else {
-                idx - 1
-            };
+            let prev_idx = if idx == 0 { self.tabs.len() - 1 } else { idx - 1 };
             self.selected = self.tabs[prev_idx].id.clone();
         }
     }
 
     /// Get the tab ID for a keyboard shortcut.
     pub fn tab_for_key(&self, key: char) -> Option<&str> {
-        self.tabs
-            .iter()
-            .find(|t| t.key == Some(key))
-            .map(|t| t.id.as_str())
+        self.tabs.iter().find(|t| t.key == Some(key)).map(|t| t.id.as_str())
     }
 
     /// Render the tab bar as a string.
@@ -224,7 +215,7 @@ impl Model for TabBar {
                 if self.tabs.iter().any(|t| t.id == id) {
                     self.selected = id;
                 }
-            }
+            },
             TabBarMsg::Next => self.select_next(),
             TabBarMsg::Previous => self.select_previous(),
         }
@@ -244,11 +235,7 @@ impl Model for TabBar {
 
             if is_active {
                 // Active tab: entire label in active color (with optional background)
-                let bg = self
-                    .active_bg_color
-                    .as_ref()
-                    .map(|c| c.to_ansi_bg())
-                    .unwrap_or_default();
+                let bg = self.active_bg_color.as_ref().map(|c| c.to_ansi_bg()).unwrap_or_default();
                 output.push_str(&format!(
                     "{}{}{}{}",
                     bg,
@@ -304,9 +291,8 @@ impl Model for TabBar {
                 KeyCode::BackTab => Some(TabBarMsg::Previous),
                 KeyCode::Char(c) => {
                     // Check if character matches any tab's key
-                    self.tab_for_key(c)
-                        .map(|id| TabBarMsg::Select(id.to_string()))
-                }
+                    self.tab_for_key(c).map(|id| TabBarMsg::Select(id.to_string()))
+                },
                 _ => None,
             },
             _ => None,
@@ -334,10 +320,8 @@ mod tests {
 
     #[test]
     fn test_tab_bar_creation() {
-        let bar = TabBar::new().tabs(vec![
-            Tab::new("a", "Alpha").key('a'),
-            Tab::new("b", "Beta").key('b'),
-        ]);
+        let bar = TabBar::new()
+            .tabs(vec![Tab::new("a", "Alpha").key('a'), Tab::new("b", "Beta").key('b')]);
 
         assert_eq!(bar.selected_id(), "a");
         assert_eq!(bar.get_tabs().len(), 2);
@@ -346,11 +330,7 @@ mod tests {
     #[test]
     fn test_tab_bar_selection() {
         let mut bar = TabBar::new()
-            .tabs(vec![
-                Tab::new("a", "Alpha"),
-                Tab::new("b", "Beta"),
-                Tab::new("c", "Charlie"),
-            ])
+            .tabs(vec![Tab::new("a", "Alpha"), Tab::new("b", "Beta"), Tab::new("c", "Charlie")])
             .selected("b");
 
         assert_eq!(bar.selected_id(), "b");

@@ -35,12 +35,11 @@ mod form;
 mod group;
 mod validation;
 
-pub use field::{Field, FieldKind, FieldValue, Note};
-pub use form::{Form, FormLayout, FormMsg, FormResults};
-pub use group::Group;
-pub use validation::{Validator, ValidatorFn};
-
 // Re-export field builders
 pub use field::{
     ConfirmField, FilePickerField, InputField, MultiSelectField, NoteField, SelectField,
 };
+pub use field::{Field, FieldKind, FieldValue, Note};
+pub use form::{Form, FormLayout, FormMsg, FormResults};
+pub use group::Group;
+pub use validation::{Validator, ValidatorFn};

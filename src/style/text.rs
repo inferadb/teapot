@@ -2,9 +2,11 @@
 //!
 //! Provides CSS-like styling with padding, margins, borders, dimensions, and alignment.
 
-use super::border::{Border, BorderStyle};
-use super::color::Color;
-use super::{strip_ansi, width as str_width};
+use super::{
+    border::{Border, BorderStyle},
+    color::Color,
+    strip_ansi, width as str_width,
+};
 
 /// Position for alignment.
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -37,12 +39,7 @@ pub struct Spacing {
 impl Spacing {
     /// Create spacing with all sides equal.
     pub fn all(value: usize) -> Self {
-        Self {
-            top: value,
-            right: value,
-            bottom: value,
-            left: value,
-        }
+        Self { top: value, right: value, bottom: value, left: value }
     }
 
     /// Create spacing from CSS-style shorthand.
@@ -55,24 +52,9 @@ impl Spacing {
         match values.len() {
             0 => Self::default(),
             1 => Self::all(values[0]),
-            2 => Self {
-                top: values[0],
-                right: values[1],
-                bottom: values[0],
-                left: values[1],
-            },
-            3 => Self {
-                top: values[0],
-                right: values[1],
-                bottom: values[2],
-                left: values[1],
-            },
-            _ => Self {
-                top: values[0],
-                right: values[1],
-                bottom: values[2],
-                left: values[3],
-            },
+            2 => Self { top: values[0], right: values[1], bottom: values[0], left: values[1] },
+            3 => Self { top: values[0], right: values[1], bottom: values[2], left: values[1] },
+            _ => Self { top: values[0], right: values[1], bottom: values[2], left: values[3] },
         }
     }
 
@@ -525,10 +507,7 @@ impl Style {
 
     /// Get total frame size (horizontal, vertical).
     pub fn get_frame_size(&self) -> (usize, usize) {
-        (
-            self.get_horizontal_frame_size(),
-            self.get_vertical_frame_size(),
-        )
+        (self.get_horizontal_frame_size(), self.get_vertical_frame_size())
     }
 
     // ========== Inheritance ==========
@@ -702,16 +681,16 @@ impl Style {
                         Position::Top => {
                             // Left align
                             line.push_str(&" ".repeat(padding));
-                        }
+                        },
                         Position::Center => {
                             let left = padding / 2;
                             let right = padding - left;
                             *line = format!("{}{}{}", " ".repeat(left), line, " ".repeat(right));
-                        }
+                        },
                         Position::Bottom => {
                             // Right align
                             *line = format!("{}{}", " ".repeat(padding), line);
-                        }
+                        },
                     }
                 } else if line_width > target_width {
                     *line = truncate_to_width(line, target_width);
@@ -733,7 +712,7 @@ impl Style {
                         for _ in 0..padding {
                             lines.push(empty_line.clone());
                         }
-                    }
+                    },
                     Position::Center => {
                         let top = padding / 2;
                         let bottom = padding - top;
@@ -746,7 +725,7 @@ impl Style {
                             new_lines.push(empty_line.clone());
                         }
                         lines = new_lines;
-                    }
+                    },
                     Position::Bottom => {
                         let mut new_lines = Vec::new();
                         for _ in 0..padding {
@@ -754,7 +733,7 @@ impl Style {
                         }
                         new_lines.extend(lines);
                         lines = new_lines;
-                    }
+                    },
                 }
             } else if current_height > target_height {
                 lines.truncate(target_height);
@@ -778,28 +757,17 @@ impl Style {
 
         // Build border style codes
         let border_style_start = self.get_border_style_start();
-        let border_style_end = if border_style_start.is_empty() {
-            String::new()
-        } else {
-            "\x1b[0m".to_string()
-        };
+        let border_style_end =
+            if border_style_start.is_empty() { String::new() } else { "\x1b[0m".to_string() };
 
         // Top border
         if border.top {
             let line = format!(
                 "{}{}{}{}{}",
                 border_style_start,
-                if border.left {
-                    chars.top_left.to_string()
-                } else {
-                    String::new()
-                },
+                if border.left { chars.top_left.to_string() } else { String::new() },
                 chars.top.to_string().repeat(content_width),
-                if border.right {
-                    chars.top_right.to_string()
-                } else {
-                    String::new()
-                },
+                if border.right { chars.top_right.to_string() } else { String::new() },
                 border_style_end
             );
             result.push(line);
@@ -807,31 +775,16 @@ impl Style {
 
         // Content with side borders
         for content_line in &lines {
-            let padded = format!(
-                "{}{}",
-                content_line,
-                " ".repeat(content_width - str_width(content_line))
-            );
+            let padded =
+                format!("{}{}", content_line, " ".repeat(content_width - str_width(content_line)));
             let line = format!(
                 "{}{}{}{}{}{}{}",
                 if border.left { &border_style_start } else { "" },
-                if border.left {
-                    chars.left.to_string()
-                } else {
-                    String::new()
-                },
+                if border.left { chars.left.to_string() } else { String::new() },
                 if border.left { &border_style_end } else { "" },
                 padded,
-                if border.right {
-                    &border_style_start
-                } else {
-                    ""
-                },
-                if border.right {
-                    chars.right.to_string()
-                } else {
-                    String::new()
-                },
+                if border.right { &border_style_start } else { "" },
+                if border.right { chars.right.to_string() } else { String::new() },
                 if border.right { &border_style_end } else { "" },
             );
             result.push(line);
@@ -842,17 +795,9 @@ impl Style {
             let line = format!(
                 "{}{}{}{}{}",
                 border_style_start,
-                if border.left {
-                    chars.bottom_left.to_string()
-                } else {
-                    String::new()
-                },
+                if border.left { chars.bottom_left.to_string() } else { String::new() },
                 chars.bottom.to_string().repeat(content_width),
-                if border.right {
-                    chars.bottom_right.to_string()
-                } else {
-                    String::new()
-                },
+                if border.right { chars.bottom_right.to_string() } else { String::new() },
                 border_style_end
             );
             result.push(line);
@@ -1105,10 +1050,7 @@ mod tests {
 
     #[test]
     fn test_frame_size() {
-        let style = Style::new()
-            .padding(&[1, 2])
-            .margin(&[3, 4])
-            .border(BorderStyle::Single);
+        let style = Style::new().padding(&[1, 2]).margin(&[3, 4]).border(BorderStyle::Single);
 
         // padding: top=1, right=2, bottom=1, left=2 -> h=4, v=2
         // margin: top=3, right=4, bottom=3, left=4 -> h=8, v=6

@@ -20,9 +20,11 @@
 //! // Output: //  My Application  /////...  Settings  //
 //! ```
 
-use crate::runtime::{Cmd, Model};
-use crate::style::{Color, RESET};
-use crate::terminal::Event;
+use crate::{
+    runtime::{Cmd, Model},
+    style::{Color, RESET},
+    terminal::Event,
+};
 
 /// Message type for title bar (currently none needed).
 #[derive(Debug, Clone)]
@@ -66,10 +68,7 @@ impl Default for TitleBar {
 impl TitleBar {
     /// Create a new title bar with the given title.
     pub fn new(title: impl Into<String>) -> Self {
-        Self {
-            title: title.into(),
-            ..Default::default()
-        }
+        Self { title: title.into(), ..Default::default() }
     }
 
     /// Set the subtitle (shown on the right side).
@@ -163,7 +162,7 @@ impl Model for TitleBar {
                     "/".repeat(remaining),
                     reset
                 )
-            }
+            },
             Some(subtitle) => {
                 // With subtitle: "//  Title  /////...  Subtitle  //"
                 let prefix_len = 2 + 2 + self.title.len() + 2; // "//" + "  " + title + "  "
@@ -184,7 +183,7 @@ impl Model for TitleBar {
                     sep_color,
                     reset
                 )
-            }
+            },
         }
     }
 

@@ -33,15 +33,15 @@
 //! Program::new(view).with_alt_screen().run()?;
 //! ```
 
-use std::any::Any;
-use std::sync::Arc;
-use std::time::Duration;
+use std::{any::Any, sync::Arc, time::Duration};
 
-use crate::components::{FooterHints, Modal, ModalBorder, TaskList, TitleBar};
-use crate::runtime::{Cmd, Model, Sub};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode};
-use crate::util::WorkerHandle;
+use crate::{
+    components::{FooterHints, Modal, ModalBorder, TaskList, TitleBar},
+    runtime::{Cmd, Model, Sub},
+    style::Color,
+    terminal::{Event, KeyCode},
+    util::WorkerHandle,
+};
 
 // ============================================================================
 // Core Types
@@ -73,10 +73,7 @@ impl std::fmt::Debug for TaskStep {
 impl TaskStep {
     /// Create a new task step without an executor.
     pub fn new(name: impl Into<String>) -> Self {
-        Self {
-            name: name.into(),
-            executor: None,
-        }
+        Self { name: name.into(), executor: None }
     }
 
     /// Create a step with an executor function.
@@ -89,10 +86,7 @@ impl TaskStep {
     where
         F: Fn() -> Result<Option<String>, String> + Send + Sync + 'static,
     {
-        Self {
-            name: name.into(),
-            executor: Some(Arc::new(executor)),
-        }
+        Self { name: name.into(), executor: Some(Arc::new(executor)) }
     }
 }
 
@@ -286,38 +280,29 @@ impl TaskProgressViewBuilder {
 
     /// Set footer hints for the confirming phase.
     pub fn hints_confirming(mut self, hints: Vec<(&str, &str)>) -> Self {
-        self.config.hints.confirming = hints
-            .into_iter()
-            .map(|(k, d)| (k.to_string(), d.to_string()))
-            .collect();
+        self.config.hints.confirming =
+            hints.into_iter().map(|(k, d)| (k.to_string(), d.to_string())).collect();
         self
     }
 
     /// Set footer hints for the running phase.
     pub fn hints_running(mut self, hints: Vec<(&str, &str)>) -> Self {
-        self.config.hints.running = hints
-            .into_iter()
-            .map(|(k, d)| (k.to_string(), d.to_string()))
-            .collect();
+        self.config.hints.running =
+            hints.into_iter().map(|(k, d)| (k.to_string(), d.to_string())).collect();
         self
     }
 
     /// Set footer hints for the completed phase.
     pub fn hints_completed(mut self, hints: Vec<(&str, &str)>) -> Self {
-        self.config.hints.completed = hints
-            .into_iter()
-            .map(|(k, d)| (k.to_string(), d.to_string()))
-            .collect();
+        self.config.hints.completed =
+            hints.into_iter().map(|(k, d)| (k.to_string(), d.to_string())).collect();
         self
     }
 
     /// Build the TaskProgressView.
     pub fn build(self) -> TaskProgressView {
-        let initial_phase = if self.confirmation.is_some() {
-            Phase::Confirming
-        } else {
-            Phase::Ready
-        };
+        let initial_phase =
+            if self.confirmation.is_some() { Phase::Confirming } else { Phase::Ready };
 
         TaskProgressView::new_internal(
             self.steps,
@@ -469,16 +454,16 @@ impl TaskProgressView {
         match result {
             StepResult::Success(detail) => {
                 self.task_list.complete_task(index, detail);
-            }
+            },
             StepResult::Skipped(reason) => {
                 self.task_list.skip_task(index, Some(reason));
-            }
+            },
             StepResult::Failure(error) => {
                 self.task_list.fail_task(index, Some(error.clone()));
                 if let Some(task) = self.task_list.get(index) {
                     self.error_modal = Some((task.name.clone(), error));
                 }
-            }
+            },
         }
 
         // Update phase if all tasks are complete
@@ -533,12 +518,7 @@ impl TaskProgressView {
         };
 
         FooterHints::new()
-            .hints(
-                hints
-                    .iter()
-                    .map(|(k, d)| (k.as_str(), d.as_str()))
-                    .collect(),
-            )
+            .hints(hints.iter().map(|(k, d)| (k.as_str(), d.as_str())).collect())
             .width(self.width as usize)
             .with_separator()
             .render()
@@ -639,9 +619,7 @@ impl TaskProgressView {
             self.current_step = 0;
             self.task_list.start_task(0);
             self.worker = Some(self.spawn_step_worker(0));
-            return Some(Cmd::tick(Duration::from_millis(80), |_| {
-                TaskProgressMsg::Tick
-            }));
+            return Some(Cmd::tick(Duration::from_millis(80), |_| TaskProgressMsg::Tick));
         }
         None
     }
@@ -653,9 +631,7 @@ impl Model for TaskProgressView {
     fn init(&self) -> Option<Cmd<Self::Message>> {
         if self.config.auto_start && self.phase == Phase::Ready {
             // Schedule start after brief delay for initial render
-            Some(Cmd::tick(Duration::from_millis(100), |_| {
-                TaskProgressMsg::Start
-            }))
+            Some(Cmd::tick(Duration::from_millis(100), |_| TaskProgressMsg::Start))
         } else {
             None
         }
@@ -672,10 +648,10 @@ impl Model for TaskProgressView {
                     match &result {
                         StepResult::Success(detail) => {
                             self.task_list.complete_task(index, detail.clone());
-                        }
+                        },
                         StepResult::Skipped(reason) => {
                             self.task_list.skip_task(index, Some(reason.clone()));
-                        }
+                        },
                         StepResult::Failure(error) => {
                             self.task_list.fail_task(index, Some(error.clone()));
                             if let Some(task) = self.task_list.get(index) {
@@ -683,7 +659,7 @@ impl Model for TaskProgressView {
                             }
                             self.phase = Phase::Completed;
                             return None;
-                        }
+                        },
                     }
 
                     // Start next step if there is one
@@ -700,24 +676,24 @@ impl Model for TaskProgressView {
                     }
                 }
                 None
-            }
+            },
             TaskProgressMsg::Start => {
                 if self.phase == Phase::Ready {
                     return self.start_execution();
                 }
                 None
-            }
+            },
             TaskProgressMsg::Confirm => {
                 if self.phase == Phase::Confirming {
                     return self.start_execution();
                 }
                 None
-            }
+            },
             TaskProgressMsg::Cancel => {
                 self.was_cancelled = true;
                 self.should_quit = true;
                 Some(Cmd::quit())
-            }
+            },
             TaskProgressMsg::RunStep(index) => {
                 if self.config.external_control
                     && index < self.executors.len()
@@ -727,41 +703,41 @@ impl Model for TaskProgressView {
                     self.worker = Some(self.spawn_step_worker(index));
                 }
                 None
-            }
+            },
             TaskProgressMsg::StepCompleted(index, result) => {
                 // Manual completion (for external control)
                 match &result {
                     StepResult::Success(detail) => {
                         self.task_list.complete_task(index, detail.clone());
-                    }
+                    },
                     StepResult::Skipped(reason) => {
                         self.task_list.skip_task(index, Some(reason.clone()));
-                    }
+                    },
                     StepResult::Failure(error) => {
                         self.task_list.fail_task(index, Some(error.clone()));
                         if let Some(task) = self.task_list.get(index) {
                             self.error_modal = Some((task.name.clone(), error.clone()));
                         }
-                    }
+                    },
                 }
                 None
-            }
+            },
             TaskProgressMsg::StartTask(index) => {
                 if self.config.external_control {
                     self.start_task(index);
                 }
                 None
-            }
+            },
             TaskProgressMsg::CompleteTask(index, result) => {
                 if self.config.external_control {
                     self.complete_task(index, result);
                 }
                 None
-            }
+            },
             TaskProgressMsg::CloseModal => {
                 self.error_modal = None;
                 None
-            }
+            },
             TaskProgressMsg::Quit => {
                 if self.error_modal.is_some() {
                     self.error_modal = None;
@@ -773,12 +749,12 @@ impl Model for TaskProgressView {
                     }
                     Some(Cmd::quit())
                 }
-            }
+            },
             TaskProgressMsg::Resize(w, h) => {
                 self.width = w;
                 self.height = h;
                 None
-            }
+            },
         }
     }
 
@@ -848,7 +824,7 @@ impl Model for TaskProgressView {
                         KeyCode::Char('y') | KeyCode::Char('Y') => Some(TaskProgressMsg::Confirm),
                         KeyCode::Char('n') | KeyCode::Char('N') | KeyCode::Esc => {
                             Some(TaskProgressMsg::Cancel)
-                        }
+                        },
                         KeyCode::Char('q') => Some(TaskProgressMsg::Cancel),
                         _ => None,
                     },
@@ -857,7 +833,7 @@ impl Model for TaskProgressView {
                         _ => None,
                     },
                 }
-            }
+            },
             Event::Resize { width, height } => Some(TaskProgressMsg::Resize(width, height)),
             _ => None,
         }

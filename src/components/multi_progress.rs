@@ -15,9 +15,11 @@
 
 use std::collections::HashMap;
 
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::Event;
+use crate::{
+    runtime::{Cmd, Model},
+    style::Color,
+    terminal::Event,
+};
 
 /// Message type for multi-progress.
 #[derive(Debug, Clone)]
@@ -33,11 +35,7 @@ pub enum MultiProgressMsg {
     /// Mark a task as failed.
     Fail { id: String, error: String },
     /// Add a new task.
-    AddTask {
-        id: String,
-        message: String,
-        total: u64,
-    },
+    AddTask { id: String, message: String, total: u64 },
     /// Remove a task.
     RemoveTask { id: String },
 }
@@ -82,11 +80,7 @@ impl Task {
 
     /// Get the progress percentage.
     pub fn percentage(&self) -> f64 {
-        if self.total == 0 {
-            100.0
-        } else {
-            (self.current as f64 / self.total as f64) * 100.0
-        }
+        if self.total == 0 { 100.0 } else { (self.current as f64 / self.total as f64) * 100.0 }
     }
 
     /// Check if task is complete (either success or failure).
@@ -228,10 +222,7 @@ impl MultiProgress {
 
     /// Get a mutable task by ID.
     fn get_task_mut(&mut self, id: &str) -> Option<&mut Task> {
-        self.task_index
-            .get(id)
-            .copied()
-            .and_then(move |idx| self.tasks.get_mut(idx))
+        self.task_index.get(id).copied().and_then(move |idx| self.tasks.get_mut(idx))
     }
 
     /// Get all tasks.
@@ -246,26 +237,17 @@ impl MultiProgress {
 
     /// Get the number of completed tasks.
     pub fn completed_count(&self) -> usize {
-        self.tasks
-            .iter()
-            .filter(|t| t.status == TaskStatus::Completed)
-            .count()
+        self.tasks.iter().filter(|t| t.status == TaskStatus::Completed).count()
     }
 
     /// Get the number of failed tasks.
     pub fn failed_count(&self) -> usize {
-        self.tasks
-            .iter()
-            .filter(|t| matches!(t.status, TaskStatus::Failed(_)))
-            .count()
+        self.tasks.iter().filter(|t| matches!(t.status, TaskStatus::Failed(_))).count()
     }
 
     /// Get the number of in-progress tasks.
     pub fn in_progress_count(&self) -> usize {
-        self.tasks
-            .iter()
-            .filter(|t| t.status == TaskStatus::InProgress)
-            .count()
+        self.tasks.iter().filter(|t| t.status == TaskStatus::InProgress).count()
     }
 
     /// Check if all tasks are done.
@@ -282,11 +264,7 @@ impl MultiProgress {
         let total: u64 = self.tasks.iter().map(|t| t.total).sum();
         let current: u64 = self.tasks.iter().map(|t| t.current).sum();
 
-        if total == 0 {
-            100.0
-        } else {
-            (current as f64 / total as f64) * 100.0
-        }
+        if total == 0 { 100.0 } else { (current as f64 / total as f64) * 100.0 }
     }
 
     /// Set progress for a task.
@@ -391,25 +369,25 @@ impl Model for MultiProgress {
         match msg {
             MultiProgressMsg::SetProgress { id, current } => {
                 self.set_progress(&id, current);
-            }
+            },
             MultiProgressMsg::Increment { id, amount } => {
                 self.increment(&id, amount);
-            }
+            },
             MultiProgressMsg::SetMessage { id, message } => {
                 self.set_message(&id, message);
-            }
+            },
             MultiProgressMsg::Complete { id } => {
                 self.complete_task(&id);
-            }
+            },
             MultiProgressMsg::Fail { id, error } => {
                 self.fail_task(&id, error);
-            }
+            },
             MultiProgressMsg::AddTask { id, message, total } => {
                 self.add_task_dynamic(id, message, total);
-            }
+            },
             MultiProgressMsg::RemoveTask { id } => {
                 self.remove_task(&id);
-            }
+            },
         }
 
         // Optionally remove completed tasks
@@ -437,11 +415,7 @@ impl Model for MultiProgress {
         }
 
         if self.tasks.is_empty() {
-            output.push_str(&format!(
-                "{}(no tasks){}",
-                Color::BrightBlack.to_ansi_fg(),
-                "\x1b[0m"
-            ));
+            output.push_str(&format!("{}(no tasks){}", Color::BrightBlack.to_ansi_fg(), "\x1b[0m"));
             return output;
         }
 
@@ -451,13 +425,13 @@ impl Model for MultiProgress {
             let status_indicator = match &task.status {
                 TaskStatus::InProgress => {
                     format!("{}◐{}", self.in_progress_color.to_ansi_fg(), "\x1b[0m")
-                }
+                },
                 TaskStatus::Completed => {
                     format!("{}✓{}", self.completed_color.to_ansi_fg(), "\x1b[0m")
-                }
+                },
                 TaskStatus::Failed(_) => {
                     format!("{}✗{}", self.failed_color.to_ansi_fg(), "\x1b[0m")
-                }
+                },
             };
 
             // Task line
@@ -544,9 +518,8 @@ mod tests {
 
     #[test]
     fn test_multi_progress_creation() {
-        let mp = MultiProgress::new()
-            .add_task("task1", "Task 1", 100)
-            .add_task("task2", "Task 2", 50);
+        let mp =
+            MultiProgress::new().add_task("task1", "Task 1", 100).add_task("task2", "Task 2", 50);
 
         assert_eq!(mp.task_count(), 2);
         assert_eq!(mp.completed_count(), 0);
@@ -585,9 +558,8 @@ mod tests {
 
     #[test]
     fn test_overall_percentage() {
-        let mut mp = MultiProgress::new()
-            .add_task("task1", "Task 1", 100)
-            .add_task("task2", "Task 2", 100);
+        let mut mp =
+            MultiProgress::new().add_task("task1", "Task 1", 100).add_task("task2", "Task 2", 100);
 
         mp.set_progress("task1", 50);
         mp.set_progress("task2", 50);

@@ -13,9 +13,11 @@
 //!     .filterable(true);
 //! ```
 
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode, KeyModifiers};
+use crate::{
+    runtime::{Cmd, Model},
+    style::Color,
+    terminal::{Event, KeyCode, KeyModifiers},
+};
 
 /// Message type for list.
 #[derive(Debug, Clone)]
@@ -99,10 +101,7 @@ impl<T: Clone> Default for List<T> {
 impl<T: Clone> List<T> {
     /// Create a new list with a title.
     pub fn new(title: impl Into<String>) -> Self {
-        Self {
-            title: title.into(),
-            ..Default::default()
-        }
+        Self { title: title.into(), ..Default::default() }
     }
 
     /// Set items with display labels.
@@ -380,24 +379,24 @@ impl<T: Clone + Send + 'static> Model for List<T> {
                     self.filter.push(c);
                     self.rebuild_filtered();
                 }
-            }
+            },
             ListMsg::DeleteFilterChar => {
                 if self.filterable && !self.filter.is_empty() {
                     self.filter.pop();
                     self.rebuild_filtered();
                 }
-            }
+            },
             ListMsg::ClearFilter => {
                 if self.filterable {
                     self.filter.clear();
                     self.rebuild_filtered();
                 }
-            }
+            },
             ListMsg::Submit => {
                 if !self.filtered_indices.is_empty() {
                     self.submitted = true;
                 }
-            }
+            },
             ListMsg::Cancel => self.cancelled = true,
             ListMsg::Focus => self.focused = true,
             ListMsg::Blur => self.focused = false,
@@ -419,11 +418,7 @@ impl<T: Clone + Send + 'static> Model for List<T> {
                 "{}/ {}{}",
                 self.filter_color.to_ansi_fg(),
                 if self.filter.is_empty() {
-                    format!(
-                        "{}{}",
-                        Color::BrightBlack.to_ansi_fg(),
-                        self.filter_placeholder
-                    )
+                    format!("{}{}", Color::BrightBlack.to_ansi_fg(), self.filter_placeholder)
                 } else {
                     self.filter.clone()
                 },
@@ -543,7 +538,7 @@ impl<T: Clone + Send + 'static> Model for List<T> {
                         } else {
                             Some(ListMsg::Cancel)
                         }
-                    }
+                    },
                     KeyCode::Backspace => Some(ListMsg::DeleteFilterChar),
                     KeyCode::Char(c) => {
                         if self.filterable {
@@ -553,10 +548,10 @@ impl<T: Clone + Send + 'static> Model for List<T> {
                         } else {
                             None
                         }
-                    }
+                    },
                     _ => None,
                 }
-            }
+            },
             _ => None,
         }
     }

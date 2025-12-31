@@ -49,10 +49,7 @@ pub struct KeyEvent {
 
 impl From<CrosstermKeyEvent> for KeyEvent {
     fn from(event: CrosstermKeyEvent) -> Self {
-        Self {
-            code: KeyCode::from(event.code),
-            modifiers: KeyModifiers::from(event.modifiers),
-        }
+        Self { code: KeyCode::from(event.code), modifiers: KeyModifiers::from(event.modifiers) }
     }
 }
 
@@ -218,9 +215,7 @@ impl std::ops::BitOr for KeyModifiers {
     type Output = Self;
 
     fn bitor(self, rhs: Self) -> Self::Output {
-        Self {
-            bits: self.bits | rhs.bits,
-        }
+        Self { bits: self.bits | rhs.bits }
     }
 }
 

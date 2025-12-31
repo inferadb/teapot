@@ -15,10 +15,11 @@
 
 use std::process::Command;
 
-use crate::runtime::accessible::Accessible;
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode, KeyModifiers};
+use crate::{
+    runtime::{Cmd, Model, accessible::Accessible},
+    style::Color,
+    terminal::{Event, KeyCode, KeyModifiers},
+};
 
 /// Message type for text area.
 #[derive(Debug, Clone)]
@@ -356,11 +357,8 @@ impl TextArea {
             let cursor_col = self.cursor.col;
             let line = &self.lines[self.cursor.row];
             let byte_offset: usize = line.chars().take(cursor_col).map(|c| c.len_utf8()).sum();
-            let prev_char_len = line[..byte_offset]
-                .chars()
-                .last()
-                .map(|c| c.len_utf8())
-                .unwrap_or(0);
+            let prev_char_len =
+                line[..byte_offset].chars().last().map(|c| c.len_utf8()).unwrap_or(0);
             let remove_at = byte_offset - prev_char_len;
             self.lines[self.cursor.row].remove(remove_at);
             self.cursor.col -= 1;
@@ -467,10 +465,7 @@ impl TextArea {
         let byte_offset = self.col_to_byte_offset(line, self.cursor.col);
         let before = &line[..byte_offset];
         let trimmed = before.trim_end();
-        let word_start_byte = trimmed
-            .rfind(char::is_whitespace)
-            .map(|i| i + 1)
-            .unwrap_or(0);
+        let word_start_byte = trimmed.rfind(char::is_whitespace).map(|i| i + 1).unwrap_or(0);
         let word_start_col = self.byte_offset_to_col(line, word_start_byte);
 
         // Remove from word_start to cursor
@@ -554,11 +549,8 @@ impl TextArea {
 
         // Parse the editor command (may include arguments like "code --wait")
         let parts: Vec<&str> = editor_cmd.split_whitespace().collect();
-        let (program, args) = if parts.is_empty() {
-            ("vi", Vec::new())
-        } else {
-            (parts[0], parts[1..].to_vec())
-        };
+        let (program, args) =
+            if parts.is_empty() { ("vi", Vec::new()) } else { (parts[0], parts[1..].to_vec()) };
 
         let mut cmd = Command::new(program);
         for arg in args {
@@ -574,12 +566,12 @@ impl TextArea {
                         // Clean up temp file
                         let _ = std::fs::remove_file(&temp_path_clone);
                         TextAreaMsg::EditorResult(new_content)
-                    }
+                    },
                     Err(_) => {
                         // If read fails, keep original content
                         let _ = std::fs::remove_file(&temp_path_clone);
                         TextAreaMsg::EditorResult(content.clone())
-                    }
+                    },
                 }
             } else {
                 // Editor failed, keep original content
@@ -635,12 +627,7 @@ impl TextArea {
             output.push_str(&format!("{}{}\x1b[0m", self.text_color.to_ansi_fg(), rest));
         } else {
             // Regular line
-            output.push_str(&format!(
-                "{}{}{}",
-                self.text_color.to_ansi_fg(),
-                line,
-                "\x1b[0m"
-            ));
+            output.push_str(&format!("{}{}{}", self.text_color.to_ansi_fg(), line, "\x1b[0m"));
         }
 
         output
@@ -675,33 +662,33 @@ impl Model for TextArea {
                 self.cursor = CursorPos::default();
                 self.scroll_offset = 0;
                 self.validation_error = None;
-            }
+            },
             TextAreaMsg::Submit => {
                 self.submitted = true;
-            }
+            },
             TextAreaMsg::Cancel => {
                 self.cancelled = true;
-            }
+            },
             TextAreaMsg::Focus => {
                 self.focused = true;
-            }
+            },
             TextAreaMsg::Blur => {
                 self.focused = false;
-            }
+            },
             TextAreaMsg::SetValue(value) => {
                 self.set_value_internal(value);
-            }
+            },
             TextAreaMsg::Paste(text) => {
                 self.paste(text);
-            }
+            },
             TextAreaMsg::PageUp => self.page_up(),
             TextAreaMsg::PageDown => self.page_down(),
             TextAreaMsg::OpenEditor => {
                 return Some(self.open_in_editor());
-            }
+            },
             TextAreaMsg::EditorResult(content) => {
                 self.set_value_internal(content);
-            }
+            },
         }
         None
     }
@@ -759,12 +746,7 @@ impl Model for TextArea {
 
         // Show validation error if present
         if let Some(ref error) = self.validation_error {
-            output.push_str(&format!(
-                "\n{}✗ {}{}",
-                Color::Red.to_ansi_fg(),
-                error,
-                "\x1b[0m"
-            ));
+            output.push_str(&format!("\n{}✗ {}{}", Color::Red.to_ansi_fg(), error, "\x1b[0m"));
         }
 
         output
@@ -812,7 +794,7 @@ impl Model for TextArea {
                     KeyCode::Tab => Some(TextAreaMsg::InsertChar('\t')),
                     _ => None,
                 }
-            }
+            },
             Event::Paste(text) => Some(TextAreaMsg::Paste(text)),
             _ => None,
         }

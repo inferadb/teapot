@@ -1,9 +1,10 @@
 //! Form groups (pages).
 
 use super::field::{Field, FieldMsg};
-use crate::runtime::accessible::Accessible;
-use crate::runtime::{Cmd, Model};
-use crate::terminal::Event;
+use crate::{
+    runtime::{Cmd, Model, accessible::Accessible},
+    terminal::Event,
+};
 
 /// A group of form fields (like a page).
 #[derive(Debug, Clone)]
@@ -23,12 +24,7 @@ impl Default for Group {
 impl Group {
     /// Create a new empty group.
     pub fn new() -> Self {
-        Self {
-            title: None,
-            description: None,
-            fields: Vec::new(),
-            current_field: 0,
-        }
+        Self { title: None, description: None, fields: Vec::new(), current_field: 0 }
     }
 
     /// Set the group title.
@@ -148,9 +144,7 @@ impl Model for Group {
         // Initialize current field
         if let Some(field) = self.fields.get(self.current_field) {
             let idx = self.current_field;
-            field
-                .init()
-                .map(|c| c.map(move |m| GroupMsg::Field(idx, m)))
+            field.init().map(|c| c.map(move |m| GroupMsg::Field(idx, m)))
         } else {
             None
         }
@@ -171,9 +165,8 @@ impl Model for Group {
                             | FieldMsg::Confirm(crate::components::confirm::ConfirmMsg::Submit)
                     );
 
-                    let result = field
-                        .update(field_msg)
-                        .map(|c| c.map(move |m| GroupMsg::Field(idx, m)));
+                    let result =
+                        field.update(field_msg).map(|c| c.map(move |m| GroupMsg::Field(idx, m)));
 
                     // Auto-advance on submit
                     if was_submit && !self.is_last_field() {
@@ -184,15 +177,15 @@ impl Model for Group {
                 } else {
                     None
                 }
-            }
+            },
             GroupMsg::NextField => {
                 self.next_field();
                 None
-            }
+            },
             GroupMsg::PrevField => {
                 self.prev_field();
                 None
-            }
+            },
         }
     }
 
@@ -290,9 +283,7 @@ impl Accessible for Group {
     fn parse_accessible_input(&self, input: &str) -> Option<Self::Message> {
         if let Some(field) = self.fields.get(self.current_field) {
             let idx = self.current_field;
-            field
-                .parse_accessible_input(input)
-                .map(|m| GroupMsg::Field(idx, m))
+            field.parse_accessible_input(input).map(|m| GroupMsg::Field(idx, m))
         } else {
             None
         }

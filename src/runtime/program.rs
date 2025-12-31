@@ -1,7 +1,10 @@
 //! Program runner that manages the event loop.
 
-use std::io::{self, Write};
-use std::time::{Duration, Instant};
+use std::{
+    collections::HashMap,
+    io::{self, Write},
+    time::{Duration, Instant},
+};
 
 use crossterm::{
     cursor,
@@ -10,13 +13,8 @@ use crossterm::{
     terminal::{self, ClearType},
 };
 
-use std::collections::HashMap;
-
-use super::command::CmdResult;
-use super::subscription::SubEntry;
-use super::Model;
-use crate::terminal::Event;
-use crate::Cmd;
+use super::{Model, command::CmdResult, subscription::SubEntry};
+use crate::{Cmd, terminal::Event};
 
 /// Type alias for pending tick entries: (scheduled_time, interval, message_generator)
 type PendingTick<M> = (Instant, Duration, Box<dyn Fn(Instant) -> M + Send>);
@@ -78,11 +76,7 @@ impl Default for ProgramOptions {
 impl ProgramOptions {
     /// Create options for a full-screen TUI application.
     pub fn fullscreen() -> Self {
-        Self {
-            alt_screen: true,
-            mouse: true,
-            ..Default::default()
-        }
+        Self { alt_screen: true, mouse: true, ..Default::default() }
     }
 
     /// Create options for an inline TUI (no alternate screen).
@@ -146,12 +140,7 @@ pub struct Program<M: Model> {
 impl<M: Model> Program<M> {
     /// Create a new program with the given model.
     pub fn new(model: M) -> Self {
-        Self {
-            model,
-            options: ProgramOptions::default(),
-            last_view: String::new(),
-            filter: None,
-        }
+        Self { model, options: ProgramOptions::default(), last_view: String::new(), filter: None }
     }
 
     /// Configure the program with custom options.
@@ -363,13 +352,11 @@ impl<M: Model> Program<M> {
             // Calculate poll timeout (min of ticks, subs, and frame duration)
             let tick_timeout = pending_ticks
                 .iter()
-                .map(|(scheduled, _, _)| scheduled.saturating_duration_since(now))
+                .map(|(scheduled, ..)| scheduled.saturating_duration_since(now))
                 .min();
 
-            let sub_timeout = active_subs
-                .values()
-                .map(|sub| sub.next_fire.saturating_duration_since(now))
-                .min();
+            let sub_timeout =
+                active_subs.values().map(|sub| sub.next_fire.saturating_duration_since(now)).min();
 
             let timeout = [tick_timeout, sub_timeout]
                 .into_iter()
@@ -400,21 +387,19 @@ impl<M: Model> Program<M> {
 
                 // Handle special events
                 match crossterm_event {
-                    CrosstermEvent::Resize(_, _) => {
+                    CrosstermEvent::Resize(..) => {
                         self.render(&mut stdout)?;
-                    }
+                    },
                     CrosstermEvent::Key(key) if key.kind == KeyEventKind::Press => {
                         // Ctrl+C handling as fallback
                         if key.code == crossterm::event::KeyCode::Char('c')
-                            && key
-                                .modifiers
-                                .contains(crossterm::event::KeyModifiers::CONTROL)
+                            && key.modifiers.contains(crossterm::event::KeyModifiers::CONTROL)
                         {
                             // Check if the model handled it
                             // If not, we could force quit here
                         }
-                    }
-                    _ => {}
+                    },
+                    _ => {},
                 }
             }
         }
@@ -463,12 +448,12 @@ impl<M: Model> Program<M> {
                 } else {
                     Ok(false)
                 }
-            }
+            },
             CmdResult::Tick { duration, msg_fn } => {
                 let scheduled = Instant::now() + duration;
                 pending_ticks.push((scheduled, duration, msg_fn));
                 Ok(false)
-            }
+            },
             CmdResult::Batch(cmds) => {
                 for cmd in cmds {
                     if self.process_command_with_ticks(cmd, pending_ticks)? {
@@ -476,7 +461,7 @@ impl<M: Model> Program<M> {
                     }
                 }
                 Ok(false)
-            }
+            },
             CmdResult::Sequence(cmds) => {
                 for cmd in cmds {
                     if self.process_command_with_ticks(cmd, pending_ticks)? {
@@ -484,16 +469,13 @@ impl<M: Model> Program<M> {
                     }
                 }
                 Ok(false)
-            }
+            },
             CmdResult::Async(_future) => {
                 // For now, we don't support async commands in the sync runtime
                 // This would require tokio integration
                 Ok(false)
-            }
-            CmdResult::RunProcess {
-                mut command,
-                on_exit,
-            } => {
+            },
+            CmdResult::RunProcess { mut command, on_exit } => {
                 // Teardown terminal before running external process
                 self.teardown_terminal()?;
 
@@ -513,7 +495,7 @@ impl<M: Model> Program<M> {
                 } else {
                     Ok(false)
                 }
-            }
+            },
         }
     }
 
@@ -533,11 +515,7 @@ impl<M: Model> Program<M> {
         // In non-interactive mode, display a stripped view (no ANSI codes)
         // This ensures clean output for CI/scripts
         let view = self.model.view();
-        let clean_view = if self.options.accessible {
-            strip_ansi(&view)
-        } else {
-            view
-        };
+        let clean_view = if self.options.accessible { strip_ansi(&view) } else { view };
         println!("{}", clean_view);
 
         // Note: For interactive accessible mode, use Form::run_accessible()
@@ -613,11 +591,7 @@ impl<M: Model> Program<M> {
         // Only redraw if the view changed
         if view != self.last_view {
             if self.options.alt_screen {
-                execute!(
-                    stdout,
-                    terminal::Clear(ClearType::All),
-                    cursor::MoveTo(0, 0)
-                )?;
+                execute!(stdout, terminal::Clear(ClearType::All), cursor::MoveTo(0, 0))?;
             } else {
                 // For inline mode, clear previous lines
                 let prev_lines = self.last_view.lines().count();
@@ -774,11 +748,7 @@ mod tests {
         cmd.arg("test");
 
         let _cmd: Cmd<TestMsg> = Cmd::run_process(cmd, |result| {
-            if result.map(|s| s.success()).unwrap_or(false) {
-                TestMsg::Inc
-            } else {
-                TestMsg::Quit
-            }
+            if result.map(|s| s.success()).unwrap_or(false) { TestMsg::Inc } else { TestMsg::Quit }
         });
     }
 }

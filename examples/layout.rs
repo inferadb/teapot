@@ -3,8 +3,8 @@
 //! Run with: cargo run --example layout
 
 use ferment::style::{
-    join_horizontal, join_horizontal_with, join_vertical_with, place, place_horizontal,
-    place_vertical, BorderStyle, Color, Position, Style,
+    BorderStyle, Color, Position, Style, join_horizontal, join_horizontal_with, join_vertical_with,
+    place, place_horizontal, place_vertical,
 };
 
 fn main() {
@@ -29,10 +29,7 @@ fn demo_dashboard() {
     println!("--- Dashboard Layout ---\n");
 
     // Create sidebar
-    let sidebar_style = Style::new()
-        .border(BorderStyle::Rounded)
-        .fg(Color::Cyan)
-        .width(20);
+    let sidebar_style = Style::new().border(BorderStyle::Rounded).fg(Color::Cyan).width(20);
 
     let sidebar_content = "Navigation\n\n• Dashboard\n• Settings\n• Profile\n• Help\n• Logout";
     let sidebar = sidebar_style.render(sidebar_content);
@@ -49,10 +46,7 @@ fn demo_dashboard() {
     let main_area = main_style.render(main_content);
 
     // Create stats panel
-    let stats_style = Style::new()
-        .border(BorderStyle::Single)
-        .fg(Color::Green)
-        .width(20);
+    let stats_style = Style::new().border(BorderStyle::Single).fg(Color::Green).width(20);
 
     let stats_content = "Statistics\n\n↑ 42% Traffic\n↓ 12% Errors\n→ 1.2k Users";
     let stats = stats_style.render(stats_content);
@@ -66,30 +60,15 @@ fn demo_card_grid() {
     println!("--- Card Grid ---\n");
 
     // Create cards
-    let card_style = Style::new()
-        .border(BorderStyle::Rounded)
-        .padding(&[0, 1])
-        .width(18);
+    let card_style = Style::new().border(BorderStyle::Rounded).padding(&[0, 1]).width(18);
 
-    let card1 = card_style
-        .clone()
-        .fg(Color::Red)
-        .render("Error\n━━━━━━━━\n23 issues");
+    let card1 = card_style.clone().fg(Color::Red).render("Error\n━━━━━━━━\n23 issues");
 
-    let card2 = card_style
-        .clone()
-        .fg(Color::Yellow)
-        .render("Warning\n━━━━━━━━\n12 alerts");
+    let card2 = card_style.clone().fg(Color::Yellow).render("Warning\n━━━━━━━━\n12 alerts");
 
-    let card3 = card_style
-        .clone()
-        .fg(Color::Green)
-        .render("Success\n━━━━━━━━\n156 passed");
+    let card3 = card_style.clone().fg(Color::Green).render("Success\n━━━━━━━━\n156 passed");
 
-    let card4 = card_style
-        .clone()
-        .fg(Color::Blue)
-        .render("Info\n━━━━━━━━\n8 notes");
+    let card4 = card_style.clone().fg(Color::Blue).render("Info\n━━━━━━━━\n8 notes");
 
     // Arrange in 2x2 grid
     let row1 = join_horizontal_with(Position::Top, &[&card1, &card2]);
@@ -140,18 +119,12 @@ fn demo_dialog() {
     println!("--- Dialog Box ---\n");
 
     // Dialog content
-    let title = Style::new()
-        .bold(true)
-        .fg(Color::Cyan)
-        .render("Confirm Action");
+    let title = Style::new().bold(true).fg(Color::Cyan).render("Confirm Action");
 
     let message = "Are you sure you want to delete\nthis file? This cannot be undone.";
 
     let buttons = {
-        let cancel = Style::new()
-            .border(BorderStyle::Rounded)
-            .padding(&[0, 2])
-            .render("Cancel");
+        let cancel = Style::new().border(BorderStyle::Rounded).padding(&[0, 2]).render("Cancel");
 
         let confirm = Style::new()
             .border(BorderStyle::Rounded)
@@ -166,19 +139,14 @@ fn demo_dialog() {
 
     // Stack content vertically with spacing
     let spacer = "";
-    let content = join_vertical_with(
-        Position::Center,
-        &[&title, spacer, message, spacer, &buttons],
-    );
+    let content =
+        join_vertical_with(Position::Center, &[&title, spacer, message, spacer, &buttons]);
 
     // Center in a box
     let centered = place(50, 10, Position::Center, Position::Center, &content);
 
     // Add dialog border
-    let dialog = Style::new()
-        .border(BorderStyle::Double)
-        .fg(Color::White)
-        .render(&centered);
+    let dialog = Style::new().border(BorderStyle::Double).fg(Color::White).render(&centered);
 
     println!("{}\n", dialog);
 }

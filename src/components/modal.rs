@@ -17,8 +17,7 @@
 //! let output = modal.render_overlay(80, 24, &background_content);
 //! ```
 
-use crate::style::Color;
-use crate::util::measure_text;
+use crate::{style::Color, util::measure_text};
 
 /// Border style for the modal.
 #[derive(Debug, Clone, Copy, Default)]
@@ -61,10 +60,7 @@ pub struct ModalHint {
 impl ModalHint {
     /// Create a new hint.
     pub fn new(shortcut: impl Into<String>, description: impl Into<String>) -> Self {
-        Self {
-            shortcut: shortcut.into(),
-            description: description.into(),
-        }
+        Self { shortcut: shortcut.into(), description: description.into() }
     }
 }
 
@@ -161,10 +157,7 @@ impl Modal {
 
     /// Set multiple footer hints.
     pub fn footer_hints(mut self, hints: Vec<(&str, &str)>) -> Self {
-        self.hints = hints
-            .into_iter()
-            .map(|(s, d)| ModalHint::new(s, d))
-            .collect();
+        self.hints = hints.into_iter().map(|(s, d)| ModalHint::new(s, d)).collect();
         self
     }
 
@@ -216,14 +209,7 @@ impl Modal {
         let mut lines = Vec::new();
 
         // Top border
-        lines.push(format!(
-            "{}{}{}{}{}",
-            border_fg,
-            tl,
-            h.repeat(inner_w),
-            tr,
-            reset
-        ));
+        lines.push(format!("{}{}{}{}{}", border_fg, tl, h.repeat(inner_w), tr, reset));
 
         // Title line (if title is set)
         if !self.title.is_empty() {
@@ -251,14 +237,7 @@ impl Modal {
             ));
 
             // Blank line after title
-            lines.push(format!(
-                "{}{}{}{}{}",
-                border_fg,
-                left,
-                " ".repeat(inner_w),
-                right,
-                reset
-            ));
+            lines.push(format!("{}{}{}{}{}", border_fg, left, " ".repeat(inner_w), right, reset));
         }
 
         // Content lines (with horizontal padding)
@@ -303,27 +282,13 @@ impl Modal {
         let content_lines_used = lines.len() - content_start;
         let remaining = self.inner_height().saturating_sub(content_lines_used);
         for _ in 0..remaining {
-            lines.push(format!(
-                "{}{}{}{}{}",
-                border_fg,
-                left,
-                " ".repeat(inner_w),
-                right,
-                reset
-            ));
+            lines.push(format!("{}{}{}{}{}", border_fg, left, " ".repeat(inner_w), right, reset));
         }
 
         // Footer hints
         if !self.hints.is_empty() {
             // Blank line before hints
-            lines.push(format!(
-                "{}{}{}{}{}",
-                border_fg,
-                left,
-                " ".repeat(inner_w),
-                right,
-                reset
-            ));
+            lines.push(format!("{}{}{}{}{}", border_fg, left, " ".repeat(inner_w), right, reset));
 
             // Hints line (right-aligned)
             let hint_key_fg = self.hint_key_color.to_ansi_fg();
@@ -360,14 +325,7 @@ impl Modal {
         }
 
         // Bottom border
-        lines.push(format!(
-            "{}{}{}{}{}",
-            border_fg,
-            bl,
-            h.repeat(inner_w),
-            br,
-            reset
-        ));
+        lines.push(format!("{}{}{}{}{}", border_fg, bl, h.repeat(inner_w), br, reset));
 
         lines
     }
@@ -497,9 +455,7 @@ mod tests {
 
     #[test]
     fn test_modal_multiline_content() {
-        let modal = Modal::new(40, 10)
-            .title("Info")
-            .content("Line 1\nLine 2\nLine 3");
+        let modal = Modal::new(40, 10).title("Info").content("Line 1\nLine 2\nLine 3");
 
         let lines = modal.render_lines();
         // Should have content spread across multiple lines

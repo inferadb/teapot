@@ -22,8 +22,10 @@
 //! }
 //! ```
 
-use std::sync::mpsc::{self, Receiver, TryRecvError};
-use std::thread;
+use std::{
+    sync::mpsc::{self, Receiver, TryRecvError},
+    thread,
+};
 
 /// A handle to a spawned worker thread with its result receiver.
 ///
@@ -96,10 +98,7 @@ impl<T: Send + 'static> WorkerHandle<T> {
         // which happens after the worker thread finishes.
         // However, we can't check this without consuming the message.
         // This implementation just checks if a message is available.
-        matches!(
-            self.receiver.try_recv(),
-            Ok(_) | Err(TryRecvError::Disconnected)
-        )
+        matches!(self.receiver.try_recv(), Ok(_) | Err(TryRecvError::Disconnected))
     }
 }
 
@@ -116,10 +115,7 @@ pub struct ManagedWorker<T> {
 impl<T: Send + 'static> ManagedWorker<T> {
     /// Create a new managed worker (not executing).
     pub fn new() -> Self {
-        Self {
-            handle: None,
-            executing: false,
-        }
+        Self { handle: None, executing: false }
     }
 
     /// Check if currently executing.
@@ -165,9 +161,9 @@ impl<T: Send + 'static> ManagedWorker<T> {
 
 #[cfg(test)]
 mod tests {
+    use std::{thread, time::Duration};
+
     use super::*;
-    use std::thread;
-    use std::time::Duration;
 
     #[test]
     fn test_worker_handle_spawn_and_recv() {

@@ -21,9 +21,11 @@
 //!     .height(10);
 //! ```
 
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode, KeyModifiers};
+use crate::{
+    runtime::{Cmd, Model},
+    style::Color,
+    terminal::{Event, KeyCode, KeyModifiers},
+};
 
 /// Column alignment.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -53,12 +55,7 @@ pub struct Column {
 impl Column {
     /// Create a new column with a title.
     pub fn new(title: impl Into<String>) -> Self {
-        Self {
-            title: title.into(),
-            width: 0,
-            align: Align::Left,
-            grow: false,
-        }
+        Self { title: title.into(), width: 0, align: Align::Left, grow: false }
     }
 
     /// Set the column width.
@@ -185,10 +182,8 @@ impl Table {
         R: IntoIterator<Item = S>,
         S: Into<String>,
     {
-        self.rows = rows
-            .into_iter()
-            .map(|row| row.into_iter().map(|s| s.into()).collect())
-            .collect();
+        self.rows =
+            rows.into_iter().map(|row| row.into_iter().map(|s| s.into()).collect()).collect();
         self
     }
 
@@ -329,11 +324,7 @@ impl Table {
 
     /// Get the selected row if submitted.
     pub fn selected_row(&self) -> Option<&Vec<String>> {
-        if self.submitted && !self.rows.is_empty() {
-            self.rows.get(self.cursor_row)
-        } else {
-            None
-        }
+        if self.submitted && !self.rows.is_empty() { self.rows.get(self.cursor_row) } else { None }
     }
 
     /// Get the current row regardless of submit state.
@@ -343,19 +334,12 @@ impl Table {
 
     /// Get the selected cell value if in cell selection mode and submitted.
     pub fn selected_cell(&self) -> Option<&str> {
-        if self.submitted && self.cell_selection {
-            self.current_cell()
-        } else {
-            None
-        }
+        if self.submitted && self.cell_selection { self.current_cell() } else { None }
     }
 
     /// Get the current cell value.
     pub fn current_cell(&self) -> Option<&str> {
-        self.rows
-            .get(self.cursor_row)
-            .and_then(|row| row.get(self.cursor_col))
-            .map(|s| s.as_str())
+        self.rows.get(self.cursor_row).and_then(|row| row.get(self.cursor_col)).map(|s| s.as_str())
     }
 
     /// Check if submitted.
@@ -380,10 +364,8 @@ impl Table {
         R: IntoIterator<Item = S>,
         S: Into<String>,
     {
-        self.rows = rows
-            .into_iter()
-            .map(|row| row.into_iter().map(|s| s.into()).collect())
-            .collect();
+        self.rows =
+            rows.into_iter().map(|row| row.into_iter().map(|s| s.into()).collect()).collect();
         self.cursor_row = self.cursor_row.min(self.rows.len().saturating_sub(1));
         self.ensure_visible();
     }
@@ -514,7 +496,7 @@ impl Table {
                     let left_pad = padding / 2;
                     let right_pad = padding - left_pad;
                     format!("{}{}{}", " ".repeat(left_pad), text, " ".repeat(right_pad))
-                }
+                },
             }
         }
     }
@@ -576,11 +558,7 @@ impl Table {
         let mut active_style = String::new();
 
         let target_start = self.h_scroll_offset;
-        let target_end = if max_width > 0 {
-            self.h_scroll_offset + max_width
-        } else {
-            usize::MAX
-        };
+        let target_end = if max_width > 0 { self.h_scroll_offset + max_width } else { usize::MAX };
 
         for ch in line.chars() {
             if in_escape {
@@ -651,7 +629,7 @@ impl Model for Table {
                 if !self.rows.is_empty() {
                     self.submitted = true;
                 }
-            }
+            },
             TableMsg::Cancel => self.cancelled = true,
             TableMsg::Focus => self.focused = true,
             TableMsg::Blur => self.focused = false,
@@ -728,11 +706,7 @@ impl Model for Table {
 
         // Data rows
         if self.rows.is_empty() {
-            output.push_str(&format!(
-                "{}(no data){}",
-                Color::BrightBlack.to_ansi_fg(),
-                "\x1b[0m"
-            ));
+            output.push_str(&format!("{}(no data){}", Color::BrightBlack.to_ansi_fg(), "\x1b[0m"));
         } else {
             let (start, end) = self.visible_range();
 
@@ -755,11 +729,7 @@ impl Model for Table {
                 let row_color = if is_selected_row {
                     self.selected_row_color.clone()
                 } else if let Some(ref alt) = self.alt_row_color {
-                    if row_idx % 2 == 1 {
-                        alt.clone()
-                    } else {
-                        self.row_color.clone()
-                    }
+                    if row_idx % 2 == 1 { alt.clone() } else { self.row_color.clone() }
                 } else {
                     self.row_color.clone()
                 };
@@ -777,11 +747,8 @@ impl Model for Table {
                     let is_selected_cell =
                         self.cell_selection && is_selected_row && col_idx == self.cursor_col;
 
-                    let cell_color = if is_selected_cell {
-                        &self.selected_cell_color
-                    } else {
-                        &row_color
-                    };
+                    let cell_color =
+                        if is_selected_cell { &self.selected_cell_color } else { &row_color };
 
                     if is_selected_row {
                         row_line.push_str(&format!(
@@ -875,7 +842,7 @@ impl Model for Table {
                     KeyCode::Esc | KeyCode::Char('q') => Some(TableMsg::Cancel),
                     _ => None,
                 }
-            }
+            },
             _ => None,
         }
     }
@@ -888,10 +855,7 @@ mod tests {
     #[test]
     fn test_table_creation() {
         let table = Table::new()
-            .columns(vec![
-                Column::new("Name").width(10),
-                Column::new("Age").width(5),
-            ])
+            .columns(vec![Column::new("Name").width(10), Column::new("Age").width(5)])
             .rows(vec![vec!["Alice", "30"], vec!["Bob", "25"]]);
 
         assert_eq!(table.column_count(), 2);
@@ -938,9 +902,8 @@ mod tests {
 
     #[test]
     fn test_table_submit() {
-        let mut table = Table::new()
-            .columns(vec![Column::new("Name")])
-            .rows(vec![vec!["Alice"], vec!["Bob"]]);
+        let mut table =
+            Table::new().columns(vec![Column::new("Name")]).rows(vec![vec!["Alice"], vec!["Bob"]]);
 
         table.move_down();
         assert!(table.selected_row().is_none());

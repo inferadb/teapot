@@ -73,9 +73,7 @@ impl<M> Sub<M> {
     /// ```
     #[inline]
     pub fn none() -> Self {
-        Self {
-            inner: SubInner::None,
-        }
+        Self { inner: SubInner::None }
     }
 
     /// Create a periodic interval subscription.
@@ -105,13 +103,7 @@ impl<M> Sub<M> {
     where
         F: Fn() -> M + Send + 'static,
     {
-        Self {
-            inner: SubInner::Interval {
-                id: id.into(),
-                interval,
-                msg_fn: Box::new(msg_fn),
-            },
-        }
+        Self { inner: SubInner::Interval { id: id.into(), interval, msg_fn: Box::new(msg_fn) } }
     }
 
     /// Create a subscription that fires every N milliseconds.
@@ -180,9 +172,7 @@ impl<M> Sub<M> {
         } else if subs.len() == 1 {
             subs.into_iter().next().unwrap()
         } else {
-            Self {
-                inner: SubInner::Batch(subs),
-            }
+            Self { inner: SubInner::Batch(subs) }
         }
     }
 
@@ -215,17 +205,13 @@ impl<M> Sub<M> {
     {
         match self.inner {
             SubInner::None => Sub::none(),
-            SubInner::Interval {
-                id,
-                interval,
-                msg_fn,
-            } => {
+            SubInner::Interval { id, interval, msg_fn } => {
                 let f = f.clone();
                 Sub::interval(id, interval, move || f(msg_fn()))
-            }
+            },
             SubInner::Batch(subs) => {
                 Sub::batch(subs.into_iter().map(|s| s.map(f.clone())).collect())
-            }
+            },
         }
     }
 
@@ -233,17 +219,9 @@ impl<M> Sub<M> {
     pub(crate) fn into_entries(self) -> Vec<SubEntry<M>> {
         match self.inner {
             SubInner::None => vec![],
-            SubInner::Interval {
-                id,
-                interval,
-                msg_fn,
-            } => {
-                vec![SubEntry {
-                    id,
-                    interval,
-                    msg_fn,
-                }]
-            }
+            SubInner::Interval { id, interval, msg_fn } => {
+                vec![SubEntry { id, interval, msg_fn }]
+            },
             SubInner::Batch(subs) => subs.into_iter().flat_map(|s| s.into_entries()).collect(),
         }
     }
@@ -261,7 +239,7 @@ impl<M> std::fmt::Debug for Sub<M> {
             SubInner::None => write!(f, "Sub::None"),
             SubInner::Interval { id, interval, .. } => {
                 write!(f, "Sub::Interval({:?}, {:?})", id, interval)
-            }
+            },
             SubInner::Batch(subs) => write!(f, "Sub::Batch({} subs)", subs.len()),
         }
     }
@@ -347,7 +325,7 @@ mod tests {
         let entries = parent_sub.into_entries();
         assert_eq!(entries.len(), 1);
         match (entries[0].msg_fn)() {
-            Parent::Child(Child::Tick) => {}
+            Parent::Child(Child::Tick) => {},
         }
     }
 

@@ -13,9 +13,11 @@
 //!     .message("Downloading...");
 //! ```
 
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::Event;
+use crate::{
+    runtime::{Cmd, Model},
+    style::Color,
+    terminal::Event,
+};
 
 /// Message type for progress bar.
 #[derive(Debug, Clone)]
@@ -132,11 +134,7 @@ impl Progress {
 
     /// Get the current progress as a percentage.
     pub fn percentage(&self) -> f64 {
-        if self.total == 0 {
-            100.0
-        } else {
-            (self.current as f64 / self.total as f64) * 100.0
-        }
+        if self.total == 0 { 100.0 } else { (self.current as f64 / self.total as f64) * 100.0 }
     }
 
     /// Check if progress is complete.
@@ -178,16 +176,16 @@ impl Model for Progress {
         match msg {
             ProgressMsg::SetProgress(current) => {
                 self.set(current);
-            }
+            },
             ProgressMsg::Increment(amount) => {
                 self.increment(amount);
-            }
+            },
             ProgressMsg::SetMessage(message) => {
                 self.message = message;
-            }
+            },
             ProgressMsg::Complete => {
                 self.complete();
-            }
+            },
         }
         None
     }
@@ -292,11 +290,7 @@ mod tests {
 
     #[test]
     fn test_progress_view() {
-        let progress = Progress::new()
-            .total(100)
-            .current(50)
-            .message("Loading")
-            .width(10);
+        let progress = Progress::new().total(100).current(50).message("Loading").width(10);
         let view = progress.view();
         assert!(view.contains("Loading"));
         assert!(view.contains("50%"));

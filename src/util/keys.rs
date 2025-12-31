@@ -14,10 +14,7 @@ pub struct KeyBinding {
 impl KeyBinding {
     /// Create a new key binding.
     pub fn new(key: KeyCode, description: impl Into<String>) -> Self {
-        Self {
-            key,
-            description: description.into(),
-        }
+        Self { key, description: description.into() }
     }
 
     /// Get a display string for the key.
@@ -78,12 +75,7 @@ impl KeyBindings {
 
     /// Render as a help table.
     pub fn render_full(&self) -> String {
-        let max_key_width = self
-            .bindings
-            .iter()
-            .map(|b| b.key_display().len())
-            .max()
-            .unwrap_or(0);
+        let max_key_width = self.bindings.iter().map(|b| b.key_display().len()).max().unwrap_or(0);
 
         self.bindings
             .iter()
@@ -115,9 +107,7 @@ pub fn navigation_bindings() -> KeyBindings {
 
 /// Common key bindings for text input.
 pub fn text_input_bindings() -> KeyBindings {
-    KeyBindings::new()
-        .add(KeyCode::Enter, "submit")
-        .add(KeyCode::Esc, "cancel")
+    KeyBindings::new().add(KeyCode::Enter, "submit").add(KeyCode::Esc, "cancel")
 }
 
 #[cfg(test)]
@@ -132,9 +122,7 @@ mod tests {
 
     #[test]
     fn test_key_bindings_render() {
-        let bindings = KeyBindings::new()
-            .add(KeyCode::Enter, "submit")
-            .add(KeyCode::Esc, "cancel");
+        let bindings = KeyBindings::new().add(KeyCode::Enter, "submit").add(KeyCode::Esc, "cancel");
 
         let short = bindings.render_short();
         assert!(short.contains("enter submit"));

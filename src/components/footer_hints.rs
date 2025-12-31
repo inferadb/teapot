@@ -23,10 +23,12 @@
 //! println!("{}", footer.render());
 //! ```
 
-use crate::runtime::{Cmd, Model};
-use crate::style::{Color, RESET};
-use crate::terminal::Event;
-use crate::util::measure_text;
+use crate::{
+    runtime::{Cmd, Model},
+    style::{Color, RESET},
+    terminal::Event,
+    util::measure_text,
+};
 
 /// Message type for footer hints (currently none needed).
 #[derive(Debug, Clone)]
@@ -91,10 +93,7 @@ impl FooterHints {
         K: Into<String>,
         D: Into<String>,
     {
-        self.hints = hints
-            .into_iter()
-            .map(|(k, d)| (k.into(), d.into()))
-            .collect();
+        self.hints = hints.into_iter().map(|(k, d)| (k.into(), d.into())).collect();
         self
     }
 
@@ -169,11 +168,7 @@ impl FooterHints {
         if self.hints.is_empty() {
             return 0;
         }
-        let hint_len: usize = self
-            .hints
-            .iter()
-            .map(|(k, d)| measure_text(k) + 1 + d.len())
-            .sum();
+        let hint_len: usize = self.hints.iter().map(|(k, d)| measure_text(k) + 1 + d.len()).sum();
         let separator_len = (self.hints.len().saturating_sub(1)) * 2; // "  " between hints
         hint_len + separator_len
     }
@@ -232,16 +227,8 @@ impl Model for FooterHints {
         }
 
         // Scroll indicators
-        let left_indicator = if self.show_scroll_left {
-            &self.scroll_left_char
-        } else {
-            "  "
-        };
-        let right_indicator = if self.show_scroll_right {
-            &self.scroll_right_char
-        } else {
-            "  "
-        };
+        let left_indicator = if self.show_scroll_left { &self.scroll_left_char } else { "  " };
+        let right_indicator = if self.show_scroll_right { &self.scroll_right_char } else { "  " };
 
         let indicators_len = measure_text(left_indicator) + measure_text(right_indicator);
         let hints_len = self.hints_plain_len();
@@ -316,10 +303,7 @@ mod tests {
 
     #[test]
     fn test_render_with_separator() {
-        let footer = FooterHints::new()
-            .hints(vec![("q", "quit")])
-            .width(40)
-            .with_separator();
+        let footer = FooterHints::new().hints(vec![("q", "quit")]).width(40).with_separator();
         let rendered = footer.render();
         assert!(rendered.contains("─"));
         assert!(rendered.contains("\r\n"));

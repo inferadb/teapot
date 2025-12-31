@@ -15,10 +15,11 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::runtime::accessible::Accessible;
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode};
+use crate::{
+    runtime::{Cmd, Model, accessible::Accessible},
+    style::Color,
+    terminal::{Event, KeyCode},
+};
 
 /// Message type for file picker.
 #[derive(Debug, Clone)]
@@ -61,11 +62,7 @@ impl FileEntry {
             name,
             path: path.to_path_buf(),
             is_dir: metadata.is_dir(),
-            size: if metadata.is_file() {
-                Some(metadata.len())
-            } else {
-                None
-            },
+            size: if metadata.is_file() { Some(metadata.len()) } else { None },
         })
     }
 }
@@ -242,11 +239,7 @@ impl FilePicker {
 
             // Extension filter (only for files)
             if !file_entry.is_dir && !self.extensions.is_empty() {
-                let ext = path
-                    .extension()
-                    .and_then(|e| e.to_str())
-                    .unwrap_or("")
-                    .to_lowercase();
+                let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("").to_lowercase();
                 if !self.extensions.iter().any(|e| e.to_lowercase() == ext) {
                     continue;
                 }
@@ -347,7 +340,7 @@ impl Model for FilePicker {
             FilePickerMsg::ToggleHidden => {
                 self.show_hidden = !self.show_hidden;
                 self.refresh_entries();
-            }
+            },
             FilePickerMsg::Submit => {
                 if let Some(entry) = self.entries.get(self.cursor) {
                     if self.dirs_only || !entry.is_dir {
@@ -355,10 +348,10 @@ impl Model for FilePicker {
                         self.submitted = true;
                     }
                 }
-            }
+            },
             FilePickerMsg::Cancel => {
                 self.cancelled = true;
-            }
+            },
         }
         None
     }
@@ -368,12 +361,7 @@ impl Model for FilePicker {
 
         // Title
         if !self.title.is_empty() {
-            output.push_str(&format!(
-                "{}{}{}",
-                Color::Cyan.to_ansi_fg(),
-                self.title,
-                "\x1b[0m"
-            ));
+            output.push_str(&format!("{}{}{}", Color::Cyan.to_ansi_fg(), self.title, "\x1b[0m"));
             output.push('\n');
         }
 
@@ -388,18 +376,11 @@ impl Model for FilePicker {
 
         // Entries
         if self.entries.is_empty() {
-            output.push_str(&format!(
-                "{}(empty){}",
-                Color::BrightBlack.to_ansi_fg(),
-                "\x1b[0m"
-            ));
+            output.push_str(&format!("{}(empty){}", Color::BrightBlack.to_ansi_fg(), "\x1b[0m"));
         } else {
             let visible_end = (self.scroll_offset + self.height).min(self.entries.len());
 
-            for (i, entry) in self.entries[self.scroll_offset..visible_end]
-                .iter()
-                .enumerate()
-            {
+            for (i, entry) in self.entries[self.scroll_offset..visible_end].iter().enumerate() {
                 let idx = self.scroll_offset + i;
                 let is_selected = idx == self.cursor && self.focused;
 
@@ -504,10 +485,7 @@ impl Accessible for FilePicker {
             prompt.push_str(&format!("{}\n", self.title));
         }
 
-        prompt.push_str(&format!(
-            "Current directory: {}\n\n",
-            self.current_dir.display()
-        ));
+        prompt.push_str(&format!("Current directory: {}\n\n", self.current_dir.display()));
 
         if self.entries.is_empty() {
             prompt.push_str("(empty directory)\n");

@@ -45,33 +45,21 @@ pub mod validators {
     /// Validate that a string is not empty.
     pub fn required() -> Validator<String> {
         Validator::new(|s: &String| {
-            if s.trim().is_empty() {
-                Err("This field is required".to_string())
-            } else {
-                Ok(())
-            }
+            if s.trim().is_empty() { Err("This field is required".to_string()) } else { Ok(()) }
         })
     }
 
     /// Validate minimum length.
     pub fn min_length(min: usize) -> Validator<String> {
         Validator::new(move |s: &String| {
-            if s.len() < min {
-                Err(format!("Must be at least {} characters", min))
-            } else {
-                Ok(())
-            }
+            if s.len() < min { Err(format!("Must be at least {} characters", min)) } else { Ok(()) }
         })
     }
 
     /// Validate maximum length.
     pub fn max_length(max: usize) -> Validator<String> {
         Validator::new(move |s: &String| {
-            if s.len() > max {
-                Err(format!("Must be at most {} characters", max))
-            } else {
-                Ok(())
-            }
+            if s.len() > max { Err(format!("Must be at most {} characters", max)) } else { Ok(()) }
         })
     }
 
@@ -104,11 +92,7 @@ pub mod validators {
         Validator::new(move |s: &String| {
             // Simple pattern matching without regex crate
             // Just checks if the pattern is contained
-            if s.contains(&pattern) {
-                Ok(())
-            } else {
-                Err(msg.clone())
-            }
+            if s.contains(&pattern) { Ok(()) } else { Err(msg.clone()) }
         })
     }
 

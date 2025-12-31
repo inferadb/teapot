@@ -132,26 +132,11 @@ fn demo_all_field_types() -> Result<(), Box<dyn std::error::Error>> {
     match form.run_accessible()? {
         Some(results) => {
             println!("\n=== Form Results ===\n");
-            println!(
-                "Name: {}",
-                results.get_string("name").unwrap_or("(not set)")
-            );
-            println!(
-                "Email: {}",
-                results.get_string("email").unwrap_or("(not set)")
-            );
-            println!(
-                "Phone: {}",
-                results.get_string("phone").unwrap_or("(not set)")
-            );
-            println!(
-                "Theme: {}",
-                results.get_string("theme").unwrap_or("(not set)")
-            );
-            println!(
-                "Language: {}",
-                results.get_string("language").unwrap_or("(not set)")
-            );
+            println!("Name: {}", results.get_string("name").unwrap_or("(not set)"));
+            println!("Email: {}", results.get_string("email").unwrap_or("(not set)"));
+            println!("Phone: {}", results.get_string("phone").unwrap_or("(not set)"));
+            println!("Theme: {}", results.get_string("theme").unwrap_or("(not set)"));
+            println!("Language: {}", results.get_string("language").unwrap_or("(not set)"));
 
             if let Some(notifications) = results.get("notifications") {
                 println!("Notifications: {:?}", notifications);
@@ -161,18 +146,12 @@ fn demo_all_field_types() -> Result<(), Box<dyn std::error::Error>> {
                 println!("Config file: {:?}", config);
             }
 
-            println!(
-                "Accepted terms: {}",
-                results.get_bool("terms").unwrap_or(false)
-            );
-            println!(
-                "Newsletter: {}",
-                results.get_bool("newsletter").unwrap_or(false)
-            );
-        }
+            println!("Accepted terms: {}", results.get_bool("terms").unwrap_or(false));
+            println!("Newsletter: {}", results.get_bool("newsletter").unwrap_or(false));
+        },
         None => {
             println!("Form was cancelled.");
-        }
+        },
     }
 
     Ok(())
@@ -206,7 +185,7 @@ fn demo_stacked_layout() -> Result<(), Box<dyn std::error::Error>> {
         Some(results) => {
             println!("Rating: {}", results.get_string("rating").unwrap_or(""));
             println!("Feedback: {}", results.get_string("feedback").unwrap_or(""));
-        }
+        },
         None => println!("Cancelled"),
     }
 
@@ -239,8 +218,10 @@ fn demo_columns_layout() -> Result<(), Box<dyn std::error::Error>> {
 
 #[allow(dead_code)]
 fn demo_dynamic_content() -> Result<(), Box<dyn std::error::Error>> {
-    use std::sync::atomic::{AtomicUsize, Ordering};
-    use std::sync::Arc;
+    use std::sync::{
+        Arc,
+        atomic::{AtomicUsize, Ordering},
+    };
 
     println!("--- Dynamic Content Demo ---\n");
 
@@ -252,10 +233,7 @@ fn demo_dynamic_content() -> Result<(), Box<dyn std::error::Error>> {
             .field(
                 InputField::new("password")
                     .title_fn(move || {
-                        format!(
-                            "Password (attempt {})",
-                            attempt_clone.load(Ordering::SeqCst)
-                        )
+                        format!("Password (attempt {})", attempt_clone.load(Ordering::SeqCst))
                     })
                     .description_fn(|| "Must be at least 8 characters".to_string())
                     .build(),

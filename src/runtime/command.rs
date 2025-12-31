@@ -3,10 +3,12 @@
 //! Commands represent IO operations that produce messages when complete.
 //! They are the only way to perform side effects in the Elm Architecture.
 
-use std::future::Future;
-use std::pin::Pin;
-use std::process::Command as ProcessCommand;
-use std::time::{Duration, Instant};
+use std::{
+    future::Future,
+    pin::Pin,
+    process::Command as ProcessCommand,
+    time::{Duration, Instant},
+};
 
 /// A command representing an IO operation that produces a message.
 ///
@@ -43,10 +45,7 @@ enum CmdInner<M> {
     /// A synchronous action that produces a message
     Sync(Box<dyn FnOnce() -> M + Send>),
     /// A tick timer
-    Tick {
-        duration: Duration,
-        msg_fn: Box<dyn Fn(Instant) -> M + Send>,
-    },
+    Tick { duration: Duration, msg_fn: Box<dyn Fn(Instant) -> M + Send> },
     /// Batch of commands to run concurrently
     Batch(Vec<Cmd<M>>),
     /// Sequence of commands to run in order
@@ -66,9 +65,7 @@ impl<M> Cmd<M> {
     /// This is useful when you need to return a command but have nothing to do.
     #[inline]
     pub fn none() -> Self {
-        Self {
-            inner: CmdInner::None,
-        }
+        Self { inner: CmdInner::None }
     }
 
     /// Create a command to quit the program.
@@ -86,9 +83,7 @@ impl<M> Cmd<M> {
     /// ```
     #[inline]
     pub fn quit() -> Self {
-        Self {
-            inner: CmdInner::Quit,
-        }
+        Self { inner: CmdInner::Quit }
     }
 
     /// Create a tick command that fires after a duration.
@@ -110,12 +105,7 @@ impl<M> Cmd<M> {
     where
         F: Fn(Instant) -> M + Send + 'static,
     {
-        Self {
-            inner: CmdInner::Tick {
-                duration,
-                msg_fn: Box::new(msg_fn),
-            },
-        }
+        Self { inner: CmdInner::Tick { duration, msg_fn: Box::new(msg_fn) } }
     }
 
     /// Create a command from a synchronous function.
@@ -135,9 +125,7 @@ impl<M> Cmd<M> {
     where
         F: FnOnce() -> M + Send + 'static,
     {
-        Self {
-            inner: CmdInner::Sync(Box::new(f)),
-        }
+        Self { inner: CmdInner::Sync(Box::new(f)) }
     }
 
     /// Create a command from an async future.
@@ -162,9 +150,7 @@ impl<M> Cmd<M> {
     where
         F: Future<Output = M> + Send + 'static,
     {
-        Self {
-            inner: CmdInner::Async(Box::pin(future)),
-        }
+        Self { inner: CmdInner::Async(Box::pin(future)) }
     }
 
     /// Run an external process, suspending the TUI.
@@ -194,12 +180,7 @@ impl<M> Cmd<M> {
     where
         F: FnOnce(std::io::Result<std::process::ExitStatus>) -> M + Send + 'static,
     {
-        Self {
-            inner: CmdInner::RunProcess {
-                command,
-                on_exit: Box::new(on_exit),
-            },
-        }
+        Self { inner: CmdInner::RunProcess { command, on_exit: Box::new(on_exit) } }
     }
 
     /// Batch multiple commands to run concurrently.
@@ -219,9 +200,7 @@ impl<M> Cmd<M> {
     /// ]);
     /// ```
     pub fn batch(cmds: Vec<Cmd<M>>) -> Self {
-        Self {
-            inner: CmdInner::Batch(cmds),
-        }
+        Self { inner: CmdInner::Batch(cmds) }
     }
 
     /// Sequence commands to run in order.
@@ -241,9 +220,7 @@ impl<M> Cmd<M> {
     /// ]);
     /// ```
     pub fn sequence(cmds: Vec<Cmd<M>>) -> Self {
-        Self {
-            inner: CmdInner::Sequence(cmds),
-        }
+        Self { inner: CmdInner::Sequence(cmds) }
     }
 
     /// Transform the message type of this command.
@@ -273,24 +250,24 @@ impl<M> Cmd<M> {
             CmdInner::Sync(action) => {
                 let f = f.clone();
                 Cmd::perform(move || f(action()))
-            }
+            },
             CmdInner::Tick { duration, msg_fn } => {
                 Cmd::tick(duration, move |instant| f(msg_fn(instant)))
-            }
+            },
             CmdInner::Batch(cmds) => {
                 Cmd::batch(cmds.into_iter().map(|c| c.map(f.clone())).collect())
-            }
+            },
             CmdInner::Sequence(cmds) => {
                 Cmd::sequence(cmds.into_iter().map(|c| c.map(f.clone())).collect())
-            }
+            },
             CmdInner::Async(future) => {
                 let f = f.clone();
                 Cmd::perform_async(async move { f(future.await) })
-            }
+            },
             CmdInner::RunProcess { command, on_exit } => {
                 let f = f.clone();
                 Cmd::run_process(command, move |result| f(on_exit(result)))
-            }
+            },
         }
     }
 

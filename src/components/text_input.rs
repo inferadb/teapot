@@ -12,10 +12,14 @@
 //!     .prompt("> ");
 //! ```
 
-use crate::runtime::accessible::{Accessible, AccessibleInput};
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode, KeyModifiers};
+use crate::{
+    runtime::{
+        Cmd, Model,
+        accessible::{Accessible, AccessibleInput},
+    },
+    style::Color,
+    terminal::{Event, KeyCode, KeyModifiers},
+};
 
 /// Message type for text input.
 #[derive(Debug, Clone)]
@@ -175,11 +179,8 @@ impl TextInput {
     /// Delete the character before the cursor.
     fn delete_back(&mut self) {
         if self.cursor > 0 {
-            let prev_char = self.value[..self.cursor]
-                .chars()
-                .last()
-                .map(|c| c.len_utf8())
-                .unwrap_or(0);
+            let prev_char =
+                self.value[..self.cursor].chars().last().map(|c| c.len_utf8()).unwrap_or(0);
             self.cursor -= prev_char;
             self.value.remove(self.cursor);
             self.validation_error = None;
@@ -197,11 +198,8 @@ impl TextInput {
     /// Move cursor left.
     fn cursor_left(&mut self) {
         if self.cursor > 0 {
-            let prev_char = self.value[..self.cursor]
-                .chars()
-                .last()
-                .map(|c| c.len_utf8())
-                .unwrap_or(0);
+            let prev_char =
+                self.value[..self.cursor].chars().last().map(|c| c.len_utf8()).unwrap_or(0);
             self.cursor -= prev_char;
         }
     }
@@ -209,11 +207,8 @@ impl TextInput {
     /// Move cursor right.
     fn cursor_right(&mut self) {
         if self.cursor < self.value.len() {
-            let next_char = self.value[self.cursor..]
-                .chars()
-                .next()
-                .map(|c| c.len_utf8())
-                .unwrap_or(0);
+            let next_char =
+                self.value[self.cursor..].chars().next().map(|c| c.len_utf8()).unwrap_or(0);
             self.cursor += next_char;
         }
     }
@@ -233,17 +228,10 @@ impl TextInput {
         // Find start of current/previous word
         let before = &self.value[..self.cursor];
         let trimmed = before.trim_end();
-        let word_start = trimmed
-            .rfind(char::is_whitespace)
-            .map(|i| i + 1)
-            .unwrap_or(0);
+        let word_start = trimmed.rfind(char::is_whitespace).map(|i| i + 1).unwrap_or(0);
 
         // Remove characters from word_start to cursor
-        self.value = format!(
-            "{}{}",
-            &self.value[..word_start],
-            &self.value[self.cursor..]
-        );
+        self.value = format!("{}{}", &self.value[..word_start], &self.value[self.cursor..]);
         self.cursor = word_start;
         self.validation_error = None;
     }
@@ -270,26 +258,26 @@ impl Model for TextInput {
                 self.value.clear();
                 self.cursor = 0;
                 self.validation_error = None;
-            }
+            },
             TextInputMsg::Submit => {
                 self.submitted = true;
-            }
+            },
             TextInputMsg::Focus => {
                 self.focused = true;
-            }
+            },
             TextInputMsg::Blur => {
                 self.focused = false;
-            }
+            },
             TextInputMsg::SetValue(value) => {
                 self.value = value;
                 self.cursor = self.value.len();
                 self.validation_error = None;
-            }
+            },
             TextInputMsg::Paste(text) => {
                 for c in text.chars() {
                     self.insert_char(c);
                 }
-            }
+            },
         }
         None
     }
@@ -323,9 +311,7 @@ impl Model for TextInput {
                 } else {
                     // For non-hidden, cursor is already a byte position
                     // Convert to character position for consistent handling
-                    self.value[..self.cursor.min(self.value.len())]
-                        .chars()
-                        .count()
+                    self.value[..self.cursor.min(self.value.len())].chars().count()
                 };
 
                 // Split display_value at character boundary
@@ -336,10 +322,8 @@ impl Model for TextInput {
                         before.push(c);
                     }
                 }
-                let cursor_char: String = after_chars
-                    .next()
-                    .map(|c| c.to_string())
-                    .unwrap_or_else(|| " ".to_string());
+                let cursor_char: String =
+                    after_chars.next().map(|c| c.to_string()).unwrap_or_else(|| " ".to_string());
                 let after: String = after_chars.collect();
 
                 output.push_str(&format!("{}{}", self.text_color.to_ansi_fg(), before));
@@ -361,12 +345,7 @@ impl Model for TextInput {
 
         // Show validation error if present
         if let Some(ref error) = self.validation_error {
-            output.push_str(&format!(
-                "\n{}✗ {}{}",
-                Color::Red.to_ansi_fg(),
-                error,
-                "\x1b[0m"
-            ));
+            output.push_str(&format!("\n{}✗ {}{}", Color::Red.to_ansi_fg(), error, "\x1b[0m"));
         }
 
         output
@@ -391,7 +370,7 @@ impl Model for TextInput {
                     } else {
                         Some(TextInputMsg::InsertChar(c))
                     }
-                }
+                },
                 KeyCode::Backspace => Some(TextInputMsg::DeleteBack),
                 KeyCode::Delete => Some(TextInputMsg::DeleteForward),
                 KeyCode::Left => Some(TextInputMsg::CursorLeft),
@@ -415,11 +394,7 @@ impl Accessible for TextInput {
 
         // Show placeholder as hint if value is empty
         if self.value.is_empty() && !self.placeholder.is_empty() {
-            prompt.push_str(&format!(
-                "? {} ({})\n",
-                self.prompt.trim(),
-                self.placeholder
-            ));
+            prompt.push_str(&format!("? {} ({})\n", self.prompt.trim(), self.placeholder));
         } else if !self.prompt.is_empty() {
             prompt.push_str(&format!("? {}\n", self.prompt.trim()));
         }
@@ -443,7 +418,7 @@ impl Accessible for TextInput {
             AccessibleInput::Empty => {
                 // Keep current value and submit
                 Some(TextInputMsg::Submit)
-            }
+            },
             _ => None,
         }
     }

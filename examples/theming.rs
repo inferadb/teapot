@@ -2,7 +2,7 @@
 //!
 //! Run with: cargo run --example theming
 
-use ferment::style::{has_dark_background, BorderStyle, Color, ColorProfile, Style};
+use ferment::style::{BorderStyle, Color, ColorProfile, Style, has_dark_background};
 
 fn main() {
     println!("\n=== Ferment Adaptive Theming Demo ===\n");
@@ -44,10 +44,7 @@ fn demo_detection() {
         println!("NO_COLOR is set - colors disabled");
     }
     if std::env::var("COLORTERM").is_ok() {
-        println!(
-            "COLORTERM: {}",
-            std::env::var("COLORTERM").unwrap_or_default()
-        );
+        println!("COLORTERM: {}", std::env::var("COLORTERM").unwrap_or_default());
     }
 
     println!();
@@ -72,25 +69,12 @@ fn demo_adaptive_colors() {
         dark: Box::new(Color::Ansi256(240)),  // Darker gray for dark bg
     };
 
+    println!("{}", Style::new().fg(text_color).render("Primary text - adapts to background"));
     println!(
         "{}",
-        Style::new()
-            .fg(text_color)
-            .render("Primary text - adapts to background")
+        Style::new().fg(accent_color).bold(true).render("Accent text - high visibility")
     );
-    println!(
-        "{}",
-        Style::new()
-            .fg(accent_color)
-            .bold(true)
-            .render("Accent text - high visibility")
-    );
-    println!(
-        "{}",
-        Style::new()
-            .fg(muted_color)
-            .render("Muted text - secondary information")
-    );
+    println!("{}", Style::new().fg(muted_color).render("Muted text - secondary information"));
     println!();
 }
 
@@ -117,27 +101,12 @@ fn demo_complete_colors() {
         ansi: 6, // Cyan fallback
     };
 
+    println!("{}", Style::new().fg(orange).bold(true).render("Orange: (255,102,0) → 208 → yellow"));
     println!(
         "{}",
-        Style::new()
-            .fg(orange)
-            .bold(true)
-            .render("Orange: (255,102,0) → 208 → yellow")
+        Style::new().fg(purple).bold(true).render("Purple: (153,51,255) → 135 → magenta")
     );
-    println!(
-        "{}",
-        Style::new()
-            .fg(purple)
-            .bold(true)
-            .render("Purple: (153,51,255) → 135 → magenta")
-    );
-    println!(
-        "{}",
-        Style::new()
-            .fg(teal)
-            .bold(true)
-            .render("Teal: (0,168,150) → 37 → cyan")
-    );
+    println!("{}", Style::new().fg(teal).bold(true).render("Teal: (0,168,150) → 37 → cyan"));
     println!();
 }
 
@@ -169,10 +138,7 @@ fn demo_theme_system() {
     println!("{}\n", footer);
 
     // Show theme info
-    println!(
-        "Current theme: {}",
-        if theme.is_dark { "Dark" } else { "Light" }
-    );
+    println!("Current theme: {}", if theme.is_dark { "Dark" } else { "Light" });
 }
 
 /// A complete theme system that adapts to terminal capabilities.
@@ -195,11 +161,7 @@ impl Theme {
     fn detect() -> Self {
         let is_dark = has_dark_background();
 
-        if is_dark {
-            Self::dark()
-        } else {
-            Self::light()
-        }
+        if is_dark { Self::dark() } else { Self::light() }
     }
 
     /// Dark theme for dark terminal backgrounds.
@@ -233,18 +195,11 @@ impl Theme {
     }
 
     fn header_style(&self) -> Style {
-        Style::new()
-            .fg(self.accent.clone())
-            .bold(true)
-            .border(BorderStyle::Double)
-            .padding(&[0, 1])
+        Style::new().fg(self.accent.clone()).bold(true).border(BorderStyle::Double).padding(&[0, 1])
     }
 
     fn content_style(&self) -> Style {
-        Style::new()
-            .fg(self.primary.clone())
-            .border(BorderStyle::Rounded)
-            .padding(&[1, 2])
+        Style::new().fg(self.primary.clone()).border(BorderStyle::Rounded).padding(&[1, 2])
     }
 
     fn success_style(&self) -> Style {

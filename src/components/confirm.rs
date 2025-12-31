@@ -11,10 +11,14 @@
 //!     .default(false);
 //! ```
 
-use crate::runtime::accessible::{Accessible, AccessibleInput};
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode};
+use crate::{
+    runtime::{
+        Cmd, Model,
+        accessible::{Accessible, AccessibleInput},
+    },
+    style::Color,
+    terminal::{Event, KeyCode},
+};
 
 /// Message type for confirm.
 #[derive(Debug, Clone)]
@@ -68,10 +72,7 @@ impl Default for Confirm {
 impl Confirm {
     /// Create a new confirm with a title.
     pub fn new(title: impl Into<String>) -> Self {
-        Self {
-            title: title.into(),
-            ..Default::default()
-        }
+        Self { title: title.into(), ..Default::default() }
     }
 
     /// Set the default value.
@@ -106,11 +107,7 @@ impl Confirm {
 
     /// Get the confirmed value if submitted.
     pub fn confirmed(&self) -> Option<bool> {
-        if self.submitted {
-            Some(self.value)
-        } else {
-            None
-        }
+        if self.submitted { Some(self.value) } else { None }
     }
 
     /// Check if submitted.
@@ -151,33 +148,15 @@ impl Model for Confirm {
 
     fn view(&self) -> String {
         let yes_style = if self.value {
-            format!(
-                "{}\x1b[1m{}\x1b[0m",
-                self.selected_color.to_ansi_fg(),
-                self.yes_label
-            )
+            format!("{}\x1b[1m{}\x1b[0m", self.selected_color.to_ansi_fg(), self.yes_label)
         } else {
-            format!(
-                "{}{}{}",
-                Color::BrightBlack.to_ansi_fg(),
-                self.yes_label,
-                "\x1b[0m"
-            )
+            format!("{}{}{}", Color::BrightBlack.to_ansi_fg(), self.yes_label, "\x1b[0m")
         };
 
         let no_style = if !self.value {
-            format!(
-                "{}\x1b[1m{}\x1b[0m",
-                self.selected_color.to_ansi_fg(),
-                self.no_label
-            )
+            format!("{}\x1b[1m{}\x1b[0m", self.selected_color.to_ansi_fg(), self.no_label)
         } else {
-            format!(
-                "{}{}{}",
-                Color::BrightBlack.to_ansi_fg(),
-                self.no_label,
-                "\x1b[0m"
-            )
+            format!("{}{}{}", Color::BrightBlack.to_ansi_fg(), self.no_label, "\x1b[0m")
         };
 
         let hint = format!("{}(y/n){}", Color::BrightBlack.to_ansi_fg(), "\x1b[0m");
@@ -237,22 +216,22 @@ impl Confirm {
                 self.value = true;
                 self.submitted = true;
                 true
-            }
+            },
             AccessibleInput::No => {
                 self.value = false;
                 self.submitted = true;
                 true
-            }
+            },
             AccessibleInput::Cancel => {
                 self.cancelled = true;
                 true
-            }
+            },
             AccessibleInput::Empty => {
                 // Use default value
                 self.value = self.default;
                 self.submitted = true;
                 true
-            }
+            },
             _ => false,
         }
     }

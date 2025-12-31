@@ -144,30 +144,24 @@ pub mod terminal;
 pub mod util;
 
 // Re-export core types at crate root
-pub use runtime::{Accessible, AccessibleInput, Cmd, Model, Program, ProgramOptions, Sub};
-pub use terminal::{Event, KeyCode, KeyEvent, KeyModifiers, MouseEvent};
-
-// Re-export cmd module for Bubble Tea-style function calls
-pub use runtime::cmd;
-
 // Re-export commonly used components
 pub use components::{
     BadgeVariant, Column, Confirm, FilePicker, FooterHints, List, MultiProgress, MultiSelect,
     Progress, Select, Spinner, StatusBadge, Tab, TabBar, Table, TaskList, TaskProgressView,
     TaskStep, TextArea, TextInput, TitleBar,
 };
-
-// Re-export style types
-pub use style::{Border, Color, Style};
-
+// Re-export form types
+pub use forms::{Form, Group};
+// Re-export cmd module for Bubble Tea-style function calls
+pub use runtime::cmd;
+pub use runtime::{Accessible, AccessibleInput, Cmd, Model, Program, ProgramOptions, Sub};
 // Re-export ANSI constants for convenience
 pub use style::{
     BLINK, BOLD, CLEAR_LINE, CR, CURSOR_UP, DIM, HIDDEN, ITALIC, RESET, REVERSE, STRIKETHROUGH,
     UNDERLINE,
 };
-
-// Re-export form types
-pub use forms::{Form, Group};
-
+// Re-export style types
+pub use style::{Border, Color, Style};
+pub use terminal::{Event, KeyCode, KeyEvent, KeyModifiers, MouseEvent};
 // Re-export utility types
 pub use util::{ManagedWorker, ScrollState, WorkerHandle};

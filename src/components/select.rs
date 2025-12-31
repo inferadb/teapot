@@ -11,10 +11,14 @@
 //!     .options(vec!["Red", "Green", "Blue"]);
 //! ```
 
-use crate::runtime::accessible::{Accessible, AccessibleInput};
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode};
+use crate::{
+    runtime::{
+        Cmd, Model,
+        accessible::{Accessible, AccessibleInput},
+    },
+    style::Color,
+    terminal::{Event, KeyCode},
+};
 
 /// Message type for select.
 #[derive(Debug, Clone)]
@@ -70,10 +74,7 @@ impl<T: Clone> Default for Select<T> {
 impl<T: Clone> Select<T> {
     /// Create a new select with a title.
     pub fn new(title: impl Into<String>) -> Self {
-        Self {
-            title: title.into(),
-            ..Default::default()
-        }
+        Self { title: title.into(), ..Default::default() }
     }
 
     /// Set the options with display strings.
@@ -265,7 +266,7 @@ impl<T: Clone + Send + 'static> Accessible for Select<T> {
             AccessibleInput::Selection(_) => {
                 // Selection is handled by apply_accessible_input which updates cursor
                 Some(SelectMsg::Submit)
-            }
+            },
             AccessibleInput::Cancel => Some(SelectMsg::Cancel),
             AccessibleInput::Empty => None,
             _ => None,
@@ -295,11 +296,11 @@ impl<T: Clone + Send + 'static> Select<T> {
                 self.cursor = n - 1; // Convert 1-based to 0-based
                 self.submitted = true;
                 true
-            }
+            },
             AccessibleInput::Cancel => {
                 self.cancelled = true;
                 true
-            }
+            },
             AccessibleInput::Empty => false,
             _ => false,
         }

@@ -18,13 +18,7 @@ pub struct Border {
 impl Border {
     /// Create a new border with all sides.
     pub fn all(style: BorderStyle) -> Self {
-        Self {
-            style,
-            top: true,
-            bottom: true,
-            left: true,
-            right: true,
-        }
+        Self { style, top: true, bottom: true, left: true, right: true }
     }
 
     /// Create a border with no sides.
@@ -34,24 +28,12 @@ impl Border {
 
     /// Create a border with only top and bottom.
     pub fn horizontal(style: BorderStyle) -> Self {
-        Self {
-            style,
-            top: true,
-            bottom: true,
-            left: false,
-            right: false,
-        }
+        Self { style, top: true, bottom: true, left: false, right: false }
     }
 
     /// Create a border with only left and right.
     pub fn vertical(style: BorderStyle) -> Self {
-        Self {
-            style,
-            top: false,
-            bottom: false,
-            left: true,
-            right: true,
-        }
+        Self { style, top: false, bottom: false, left: true, right: true }
     }
 
     /// Get the character set for this border.

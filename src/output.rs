@@ -14,8 +14,9 @@
 //! output::info("Processing 42 items...");
 //! ```
 
-use crate::style::Color;
 use std::io::IsTerminal;
+
+use crate::style::Color;
 
 const RESET: &str = "\x1b[0m";
 
@@ -149,12 +150,7 @@ pub fn header(title: &str) {
 /// ```
 pub fn phase(name: &str) {
     if is_tty() {
-        eprintln!(
-            "{}━━━ {} ━━━{}",
-            Color::BrightBlack.to_ansi_fg(),
-            name,
-            RESET
-        );
+        eprintln!("{}━━━ {} ━━━{}", Color::BrightBlack.to_ansi_fg(), name, RESET);
     } else {
         eprintln!("--- {} ---", name);
     }
@@ -192,16 +188,12 @@ pub fn use_color() -> bool {
 
 /// Get the terminal width, or a default of 80 columns.
 pub fn terminal_width() -> usize {
-    crossterm::terminal::size()
-        .map(|(w, _)| w as usize)
-        .unwrap_or(80)
+    crossterm::terminal::size().map(|(w, _)| w as usize).unwrap_or(80)
 }
 
 /// Get the terminal height, or a default of 24 rows.
 pub fn terminal_height() -> usize {
-    crossterm::terminal::size()
-        .map(|(_, h)| h as usize)
-        .unwrap_or(24)
+    crossterm::terminal::size().map(|(_, h)| h as usize).unwrap_or(24)
 }
 
 /// Strip ANSI escape codes from a string.
@@ -225,7 +217,7 @@ pub fn strip_ansi(s: &str) -> String {
                             break;
                         }
                     }
-                }
+                },
                 Some(']') => {
                     // OSC sequence: ESC ] ... (BEL or ESC \)
                     chars.next();
@@ -237,8 +229,8 @@ pub fn strip_ansi(s: &str) -> String {
                             break;
                         }
                     }
-                }
-                _ => {}
+                },
+                _ => {},
             }
         } else {
             result.push(c);
@@ -260,10 +252,7 @@ mod tests {
         assert_eq!(strip_ansi("\x1b[1m\x1b[31mbold red\x1b[0m"), "bold red");
 
         // OSC 8 hyperlinks
-        assert_eq!(
-            strip_ansi("\x1b]8;;https://example.com\x07link\x1b]8;;\x07"),
-            "link"
-        );
+        assert_eq!(strip_ansi("\x1b]8;;https://example.com\x07link\x1b]8;;\x07"), "link");
     }
 
     #[test]

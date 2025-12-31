@@ -3,8 +3,8 @@
 //! Run with: cargo run --example styling
 
 use ferment::style::{
-    join_horizontal, join_horizontal_with, join_vertical, join_vertical_with, place,
-    place_horizontal, BorderStyle, Color, Position, Style,
+    BorderStyle, Color, Position, Style, join_horizontal, join_horizontal_with, join_vertical,
+    join_vertical_with, place, place_horizontal,
 };
 
 fn main() {
@@ -37,10 +37,7 @@ fn demo_basic_styling() {
     let bold = Style::new().bold(true).render("Bold text");
     let italic = Style::new().italic(true).render("Italic text");
     let underline = Style::new().underline(true).render("Underlined");
-    let colored = Style::new()
-        .fg(Color::Cyan)
-        .bg(Color::Black)
-        .render("Cyan on black");
+    let colored = Style::new().fg(Color::Cyan).bg(Color::Black).render("Cyan on black");
 
     println!("{}", bold);
     println!("{}", italic);
@@ -53,15 +50,10 @@ fn demo_css_shorthand() {
     println!("--- CSS Shorthand ---\n");
 
     // Padding examples
-    let p1 = Style::new()
-        .padding(&[1])
-        .bg(Color::Blue)
-        .render("Padding: 1 all sides");
+    let p1 = Style::new().padding(&[1]).bg(Color::Blue).render("Padding: 1 all sides");
 
-    let p2 = Style::new()
-        .padding(&[0, 2])
-        .bg(Color::Green)
-        .render("Padding: 0 vertical, 2 horizontal");
+    let p2 =
+        Style::new().padding(&[0, 2]).bg(Color::Green).render("Padding: 0 vertical, 2 horizontal");
 
     let p3 = Style::new()
         .padding(&[1, 2, 1, 2])
@@ -76,25 +68,14 @@ fn demo_css_shorthand() {
 fn demo_borders() {
     println!("--- Border Styles ---\n");
 
-    let rounded = Style::new()
-        .border(BorderStyle::Rounded)
-        .padding(&[0, 1])
-        .render("Rounded border");
+    let rounded =
+        Style::new().border(BorderStyle::Rounded).padding(&[0, 1]).render("Rounded border");
 
-    let single = Style::new()
-        .border(BorderStyle::Single)
-        .padding(&[0, 1])
-        .render("Single border");
+    let single = Style::new().border(BorderStyle::Single).padding(&[0, 1]).render("Single border");
 
-    let double = Style::new()
-        .border(BorderStyle::Double)
-        .padding(&[0, 1])
-        .render("Double border");
+    let double = Style::new().border(BorderStyle::Double).padding(&[0, 1]).render("Double border");
 
-    let ascii = Style::new()
-        .border(BorderStyle::Ascii)
-        .padding(&[0, 1])
-        .render("ASCII border");
+    let ascii = Style::new().border(BorderStyle::Ascii).padding(&[0, 1]).render("ASCII border");
 
     println!("{}\n", rounded);
     println!("{}\n", single);
@@ -106,23 +87,14 @@ fn demo_layout() {
     println!("--- Layout Utilities ---\n");
 
     // Create some boxes
-    let box1 = Style::new()
-        .border(BorderStyle::Rounded)
-        .padding(&[0, 1])
-        .fg(Color::Red)
-        .render("Box 1");
+    let box1 =
+        Style::new().border(BorderStyle::Rounded).padding(&[0, 1]).fg(Color::Red).render("Box 1");
 
-    let box2 = Style::new()
-        .border(BorderStyle::Rounded)
-        .padding(&[0, 1])
-        .fg(Color::Green)
-        .render("Box 2");
+    let box2 =
+        Style::new().border(BorderStyle::Rounded).padding(&[0, 1]).fg(Color::Green).render("Box 2");
 
-    let box3 = Style::new()
-        .border(BorderStyle::Rounded)
-        .padding(&[0, 1])
-        .fg(Color::Blue)
-        .render("Box 3");
+    let box3 =
+        Style::new().border(BorderStyle::Rounded).padding(&[0, 1]).fg(Color::Blue).render("Box 3");
 
     // Horizontal join (default alignment)
     println!("Horizontal join:");
@@ -162,10 +134,7 @@ fn demo_adaptive_colors() {
 
     // Detect terminal background
     let has_dark = ferment::style::has_dark_background();
-    println!(
-        "Terminal background: {}",
-        if has_dark { "dark" } else { "light" }
-    );
+    println!("Terminal background: {}", if has_dark { "dark" } else { "light" });
 
     // Adaptive color (changes based on background)
     let adaptive = Color::Adaptive {
@@ -173,9 +142,7 @@ fn demo_adaptive_colors() {
         dark: Box::new(Color::Ansi256(252)),  // Light gray for dark backgrounds
     };
 
-    let styled = Style::new()
-        .fg(adaptive)
-        .render("This text adapts to your terminal background");
+    let styled = Style::new().fg(adaptive).render("This text adapts to your terminal background");
     println!("{}\n", styled);
 
     // Complete color (different representations for different terminal types)

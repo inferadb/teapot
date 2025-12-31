@@ -12,9 +12,7 @@ pub struct TerminalOutput {
 impl TerminalOutput {
     /// Create a new terminal output.
     pub fn new() -> Self {
-        Self {
-            buffer: String::new(),
-        }
+        Self { buffer: String::new() }
     }
 
     /// Write a string to the buffer.

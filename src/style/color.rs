@@ -74,10 +74,7 @@ impl Color {
     /// let color = Color::adaptive(Color::Black, Color::White);
     /// ```
     pub fn adaptive(light: Color, dark: Color) -> Self {
-        Color::Adaptive {
-            light: Box::new(light),
-            dark: Box::new(dark),
-        }
+        Color::Adaptive { light: Box::new(light), dark: Box::new(dark) }
     }
 
     /// Create a complete color with explicit values for each color profile.
@@ -89,11 +86,7 @@ impl Color {
     /// let color = Color::complete((255, 0, 0), 196, 1);
     /// ```
     pub fn complete(true_color: (u8, u8, u8), ansi256: u8, ansi: u8) -> Self {
-        Color::Complete {
-            true_color,
-            ansi256,
-            ansi,
-        }
+        Color::Complete { true_color, ansi256, ansi }
     }
 
     /// Create a color from a hex string like "#FF5500" or "FF5500".
@@ -124,7 +117,7 @@ impl Color {
                 } else {
                     light.resolve()
                 }
-            }
+            },
             _ => self,
         }
     }
@@ -157,11 +150,8 @@ impl Color {
             Color::Rgb(r, g, b) => format!("\x1b[38;2;{};{};{}m", r, g, b),
             Color::Adaptive { dark, .. } => dark.to_ansi_fg_inner(),
             Color::Complete { true_color, .. } => {
-                format!(
-                    "\x1b[38;2;{};{};{}m",
-                    true_color.0, true_color.1, true_color.2
-                )
-            }
+                format!("\x1b[38;2;{};{};{}m", true_color.0, true_color.1, true_color.2)
+            },
         }
     }
 
@@ -193,11 +183,8 @@ impl Color {
             Color::Rgb(r, g, b) => format!("\x1b[48;2;{};{};{}m", r, g, b),
             Color::Adaptive { dark, .. } => dark.to_ansi_bg_inner(),
             Color::Complete { true_color, .. } => {
-                format!(
-                    "\x1b[48;2;{};{};{}m",
-                    true_color.0, true_color.1, true_color.2
-                )
-            }
+                format!("\x1b[48;2;{};{};{}m", true_color.0, true_color.1, true_color.2)
+            },
         }
     }
 
@@ -222,15 +209,9 @@ impl Color {
             Color::BrightCyan => crossterm::style::Color::Cyan,
             Color::BrightWhite => crossterm::style::Color::White,
             Color::Ansi256(n) => crossterm::style::Color::AnsiValue(*n),
-            Color::Rgb(r, g, b) => crossterm::style::Color::Rgb {
-                r: *r,
-                g: *g,
-                b: *b,
-            },
-            Color::Complete { true_color, .. } => crossterm::style::Color::Rgb {
-                r: true_color.0,
-                g: true_color.1,
-                b: true_color.2,
+            Color::Rgb(r, g, b) => crossterm::style::Color::Rgb { r: *r, g: *g, b: *b },
+            Color::Complete { true_color, .. } => {
+                crossterm::style::Color::Rgb { r: true_color.0, g: true_color.1, b: true_color.2 }
             },
             Color::Adaptive { .. } => crossterm::style::Color::Reset,
         }

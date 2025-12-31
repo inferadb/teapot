@@ -1,13 +1,13 @@
 //! Form field types.
 
-use std::path::PathBuf;
-use std::sync::Arc;
+use std::{path::PathBuf, sync::Arc};
 
 use super::validation::Validator;
-use crate::components::{Confirm, FilePicker, MultiSelect, Select, TextInput};
-use crate::runtime::accessible::Accessible;
-use crate::runtime::{Cmd, Model};
-use crate::terminal::{Event, KeyCode};
+use crate::{
+    components::{Confirm, FilePicker, MultiSelect, Select, TextInput},
+    runtime::{Cmd, Model, accessible::Accessible},
+    terminal::{Event, KeyCode},
+};
 
 /// A dynamic string function for titles and descriptions.
 pub type DynamicString = Arc<dyn Fn() -> String + Send + Sync>;
@@ -136,10 +136,7 @@ impl std::fmt::Debug for Field {
             .field("title", &self.title)
             .field("title_fn", &self.title_fn.as_ref().map(|_| "<fn>"))
             .field("description", &self.description)
-            .field(
-                "description_fn",
-                &self.description_fn.as_ref().map(|_| "<fn>"),
-            )
+            .field("description_fn", &self.description_fn.as_ref().map(|_| "<fn>"))
             .field("required", &self.required)
             .field("inner", &self.inner)
             .finish()
@@ -149,20 +146,12 @@ impl std::fmt::Debug for Field {
 impl Field {
     /// Get the effective title (dynamic or static).
     pub fn get_title(&self) -> String {
-        if let Some(f) = &self.title_fn {
-            f()
-        } else {
-            self.title.clone()
-        }
+        if let Some(f) = &self.title_fn { f() } else { self.title.clone() }
     }
 
     /// Get the effective description (dynamic or static).
     pub fn get_description(&self) -> Option<String> {
-        if let Some(f) = &self.description_fn {
-            Some(f())
-        } else {
-            self.description.clone()
-        }
+        if let Some(f) = &self.description_fn { Some(f()) } else { self.description.clone() }
     }
 }
 
@@ -177,11 +166,7 @@ pub struct Note {
 impl Note {
     /// Create a new note.
     pub fn new(content: impl Into<String>) -> Self {
-        Self {
-            content: content.into(),
-            acknowledged: false,
-            focused: true,
-        }
+        Self { content: content.into(), acknowledged: false, focused: true }
     }
 
     /// Check if acknowledged.
@@ -234,10 +219,10 @@ impl Field {
                 } else {
                     FieldValue::None
                 }
-            }
+            },
             FieldInner::MultiSelect(select) => {
                 FieldValue::StringList(select.selected().iter().map(|s| (*s).clone()).collect())
-            }
+            },
             FieldInner::Confirm(confirm) => FieldValue::Bool(confirm.value()),
             FieldInner::Note(_) => FieldValue::None, // Notes have no value
             FieldInner::FilePicker(picker) => {
@@ -246,7 +231,7 @@ impl Field {
                 } else {
                     FieldValue::None
                 }
-            }
+            },
         }
     }
 
@@ -305,23 +290,23 @@ impl Model for Field {
         match (&mut self.inner, msg) {
             (FieldInner::Input(input), FieldMsg::Input(msg)) => {
                 input.update(msg).map(|c| c.map(FieldMsg::Input))
-            }
+            },
             (FieldInner::Select(select), FieldMsg::Select(msg)) => {
                 select.update(msg).map(|c| c.map(FieldMsg::Select))
-            }
+            },
             (FieldInner::MultiSelect(select), FieldMsg::MultiSelect(msg)) => {
                 select.update(msg).map(|c| c.map(FieldMsg::MultiSelect))
-            }
+            },
             (FieldInner::Confirm(confirm), FieldMsg::Confirm(msg)) => {
                 confirm.update(msg).map(|c| c.map(FieldMsg::Confirm))
-            }
+            },
             (FieldInner::FilePicker(picker), FieldMsg::FilePicker(msg)) => {
                 picker.update(msg).map(|c| c.map(FieldMsg::FilePicker))
-            }
+            },
             (FieldInner::Note(note), FieldMsg::NoteAck) => {
                 note.acknowledge();
                 None
-            }
+            },
             _ => None,
         }
     }
@@ -365,7 +350,7 @@ impl Model for Field {
                     crate::style::Color::BrightBlack.to_ansi_fg(),
                     "\x1b[0m"
                 ));
-            }
+            },
         }
 
         output
@@ -377,7 +362,7 @@ impl Model for Field {
             FieldInner::Select(select) => select.handle_event(event).map(FieldMsg::Select),
             FieldInner::MultiSelect(select) => {
                 select.handle_event(event).map(FieldMsg::MultiSelect)
-            }
+            },
             FieldInner::Confirm(confirm) => confirm.handle_event(event).map(FieldMsg::Confirm),
             FieldInner::FilePicker(picker) => picker.handle_event(event).map(FieldMsg::FilePicker),
             FieldInner::Note(_) => {
@@ -388,7 +373,7 @@ impl Model for Field {
                     }
                 }
                 None
-            }
+            },
         }
     }
 }
@@ -425,7 +410,7 @@ impl Accessible for Field {
             FieldInner::Note(note) => {
                 prompt.push_str(note.content());
                 prompt.push_str("\n\nPress Enter to continue: ");
-            }
+            },
         }
 
         prompt
@@ -435,15 +420,15 @@ impl Accessible for Field {
         match &self.inner {
             FieldInner::Input(inner) => inner.parse_accessible_input(input).map(FieldMsg::Input),
             FieldInner::Select(inner) => inner.parse_accessible_input(input).map(FieldMsg::Select),
-            FieldInner::MultiSelect(inner) => inner
-                .parse_accessible_input(input)
-                .map(FieldMsg::MultiSelect),
+            FieldInner::MultiSelect(inner) => {
+                inner.parse_accessible_input(input).map(FieldMsg::MultiSelect)
+            },
             FieldInner::Confirm(inner) => {
                 inner.parse_accessible_input(input).map(FieldMsg::Confirm)
-            }
-            FieldInner::FilePicker(inner) => inner
-                .parse_accessible_input(input)
-                .map(FieldMsg::FilePicker),
+            },
+            FieldInner::FilePicker(inner) => {
+                inner.parse_accessible_input(input).map(FieldMsg::FilePicker)
+            },
             FieldInner::Note(_) => Some(FieldMsg::NoteAck), // Any input acknowledges the note
         }
     }
@@ -469,7 +454,7 @@ impl Field {
                 }
                 inner.update(crate::components::text_input::TextInputMsg::Submit);
                 true
-            }
+            },
             FieldInner::Select(inner) => inner.apply_accessible_input(input),
             FieldInner::MultiSelect(inner) => inner.apply_accessible_input(input),
             FieldInner::Confirm(inner) => inner.apply_accessible_input(input),
@@ -478,7 +463,7 @@ impl Field {
                 // Any input acknowledges the note
                 note.acknowledge();
                 true
-            }
+            },
         }
     }
 }
@@ -521,10 +506,7 @@ impl std::fmt::Debug for InputField {
             .field("title", &self.title)
             .field("title_fn", &self.title_fn.as_ref().map(|_| "<fn>"))
             .field("description", &self.description)
-            .field(
-                "description_fn",
-                &self.description_fn.as_ref().map(|_| "<fn>"),
-            )
+            .field("description_fn", &self.description_fn.as_ref().map(|_| "<fn>"))
             .field("placeholder", &self.placeholder)
             .field("default", &self.default)
             .field("required", &self.required)
@@ -629,10 +611,8 @@ impl InputField {
 
     /// Build the field.
     pub fn build(self) -> Field {
-        let input = TextInput::new()
-            .placeholder(self.placeholder)
-            .value(self.default)
-            .hidden(self.hidden);
+        let input =
+            TextInput::new().placeholder(self.placeholder).value(self.default).hidden(self.hidden);
 
         Field {
             key: self.key,
@@ -1141,10 +1121,7 @@ impl std::fmt::Debug for FilePickerField {
             .field("title", &self.title)
             .field("title_fn", &self.title_fn.as_ref().map(|_| "<fn>"))
             .field("description", &self.description)
-            .field(
-                "description_fn",
-                &self.description_fn.as_ref().map(|_| "<fn>"),
-            )
+            .field("description_fn", &self.description_fn.as_ref().map(|_| "<fn>"))
             .field("directory", &self.directory)
             .field("show_hidden", &self.show_hidden)
             .field("dirs_only", &self.dirs_only)

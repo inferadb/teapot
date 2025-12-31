@@ -22,9 +22,11 @@
 
 use std::time::{Duration, Instant};
 
-use crate::runtime::{Cmd, Model, Sub};
-use crate::style::Color;
-use crate::terminal::Event;
+use crate::{
+    runtime::{Cmd, Model, Sub},
+    style::Color,
+    terminal::Event,
+};
 
 /// Spinner frames for running tasks.
 const SPINNER_FRAMES: &[&str] = &["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
@@ -69,10 +71,7 @@ impl TaskState {
 
     /// Is this state a terminal state (completed)?
     pub fn is_terminal(&self) -> bool {
-        matches!(
-            self,
-            TaskState::Success | TaskState::Failure | TaskState::Skipped
-        )
+        matches!(self, TaskState::Success | TaskState::Failure | TaskState::Skipped)
     }
 }
 
@@ -92,12 +91,7 @@ pub struct TaskItem {
 impl TaskItem {
     /// Create a new pending task.
     pub fn new(name: impl Into<String>) -> Self {
-        Self {
-            name: name.into(),
-            state: TaskState::Pending,
-            detail: None,
-            error: None,
-        }
+        Self { name: name.into(), state: TaskState::Pending, detail: None, error: None }
     }
 
     /// Set the detail text.
@@ -248,9 +242,7 @@ impl TaskList {
 
     /// Get the index of the current running task.
     pub fn current_task_index(&self) -> Option<usize> {
-        self.tasks
-            .iter()
-            .position(|t| t.state == TaskState::Running)
+        self.tasks.iter().position(|t| t.state == TaskState::Running)
     }
 
     /// Update the completion status.
@@ -327,7 +319,7 @@ impl Model for TaskList {
             TaskListMsg::Tick => {
                 self.spinner_frame = (self.spinner_frame + 1) % SPINNER_FRAMES.len();
                 self.last_tick = Some(Instant::now());
-            }
+            },
         }
         None
     }
@@ -343,9 +335,7 @@ impl Model for TaskList {
     fn subscriptions(&self) -> Sub<Self::Message> {
         // Only animate if there are running tasks
         if self.is_running() {
-            Sub::interval("task-spinner", Duration::from_millis(80), || {
-                TaskListMsg::Tick
-            })
+            Sub::interval("task-spinner", Duration::from_millis(80), || TaskListMsg::Tick)
         } else {
             Sub::none()
         }

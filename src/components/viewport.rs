@@ -11,8 +11,10 @@
 //!     .content("Long content here...");
 //! ```
 
-use crate::runtime::{Cmd, Model};
-use crate::terminal::{Event, KeyCode, KeyModifiers};
+use crate::{
+    runtime::{Cmd, Model},
+    terminal::{Event, KeyCode, KeyModifiers},
+};
 
 /// Message type for viewport.
 #[derive(Debug, Clone)]
@@ -55,14 +57,7 @@ impl Default for Viewport {
 impl Viewport {
     /// Create a new viewport with dimensions.
     pub fn new(width: usize, height: usize) -> Self {
-        Self {
-            content: String::new(),
-            lines: Vec::new(),
-            offset: 0,
-            width,
-            height,
-            focused: true,
-        }
+        Self { content: String::new(), lines: Vec::new(), offset: 0, width, height, focused: true }
     }
 
     /// Set the content.
@@ -167,7 +162,7 @@ impl Model for Viewport {
                 self.width = width;
                 self.height = height;
                 self.offset = self.offset.min(self.max_offset());
-            }
+            },
         }
         None
     }
@@ -214,13 +209,12 @@ impl Model for Viewport {
                     } else {
                         None
                     }
-                }
+                },
                 _ => None,
             },
-            Event::Resize { width, height } => Some(ViewportMsg::Resize {
-                width: width as usize,
-                height: height as usize,
-            }),
+            Event::Resize { width, height } => {
+                Some(ViewportMsg::Resize { width: width as usize, height: height as usize })
+            },
             _ => None,
         }
     }

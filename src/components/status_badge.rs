@@ -17,9 +17,11 @@
 //!     .variant(BadgeVariant::Info);
 //! ```
 
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::Event;
+use crate::{
+    runtime::{Cmd, Model},
+    style::Color,
+    terminal::Event,
+};
 
 /// Preset variants for status badges.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -90,10 +92,7 @@ impl Default for StatusBadge {
 impl StatusBadge {
     /// Create a new status badge with a label.
     pub fn new(label: impl Into<String>) -> Self {
-        Self {
-            label: label.into(),
-            ..Default::default()
-        }
+        Self { label: label.into(), ..Default::default() }
     }
 
     /// Create an "Online" badge.
@@ -153,11 +152,7 @@ impl StatusBadge {
 
     /// Get the effective icon.
     fn effective_icon(&self) -> &str {
-        if let Some(ref icon) = self.icon {
-            icon
-        } else {
-            self.variant.icon()
-        }
+        if let Some(ref icon) = self.icon { icon } else { self.variant.icon() }
     }
 
     /// Get the effective color.

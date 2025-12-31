@@ -11,10 +11,14 @@
 //!     .options(vec!["Red", "Green", "Blue"]);
 //! ```
 
-use crate::runtime::accessible::{Accessible, AccessibleInput};
-use crate::runtime::{Cmd, Model};
-use crate::style::Color;
-use crate::terminal::{Event, KeyCode};
+use crate::{
+    runtime::{
+        Cmd, Model,
+        accessible::{Accessible, AccessibleInput},
+    },
+    style::Color,
+    terminal::{Event, KeyCode},
+};
 
 /// Message type for multi-select.
 #[derive(Debug, Clone)]
@@ -80,10 +84,7 @@ impl<T: Clone> Default for MultiSelect<T> {
 impl<T: Clone> MultiSelect<T> {
     /// Create a new multi-select with a title.
     pub fn new(title: impl Into<String>) -> Self {
-        Self {
-            title: title.into(),
-            ..Default::default()
-        }
+        Self { title: title.into(), ..Default::default() }
     }
 
     /// Set options with labels.
@@ -112,11 +113,7 @@ impl<T: Clone> MultiSelect<T> {
 
     /// Get selected items.
     pub fn selected(&self) -> Vec<&T> {
-        self.options
-            .iter()
-            .filter(|(_, _, selected)| *selected)
-            .map(|(v, _, _)| v)
-            .collect()
+        self.options.iter().filter(|(_, _, selected)| *selected).map(|(v, ..)| v).collect()
     }
 
     /// Get number of selected items.
@@ -227,7 +224,7 @@ impl<T: Clone + Send + 'static> Model for MultiSelect<T> {
                 if self.meets_minimum() {
                     self.submitted = true;
                 }
-            }
+            },
             MultiSelectMsg::Cancel => self.cancelled = true,
             MultiSelectMsg::Focus => self.focused = true,
             MultiSelectMsg::Blur => self.focused = false,
@@ -254,11 +251,7 @@ impl<T: Clone + Send + 'static> Model for MultiSelect<T> {
         for (i, (_, label, checked)) in self.options.iter().enumerate() {
             let is_cursor = i == self.cursor;
             let cursor = if is_cursor { self.cursor_char } else { " " };
-            let check = if *checked {
-                self.checked_char
-            } else {
-                self.unchecked_char
-            };
+            let check = if *checked { self.checked_char } else { self.unchecked_char };
 
             let check_color = if *checked {
                 self.checked_color.to_ansi_fg()
@@ -336,11 +329,7 @@ impl<T: Clone + Send + 'static> Accessible for MultiSelect<T> {
 
         // Title with selection count
         if !self.title.is_empty() {
-            prompt.push_str(&format!(
-                "? {} ({} selected)\n",
-                self.title,
-                self.selected_count()
-            ));
+            prompt.push_str(&format!("? {} ({} selected)\n", self.title, self.selected_count()));
         }
 
         // Numbered options with check marks
@@ -424,7 +413,7 @@ impl<T: Clone + Send + 'static> MultiSelect<T> {
                     self.toggle_at(n - 1); // Convert 1-based to 0-based
                 }
                 false // Not complete, allow more input
-            }
+            },
             _ => false,
         }
     }
@@ -452,10 +441,8 @@ mod tests {
 
     #[test]
     fn test_min_max() {
-        let mut select: MultiSelect<String> = MultiSelect::new("Choose")
-            .options(vec!["A", "B", "C"])
-            .min(1)
-            .max(2);
+        let mut select: MultiSelect<String> =
+            MultiSelect::new("Choose").options(vec!["A", "B", "C"]).min(1).max(2);
 
         assert!(!select.meets_minimum());
         select.toggle();

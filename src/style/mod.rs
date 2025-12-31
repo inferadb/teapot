@@ -28,8 +28,8 @@ mod color;
 mod text;
 
 pub use border::{Border, BorderStyle};
-pub use color::{has_dark_background, Color, ColorProfile};
-pub use text::{bold, colored, dim, underline, Position, Spacing, Style};
+pub use color::{Color, ColorProfile, has_dark_background};
+pub use text::{Position, Spacing, Style, bold, colored, dim, underline};
 
 // ============================================================================
 // ANSI Escape Sequence Constants
@@ -101,7 +101,7 @@ pub fn strip_ansi(s: &str) -> String {
                             break;
                         }
                     }
-                }
+                },
                 Some(']') => {
                     // OSC sequence: ESC ] ... (BEL or ESC \)
                     chars.next(); // consume ']'
@@ -115,10 +115,10 @@ pub fn strip_ansi(s: &str) -> String {
                             break;
                         }
                     }
-                }
+                },
                 _ => {
                     // Unknown escape, skip just the ESC
-                }
+                },
             }
         } else {
             result.push(c);
@@ -181,11 +181,7 @@ pub fn truncate(s: &str, max_width: usize) -> String {
 
 /// Get the height (number of lines) of a string.
 pub fn height(s: &str) -> usize {
-    if s.is_empty() {
-        0
-    } else {
-        s.lines().count()
-    }
+    if s.is_empty() { 0 } else { s.lines().count() }
 }
 
 /// Get the size (width, height) of a string.
@@ -233,11 +229,7 @@ pub fn join_horizontal_with(pos: Position, strs: &[&str]) -> String {
         .collect();
 
     // Find the maximum height
-    let max_height = blocks
-        .iter()
-        .map(|(lines, _)| lines.len())
-        .max()
-        .unwrap_or(0);
+    let max_height = blocks.iter().map(|(lines, _)| lines.len()).max().unwrap_or(0);
 
     if max_height == 0 {
         return String::new();
@@ -260,7 +252,7 @@ pub fn join_horizontal_with(pos: Position, strs: &[&str]) -> String {
                     } else {
                         None
                     }
-                }
+                },
                 Position::Center => {
                     let offset = (max_height - block_height) / 2;
                     if row >= offset && row < offset + block_height {
@@ -268,15 +260,11 @@ pub fn join_horizontal_with(pos: Position, strs: &[&str]) -> String {
                     } else {
                         None
                     }
-                }
+                },
                 Position::Bottom => {
                     let offset = max_height - block_height;
-                    if row >= offset {
-                        Some(lines[row - offset])
-                    } else {
-                        None
-                    }
-                }
+                    if row >= offset { Some(lines[row - offset]) } else { None }
+                },
             };
 
             match content {
@@ -286,10 +274,10 @@ pub fn join_horizontal_with(pos: Position, strs: &[&str]) -> String {
                     if s_width < *block_width {
                         line.push_str(&" ".repeat(block_width - s_width));
                     }
-                }
+                },
                 None => {
                     line.push_str(&" ".repeat(*block_width));
-                }
+                },
             }
         }
 
@@ -324,12 +312,7 @@ pub fn join_vertical_with(pos: Position, strs: &[&str]) -> String {
     }
 
     // Find the maximum width across all blocks
-    let max_width = strs
-        .iter()
-        .flat_map(|s| s.lines())
-        .map(width)
-        .max()
-        .unwrap_or(0);
+    let max_width = strs.iter().flat_map(|s| s.lines()).map(width).max().unwrap_or(0);
 
     // Build result with aligned lines
     let mut result = Vec::new();
@@ -345,16 +328,16 @@ pub fn join_vertical_with(pos: Position, strs: &[&str]) -> String {
                     Position::Top => {
                         // Left align
                         result.push(format!("{}{}", line, " ".repeat(padding)));
-                    }
+                    },
                     Position::Center => {
                         let left = padding / 2;
                         let right = padding - left;
                         result.push(format!("{}{}{}", " ".repeat(left), line, " ".repeat(right)));
-                    }
+                    },
                     Position::Bottom => {
                         // Right align
                         result.push(format!("{}{}", " ".repeat(padding), line));
-                    }
+                    },
                 }
             }
         }
@@ -385,10 +368,7 @@ pub fn place(
 
     // Handle empty content
     if content_height == 0 {
-        return (0..target_height)
-            .map(|_| " ".repeat(target_width))
-            .collect::<Vec<_>>()
-            .join("\n");
+        return (0..target_height).map(|_| " ".repeat(target_width)).collect::<Vec<_>>().join("\n");
     }
 
     // Calculate vertical padding
@@ -401,7 +381,7 @@ pub fn place(
             Position::Center => {
                 let top = v_padding / 2;
                 (top, v_padding - top)
-            }
+            },
             Position::Bottom => (v_padding, 0),
         }
     };
@@ -416,7 +396,7 @@ pub fn place(
             Position::Center => {
                 let left = h_padding / 2;
                 (left, h_padding - left)
-            }
+            },
             Position::Bottom => (h_padding, 0), // Right align
         }
     };
@@ -436,12 +416,7 @@ pub fn place(
         }
         let line_width = width(line);
         let line_right_pad = content_width - line_width + right_pad;
-        result.push(format!(
-            "{}{}{}",
-            " ".repeat(left_pad),
-            line,
-            " ".repeat(line_right_pad)
-        ));
+        result.push(format!("{}{}{}", " ".repeat(left_pad), line, " ".repeat(line_right_pad)));
     }
 
     // Bottom padding
@@ -460,11 +435,7 @@ pub fn place(
 /// Place a string horizontally within a given width.
 pub fn place_horizontal(target_width: usize, pos: Position, content: &str) -> String {
     let (_, content_height) = size(content);
-    let target_height = if content_height == 0 {
-        1
-    } else {
-        content_height
-    };
+    let target_height = if content_height == 0 { 1 } else { content_height };
     place(target_width, target_height, pos, Position::Top, content)
 }
 
@@ -494,10 +465,7 @@ mod tests {
         assert_eq!(strip_ansi("\x1b[1;32mbold green\x1b[0m"), "bold green");
 
         // OSC 8 hyperlinks (BEL terminated)
-        assert_eq!(
-            strip_ansi("\x1b]8;;https://example.com\x07link text\x1b]8;;\x07"),
-            "link text"
-        );
+        assert_eq!(strip_ansi("\x1b]8;;https://example.com\x07link text\x1b]8;;\x07"), "link text");
 
         // Mixed CSI and OSC
         assert_eq!(
