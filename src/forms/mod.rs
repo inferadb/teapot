@@ -37,9 +37,9 @@ mod validation;
 
 // Re-export field builders
 pub use field::{
-    ConfirmField, FilePickerField, InputField, MultiSelectField, NoteField, SelectField,
+    ConfirmField, Field, FieldKind, FieldValue, FilePickerField, InputField, MultiSelectField,
+    Note, NoteField, SelectField,
 };
-pub use field::{Field, FieldKind, FieldValue, Note};
 pub use form::{Form, FormLayout, FormMsg, FormResults};
 pub use group::Group;
 pub use validation::{Validator, ValidatorFn};
