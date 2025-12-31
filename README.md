@@ -15,6 +15,14 @@
 - **Form System** - Declarative form building with validation
 - **CI-Friendly** - Automatic non-interactive mode detection
 
+## Installation
+
+Run the following Cargo command in your project directory:
+
+```bash
+cargo add ferment-tui
+```
+
 ## Quick Start
 
 ```rust
