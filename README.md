@@ -416,13 +416,13 @@ let box_style = Style::new()
 Compose blocks horizontally or vertically:
 
 ```rust
-use ferment::style::{join_horizontal, join_vertical, place, Position};
+use ferment::style::{join_horizontal_with, join_vertical_with, place, Position};
 
 // Side-by-side blocks (aligned at top)
-let combined = join_horizontal(Position::Top, &[left_block, right_block]);
+let combined = join_horizontal_with(Position::Top, &[left_block, right_block]);
 
 // Stacked blocks (centered horizontally)
-let stacked = join_vertical(Position::Center, &[header, content, footer]);
+let stacked = join_vertical_with(Position::Center, &[header, content, footer]);
 
 // Position content in a box
 let centered = place(80, 24, Position::Center, Position::Center, "Centered!");
