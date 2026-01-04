@@ -13,7 +13,7 @@ categories = ["command-line-interface", "gui"]
 
 [dependencies]
 # Terminal backend
-crossterm = "0.28"
+crossterm = "0.29"
 
 # Unicode handling
 unicode-width = "0.2"
