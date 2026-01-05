@@ -4,9 +4,8 @@
     <p>A Rust Terminal UI framework inspired by Bubble Tea</p>
 </div>
 
-<br />
-
-## Overview
+> [!IMPORTANT]
+> Under active development. Not production-ready.
 
 `teapot` provides a functional, declarative approach to building terminal user interfaces:
 
