@@ -26,6 +26,6 @@ body:
     attributes:
       label: Environment
       description: "Ferment version, Rust version, OS, terminal (if relevant)."
-      placeholder: "ferment 0.1.0, Rust 1.88, macOS, iTerm2"
+      placeholder: "ferment 0.1.0, Rust 1.92, macOS, iTerm2"
     validations:
       required: false

@@ -4,7 +4,7 @@
 Teapot (package name: `teapot`) is a Rust-native terminal UI framework following The Elm Architecture, inspired by Go's Bubble Tea library. It provides a functional, declarative approach to building terminal user interfaces.
 
 ## Tech Stack
-- **Language**: Rust (Edition 2021, MSRV 1.88)
+- **Language**: Rust (Edition 2021, MSRV 1.92)
 - **Terminal Backend**: crossterm 0.29
 - **Unicode Handling**: unicode-width, unicode-segmentation
 - **Testing**: tokio (for async tests)

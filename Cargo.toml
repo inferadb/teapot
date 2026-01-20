@@ -1,8 +1,8 @@
 [package]
 name = "teapot"
 version = "0.1.0-alpha.1"
-edition = "2021"
-rust-version = "1.88"
+edition = "2024"
+rust-version = "1.92"
 authors = ["InferaDB Team"]
 description = "A Rust-native terminal UI framework following the Elm Architecture, inspired by Bubble Tea"
 license = "MIT OR Apache-2.0"
