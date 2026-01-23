@@ -342,11 +342,11 @@ impl Model for FilePicker {
                 self.refresh_entries();
             },
             FilePickerMsg::Submit => {
-                if let Some(entry) = self.entries.get(self.cursor) {
-                    if self.dirs_only || !entry.is_dir {
-                        self.selected = Some(entry.path.clone());
-                        self.submitted = true;
-                    }
+                if let Some(entry) = self.entries.get(self.cursor)
+                    && (self.dirs_only || !entry.is_dir)
+                {
+                    self.selected = Some(entry.path.clone());
+                    self.submitted = true;
                 }
             },
             FilePickerMsg::Cancel => {
@@ -511,11 +511,12 @@ impl Accessible for FilePicker {
             return Some(FilePickerMsg::Cancel);
         }
 
-        if let Ok(num) = trimmed.parse::<usize>() {
-            if num > 0 && num <= self.entries.len() {
-                // Select and enter
-                return Some(FilePickerMsg::Enter);
-            }
+        if let Ok(num) = trimmed.parse::<usize>()
+            && num > 0
+            && num <= self.entries.len()
+        {
+            // Select and enter
+            return Some(FilePickerMsg::Enter);
         }
 
         None
@@ -541,12 +542,13 @@ impl FilePicker {
             return true;
         }
 
-        if let Ok(num) = trimmed.parse::<usize>() {
-            if num > 0 && num <= self.entries.len() {
-                self.cursor = num - 1;
-                self.enter();
-                return self.submitted;
-            }
+        if let Ok(num) = trimmed.parse::<usize>()
+            && num > 0
+            && num <= self.entries.len()
+        {
+            self.cursor = num - 1;
+            self.enter();
+            return self.submitted;
         }
 
         false

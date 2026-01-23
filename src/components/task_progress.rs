@@ -545,11 +545,11 @@ impl TaskProgressView {
 
     /// Poll for worker result.
     fn poll_worker_result(&mut self) -> Option<WorkerResult> {
-        if let Some(ref handle) = self.worker {
-            if let Some(result) = handle.try_recv() {
-                self.worker = None;
-                return Some(result);
-            }
+        if let Some(ref handle) = self.worker
+            && let Some(result) = handle.try_recv()
+        {
+            self.worker = None;
+            return Some(result);
         }
         None
     }

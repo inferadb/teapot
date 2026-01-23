@@ -364,10 +364,10 @@ impl Model for Form {
 
     fn handle_event(&self, event: Event) -> Option<Self::Message> {
         // Check for form-level shortcuts
-        if let Event::Key(key) = &event {
-            if key.code == KeyCode::Esc {
-                return Some(FormMsg::Cancel);
-            }
+        if let Event::Key(key) = &event
+            && key.code == KeyCode::Esc
+        {
+            return Some(FormMsg::Cancel);
         }
 
         // Pass to current group

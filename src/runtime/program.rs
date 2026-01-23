@@ -292,10 +292,10 @@ impl<M: Model> Program<M> {
         let mut active_subs: HashMap<String, ActiveSub<M::Message>> = HashMap::new();
 
         // Run init command (may schedule ticks)
-        if let Some(cmd) = self.model.init() {
-            if self.process_command_with_ticks(cmd, &mut pending_ticks)? {
-                return Ok(());
-            }
+        if let Some(cmd) = self.model.init()
+            && self.process_command_with_ticks(cmd, &mut pending_ticks)?
+        {
+            return Ok(());
         }
 
         // Initial render
@@ -335,10 +335,10 @@ impl<M: Model> Program<M> {
                     None => continue, // Message was blocked
                 };
 
-                if let Some(cmd) = self.model.update(msg) {
-                    if self.process_command_with_ticks(cmd, &mut pending_ticks)? {
-                        return Ok(());
-                    }
+                if let Some(cmd) = self.model.update(msg)
+                    && self.process_command_with_ticks(cmd, &mut pending_ticks)?
+                {
+                    return Ok(());
                 }
                 needs_sub_refresh = true;
                 self.render(&mut stdout)?;
@@ -374,10 +374,10 @@ impl<M: Model> Program<M> {
                 if let Some(msg) = self.model.handle_event(event) {
                     // Apply the message filter
                     if let Some(msg) = self.apply_filter(msg) {
-                        if let Some(cmd) = self.model.update(msg) {
-                            if self.process_command_with_ticks(cmd, &mut pending_ticks)? {
-                                return Ok(());
-                            }
+                        if let Some(cmd) = self.model.update(msg)
+                            && self.process_command_with_ticks(cmd, &mut pending_ticks)?
+                        {
+                            return Ok(());
                         }
                         // Refresh subscriptions after update
                         self.refresh_subscriptions(&mut active_subs);

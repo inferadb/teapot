@@ -367,10 +367,10 @@ impl Model for Field {
             FieldInner::FilePicker(picker) => picker.handle_event(event).map(FieldMsg::FilePicker),
             FieldInner::Note(_) => {
                 // Notes acknowledge on Enter or Space
-                if let Event::Key(key) = event {
-                    if matches!(key.code, KeyCode::Enter | KeyCode::Char(' ')) {
-                        return Some(FieldMsg::NoteAck);
-                    }
+                if let Event::Key(key) = event
+                    && matches!(key.code, KeyCode::Enter | KeyCode::Char(' '))
+                {
+                    return Some(FieldMsg::NoteAck);
                 }
                 None
             },

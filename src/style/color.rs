@@ -247,13 +247,12 @@ impl Color {
 /// This checks the `COLORFGBG` environment variable and defaults to true (dark).
 pub fn has_dark_background() -> bool {
     // Check COLORFGBG environment variable (format: "fg;bg")
-    if let Ok(val) = env::var("COLORFGBG") {
-        if let Some(bg) = val.split(';').nth(1) {
-            if let Ok(bg_num) = bg.parse::<u8>() {
-                // Light backgrounds are typically 7 (white) or 15 (bright white)
-                return bg_num != 7 && bg_num != 15;
-            }
-        }
+    if let Ok(val) = env::var("COLORFGBG")
+        && let Some(bg) = val.split(';').nth(1)
+        && let Ok(bg_num) = bg.parse::<u8>()
+    {
+        // Light backgrounds are typically 7 (white) or 15 (bright white)
+        return bg_num != 7 && bg_num != 15;
     }
 
     // Default to dark background (most common)
@@ -282,10 +281,10 @@ impl ColorProfile {
         }
 
         // Check for COLORTERM
-        if let Ok(val) = env::var("COLORTERM") {
-            if val == "truecolor" || val == "24bit" {
-                return ColorProfile::TrueColor;
-            }
+        if let Ok(val) = env::var("COLORTERM")
+            && (val == "truecolor" || val == "24bit")
+        {
+            return ColorProfile::TrueColor;
         }
 
         // Check TERM

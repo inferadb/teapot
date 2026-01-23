@@ -263,11 +263,11 @@ impl TaskList {
             output.push_str(&format!("{}{}{} {}\r\n", color, icon, reset, task.name));
 
             // Detail line (if present and task is complete or running)
-            if let Some(ref detail) = task.detail {
-                if task.state.is_terminal() || task.state == TaskState::Running {
-                    let dim = Color::BrightBlack.to_ansi_fg();
-                    output.push_str(&format!("{}  {}{}\r\n", dim, detail, reset));
-                }
+            if let Some(ref detail) = task.detail
+                && (task.state.is_terminal() || task.state == TaskState::Running)
+            {
+                let dim = Color::BrightBlack.to_ansi_fg();
+                output.push_str(&format!("{}  {}{}\r\n", dim, detail, reset));
             }
 
             // Error line (if present)

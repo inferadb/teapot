@@ -45,10 +45,10 @@ pub fn supports_color() -> bool {
     }
 
     // Check TERM variable
-    if let Ok(term) = std::env::var("TERM") {
-        if term == "dumb" {
-            return false;
-        }
+    if let Ok(term) = std::env::var("TERM")
+        && term == "dumb"
+    {
+        return false;
     }
 
     // Check COLORTERM for true color support

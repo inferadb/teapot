@@ -142,12 +142,12 @@ impl<T: Send + 'static> ManagedWorker<T> {
     /// Returns `Some(result)` if the worker completed.
     /// Automatically resets the executing state on completion.
     pub fn poll(&mut self) -> Option<T> {
-        if let Some(ref handle) = self.handle {
-            if let Some(result) = handle.try_recv() {
-                self.handle = None;
-                self.executing = false;
-                return Some(result);
-            }
+        if let Some(ref handle) = self.handle
+            && let Some(result) = handle.try_recv()
+        {
+            self.handle = None;
+            self.executing = false;
+            return Some(result);
         }
         None
     }

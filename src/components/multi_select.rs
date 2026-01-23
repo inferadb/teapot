@@ -286,15 +286,15 @@ impl<T: Clone + Send + 'static> Model for MultiSelect<T> {
         }
 
         // Validation hint
-        if let Some(min) = self.min_selections {
-            if self.selected_count() < min {
-                output.push_str(&format!(
-                    "\n{}(Select at least {}){}",
-                    Color::Yellow.to_ansi_fg(),
-                    min,
-                    "\x1b[0m"
-                ));
-            }
+        if let Some(min) = self.min_selections
+            && self.selected_count() < min
+        {
+            output.push_str(&format!(
+                "\n{}(Select at least {}){}",
+                Color::Yellow.to_ansi_fg(),
+                min,
+                "\x1b[0m"
+            ));
         }
 
         output
@@ -344,10 +344,10 @@ impl<T: Clone + Send + 'static> Accessible for MultiSelect<T> {
         );
 
         // Validation hint
-        if let Some(min) = self.min_selections {
-            if self.selected_count() < min {
-                prompt.push_str(&format!("\n(Select at least {})", min));
-            }
+        if let Some(min) = self.min_selections
+            && self.selected_count() < min
+        {
+            prompt.push_str(&format!("\n(Select at least {})", min));
         }
 
         prompt

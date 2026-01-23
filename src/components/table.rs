@@ -461,21 +461,21 @@ impl Table {
             .collect();
 
         // If we have a table width and a growth column, expand it
-        if self.width > 0 {
-            if let Some(grow_idx) = self.columns.iter().position(|c| c.grow) {
-                // Calculate current total width
-                // Each column has: space + content + space (2 chars padding per column)
-                let padding_per_col = 2;
-                let current_width: usize =
-                    widths.iter().sum::<usize>() + widths.len() * padding_per_col;
+        if self.width > 0
+            && let Some(grow_idx) = self.columns.iter().position(|c| c.grow)
+        {
+            // Calculate current total width
+            // Each column has: space + content + space (2 chars padding per column)
+            let padding_per_col = 2;
+            let current_width: usize =
+                widths.iter().sum::<usize>() + widths.len() * padding_per_col;
 
-                // Calculate remaining space
-                let remaining = self.width.saturating_sub(current_width);
+            // Calculate remaining space
+            let remaining = self.width.saturating_sub(current_width);
 
-                // Add remaining space to growth column
-                if remaining > 0 {
-                    widths[grow_idx] += remaining;
-                }
+            // Add remaining space to growth column
+            if remaining > 0 {
+                widths[grow_idx] += remaining;
             }
         }
 

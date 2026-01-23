@@ -859,10 +859,10 @@ impl Style {
         }
 
         // Apply max height
-        if let Some(max_h) = self.max_height {
-            if lines.len() > max_h {
-                lines.truncate(max_h);
-            }
+        if let Some(max_h) = self.max_height
+            && lines.len() > max_h
+        {
+            lines.truncate(max_h);
         }
 
         lines.join("\n")

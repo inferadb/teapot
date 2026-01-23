@@ -332,10 +332,10 @@ impl TextArea {
     /// Insert a newline at the cursor position.
     fn insert_newline(&mut self) {
         // Check max lines limit
-        if let Some(max) = self.max_lines {
-            if self.lines.len() >= max {
-                return;
-            }
+        if let Some(max) = self.max_lines
+            && self.lines.len() >= max
+        {
+            return;
         }
 
         let byte_offset = self.col_to_byte_offset(self.current_line(), self.cursor.col);

@@ -71,10 +71,11 @@ impl AccessibleInput {
         }
 
         // Try parsing as number
-        if let Ok(n) = trimmed.parse::<usize>() {
-            if n >= 1 && n <= max {
-                return AccessibleInput::Selection(n);
-            }
+        if let Ok(n) = trimmed.parse::<usize>()
+            && n >= 1
+            && n <= max
+        {
+            return AccessibleInput::Selection(n);
         }
 
         // Invalid input - return empty to re-prompt
@@ -104,10 +105,12 @@ impl AccessibleInput {
             if part.is_empty() {
                 continue;
             }
-            if let Ok(n) = part.parse::<usize>() {
-                if n >= 1 && n <= max && !selections.contains(&n) {
-                    selections.push(n);
-                }
+            if let Ok(n) = part.parse::<usize>()
+                && n >= 1
+                && n <= max
+                && !selections.contains(&n)
+            {
+                selections.push(n);
             }
         }
 
