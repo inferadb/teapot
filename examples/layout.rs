@@ -3,8 +3,8 @@
 //! Run with: cargo run --example layout
 
 use teapot::style::{
-    BorderStyle, Color, Position, Style, join_horizontal, join_horizontal_with, join_vertical_with,
-    place, place_horizontal, place_vertical,
+    BorderStyle, Color, Position, Style, join_horizontal_with, join_vertical_with, place,
+    place_horizontal,
 };
 
 fn main() {
@@ -29,14 +29,13 @@ fn demo_dashboard() {
     println!("--- Dashboard Layout ---\n");
 
     // Create sidebar
-    let sidebar_style =
-        Style::builder().foreground(Color::Cyan).width(20).build().border(BorderStyle::Rounded);
+    let sidebar_style = Style::new().foreground(Color::Cyan).width(20).border(BorderStyle::Rounded);
 
     let sidebar_content = "Navigation\n\n• Dashboard\n• Settings\n• Profile\n• Help\n• Logout";
     let sidebar = sidebar_style.render(sidebar_content);
 
     // Create main content area
-    let main_style = Style::builder().foreground(Color::White).build().border(BorderStyle::Rounded);
+    let main_style = Style::new().foreground(Color::White).border(BorderStyle::Rounded);
 
     let main_content = "Welcome to Teapot!\n\n\
         This is the main content area.\n\
@@ -47,8 +46,7 @@ fn demo_dashboard() {
     let main_area = main_style.render(main_content);
 
     // Create stats panel
-    let stats_style =
-        Style::builder().foreground(Color::Green).width(20).build().border(BorderStyle::Single);
+    let stats_style = Style::new().foreground(Color::Green).width(20).border(BorderStyle::Single);
 
     let stats_content = "Statistics\n\n↑ 42% Traffic\n↓ 12% Errors\n→ 1.2k Users";
     let stats = stats_style.render(stats_content);
@@ -62,8 +60,7 @@ fn demo_card_grid() {
     println!("--- Card Grid ---\n");
 
     // Create cards
-    let card_style =
-        Style::builder().width(18).build().border(BorderStyle::Rounded).padding(&[0, 1]);
+    let card_style = Style::new().width(18).border(BorderStyle::Rounded).padding(&[0, 1]);
 
     let card1 = card_style.clone().fg(Color::Red).render("Error\n━━━━━━━━\n23 issues");
 
@@ -87,11 +84,10 @@ fn demo_status_bar() {
     let width = 60;
 
     // Left section: mode indicator
-    let mode = Style::builder()
+    let mode = Style::new()
         .background(Color::Blue)
         .foreground(Color::White)
         .bold(true)
-        .build()
         .padding(&[0, 1])
         .render(" NORMAL ");
 
@@ -99,10 +95,9 @@ fn demo_status_bar() {
     let filename = "src/main.rs [+]";
 
     // Right section: position
-    let position = Style::builder()
+    let position = Style::new()
         .background(Color::BrightBlack)
         .foreground(Color::White)
-        .build()
         .padding(&[0, 1])
         .render(" Ln 42, Col 15 ");
 
@@ -116,7 +111,7 @@ fn demo_status_bar() {
     let status_bar = format!("{}{}{}", mode, centered_filename, position);
 
     // Add a border around it
-    let bar_style = Style::builder().width(width).build().border(BorderStyle::Single);
+    let bar_style = Style::new().width(width).border(BorderStyle::Single);
     println!("{}\n", bar_style.render(&status_bar));
 }
 
@@ -124,18 +119,17 @@ fn demo_dialog() {
     println!("--- Dialog Box ---\n");
 
     // Dialog content
-    let title = Style::builder().bold(true).build().fg(Color::Cyan).render("Confirm Action");
+    let title = Style::new().bold(true).fg(Color::Cyan).render("Confirm Action");
 
     let message = "Are you sure you want to delete\nthis file? This cannot be undone.";
 
     let buttons = {
         let cancel = Style::new().border(BorderStyle::Rounded).padding(&[0, 2]).render("Cancel");
 
-        let confirm = Style::builder()
+        let confirm = Style::new()
             .background(Color::Red)
             .foreground(Color::White)
             .bold(true)
-            .build()
             .border(BorderStyle::Rounded)
             .padding(&[0, 2])
             .render("Delete");
@@ -155,46 +149,4 @@ fn demo_dialog() {
     let dialog = Style::new().border(BorderStyle::Double).fg(Color::White).render(&centered);
 
     println!("{}\n", dialog);
-}
-
-#[allow(dead_code)]
-fn demo_alignment_options() {
-    println!("--- Alignment Options ---\n");
-
-    let box_content = "Content";
-
-    // Vertical alignments
-    println!("Vertical alignment in 40x5 box:");
-
-    let top = place(40, 5, Position::Center, Position::Top, box_content);
-    let middle = place(40, 5, Position::Center, Position::Center, box_content);
-    let bottom = place(40, 5, Position::Center, Position::Bottom, box_content);
-
-    let top_box = Style::new().border(BorderStyle::Single).render(&top);
-    let mid_box = Style::new().border(BorderStyle::Single).render(&middle);
-    let bot_box = Style::new().border(BorderStyle::Single).render(&bottom);
-
-    let aligned = join_horizontal(&[&top_box, &mid_box, &bot_box]);
-    println!("{}\n", aligned);
-
-    // Horizontal alignments
-    println!("Horizontal alignment in 30 chars:");
-
-    let left = place_horizontal(30, Position::LEFT, box_content);
-    let center = place_horizontal(30, Position::Center, box_content);
-    let right = place_horizontal(30, Position::RIGHT, box_content);
-
-    println!("|{}|", left);
-    println!("|{}|", center);
-    println!("|{}|", right);
-    println!();
-
-    // Using place_vertical
-    println!("Vertical placement:");
-    let v_top = place_vertical(5, Position::Top, "^");
-    let v_mid = place_vertical(5, Position::Center, "●");
-    let v_bot = place_vertical(5, Position::Bottom, "v");
-
-    let v_aligned = join_horizontal(&[&v_top, &v_mid, &v_bot]);
-    println!("{}\n", v_aligned);
 }

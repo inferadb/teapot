@@ -385,15 +385,14 @@ Styling system inspired by [Lip Gloss](https://github.com/charmbracelet/lipgloss
 ### Basic Styling
 
 ```rust
-use teapot::style::{Style, Color, Border};
+use teapot::style::{Style, Color, BorderStyle};
 
-let styled = Style::builder()
+let styled = Style::new()
     .foreground(Color::Cyan)
     .background(Color::Black)
     .bold(true)
     .italic(true)
-    .build()
-    .border(Border::Rounded)
+    .border(BorderStyle::Rounded)
     .render("Hello, World!");
 ```
 
@@ -422,15 +421,14 @@ Style::new().margin(&[1, 2, 3, 4]);
 Control width, height, and alignment:
 
 ```rust
-use teapot::style::{Style, Border, Position};
+use teapot::style::{Style, BorderStyle, Position};
 
-let box_style = Style::builder()
+let box_style = Style::new()
     .width(40)
     .height(10)
     .max_width(80)
-    .build()
     .align(Position::Center, Position::Center)
-    .border(Border::Rounded);
+    .border(BorderStyle::Rounded);
 ```
 
 ### Layout Utilities
@@ -465,7 +463,7 @@ let adaptive = Color::Adaptive {
 
 // Full color specification for all terminal types
 let complete = Color::Complete {
-    true_color: "#ff6600".to_string(),
+    true_color: (255, 102, 0),  // RGB tuple
     ansi256: 208,
     ansi: 3,  // Yellow fallback
 };
@@ -478,14 +476,12 @@ Build styles incrementally:
 ```rust
 use teapot::style::{Style, Color};
 
-let base = Style::builder()
+let base = Style::new()
     .foreground(Color::White)
-    .bold(true)
-    .build();
+    .bold(true);
 
-let highlight = Style::builder()
+let highlight = Style::new()
     .background(Color::Blue)
-    .build()
     .inherit(&base);       // Copy unset properties from base
 
 // Unset specific properties

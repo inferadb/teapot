@@ -16,8 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TaskProgressView::builder()` now uses bon-generated builder
   - Replace `.auto_start()` with `.auto_start(true)`
   - Replace `.external_control()` with `.external_control(true)`
-- `Style` now uses `#[derive(bon::Builder)]` - use `Style::builder()` instead of `Style::new()`
-  - Example: `Style::builder().bold(true).foreground(Color::Red).build()`
+- `Style` uses pure fluent API - use `Style::new()` with chainable setters
+  - Example: `Style::new().bold(true).foreground(Color::Red)`
 - Form field builders now use bon-generated `Field::*()` constructors:
   - `InputField::new("key")` → `Field::input().key("key").build()`
   - `SelectField::new("key")` → `Field::select().key("key").build()`
@@ -26,14 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `NoteField::new()` → `Field::note().build()`
   - `FilePickerField::new("key")` → `Field::file_picker().key("key").build()`
 
-### Deprecated
+### Removed
 
-- `InputField` struct - use `Field::input()` builder instead
-- `SelectField` struct - use `Field::select()` builder instead
-- `MultiSelectField` struct - use `Field::multi_select()` builder instead
-- `ConfirmField` struct - use `Field::confirm()` builder instead
-- `NoteField` struct - use `Field::note()` builder instead
-- `FilePickerField` struct - use `Field::file_picker()` builder instead
+- `InputField`, `SelectField`, `MultiSelectField`, `ConfirmField`, `NoteField`, `FilePickerField` structs - use `Field::*()` builders directly
 
 ## [0.1.0-alpha.1](https://github.com/inferadb/teapot/releases/tag/v0.1.0-alpha.1)
 

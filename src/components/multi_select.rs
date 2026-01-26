@@ -124,18 +124,12 @@ impl<T: Clone> MultiSelect<T> {
 
     /// Check if selection meets minimum requirement.
     pub fn meets_minimum(&self) -> bool {
-        match self.min_selections {
-            Some(min) => self.selected_count() >= min,
-            None => true,
-        }
+        self.min_selections.is_none_or(|min| self.selected_count() >= min)
     }
 
     /// Check if selection meets maximum requirement.
     fn can_select_more(&self) -> bool {
-        match self.max_selections {
-            Some(max) => self.selected_count() < max,
-            None => true,
-        }
+        self.max_selections.is_none_or(|max| self.selected_count() < max)
     }
 
     /// Check if submitted.

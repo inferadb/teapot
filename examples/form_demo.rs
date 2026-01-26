@@ -1,14 +1,10 @@
-//! Form demo showcasing all field types and layouts.
+//! Form demo showcasing all field types.
 //!
 //! Run with: cargo run --example form_demo
 //!
 //! This example demonstrates:
 //! - All field types (Input, Select, MultiSelect, Confirm, Note, FilePicker)
-//! - Form layouts (Default, Stack, Columns)
-//! - Dynamic content (title_fn, description_fn)
 //! - Form results extraction
-
-use std::sync::Arc;
 
 use teapot::forms::{Field, Form, FormLayout, Group};
 
@@ -168,93 +164,5 @@ fn demo_all_field_types() -> Result<(), Box<dyn std::error::Error>> {
         },
     }
 
-    Ok(())
-}
-
-#[allow(dead_code)]
-fn demo_stacked_layout() -> Result<(), Box<dyn std::error::Error>> {
-    println!("--- Stacked Layout Demo ---\n");
-
-    let mut form = Form::new()
-        .title("Quick Survey")
-        .layout(FormLayout::Stack) // All groups visible at once
-        .group(
-            Group::new().title("Rating").field(
-                Field::select()
-                    .key("rating")
-                    .title("How would you rate our service?")
-                    .options(options(["Excellent", "Good", "Average", "Poor"]))
-                    .build(),
-            ),
-        )
-        .group(
-            Group::new().title("Feedback").field(
-                Field::input()
-                    .key("feedback")
-                    .title("Additional comments")
-                    .placeholder("Your feedback here...")
-                    .build(),
-            ),
-        );
-
-    match form.run_accessible()? {
-        Some(results) => {
-            println!("Rating: {}", results.get_string("rating").unwrap_or(""));
-            println!("Feedback: {}", results.get_string("feedback").unwrap_or(""));
-        },
-        None => println!("Cancelled"),
-    }
-
-    Ok(())
-}
-
-#[allow(dead_code)]
-fn demo_columns_layout() -> Result<(), Box<dyn std::error::Error>> {
-    println!("--- Columns Layout Demo ---\n");
-
-    let mut form = Form::new()
-        .title("Side-by-Side Form")
-        .layout(FormLayout::Columns(2)) // Two columns
-        .group(
-            Group::new()
-                .title("Left Column")
-                .field(Field::input().key("first_name").title("First Name").build())
-                .field(Field::input().key("city").title("City").build()),
-        )
-        .group(
-            Group::new()
-                .title("Right Column")
-                .field(Field::input().key("last_name").title("Last Name").build())
-                .field(Field::input().key("country").title("Country").build()),
-        );
-
-    form.run_accessible()?;
-    Ok(())
-}
-
-#[allow(dead_code)]
-fn demo_dynamic_content() -> Result<(), Box<dyn std::error::Error>> {
-    use std::sync::atomic::{AtomicUsize, Ordering};
-
-    println!("--- Dynamic Content Demo ---\n");
-
-    let attempt_count = Arc::new(AtomicUsize::new(1));
-    let attempt_clone = attempt_count.clone();
-
-    let mut form = Form::new().title("Login").group(
-        Group::new()
-            .field(
-                Field::input()
-                    .key("password")
-                    .title_fn(Arc::new(move || {
-                        format!("Password (attempt {})", attempt_clone.load(Ordering::SeqCst))
-                    }))
-                    .description_fn(Arc::new(|| "Must be at least 8 characters".to_string()))
-                    .build(),
-            )
-            .field(Field::confirm().key("remember").title("Remember me").build()),
-    );
-
-    form.run_accessible()?;
     Ok(())
 }

@@ -72,11 +72,7 @@ fn demo_adaptive_colors() {
     println!("{}", Style::new().fg(text_color).render("Primary text - adapts to background"));
     println!(
         "{}",
-        Style::builder()
-            .bold(true)
-            .build()
-            .fg(accent_color)
-            .render("Accent text - high visibility")
+        Style::new().bold(true).fg(accent_color).render("Accent text - high visibility")
     );
     println!("{}", Style::new().fg(muted_color).render("Muted text - secondary information"));
     println!();
@@ -105,22 +101,12 @@ fn demo_complete_colors() {
         ansi: 6, // Cyan fallback
     };
 
+    println!("{}", Style::new().bold(true).fg(orange).render("Orange: (255,102,0) → 208 → yellow"));
     println!(
         "{}",
-        Style::builder().bold(true).build().fg(orange).render("Orange: (255,102,0) → 208 → yellow")
+        Style::new().bold(true).fg(purple).render("Purple: (153,51,255) → 135 → magenta")
     );
-    println!(
-        "{}",
-        Style::builder()
-            .bold(true)
-            .build()
-            .fg(purple)
-            .render("Purple: (153,51,255) → 135 → magenta")
-    );
-    println!(
-        "{}",
-        Style::builder().bold(true).build().fg(teal).render("Teal: (0,168,150) → 37 → cyan")
-    );
+    println!("{}", Style::new().bold(true).fg(teal).render("Teal: (0,168,150) → 37 → cyan"));
     println!();
 }
 
@@ -159,15 +145,11 @@ fn demo_theme_system() {
 struct Theme {
     is_dark: bool,
     primary: Color,
-    #[allow(dead_code)]
-    secondary: Color,
     accent: Color,
     success: Color,
     warning: Color,
     error: Color,
     muted: Color,
-    #[allow(dead_code)]
-    background: Color,
 }
 
 impl Theme {
@@ -182,14 +164,12 @@ impl Theme {
     fn dark() -> Self {
         Self {
             is_dark: true,
-            primary: Color::Ansi256(255),    // White
-            secondary: Color::Ansi256(250),  // Light gray
-            accent: Color::Ansi256(39),      // Bright cyan
-            success: Color::Ansi256(114),    // Green
-            warning: Color::Ansi256(220),    // Yellow
-            error: Color::Ansi256(196),      // Red
-            muted: Color::Ansi256(242),      // Dark gray
-            background: Color::Ansi256(235), // Very dark gray
+            primary: Color::Ansi256(255), // White
+            accent: Color::Ansi256(39),   // Bright cyan
+            success: Color::Ansi256(114), // Green
+            warning: Color::Ansi256(220), // Yellow
+            error: Color::Ansi256(196),   // Red
+            muted: Color::Ansi256(242),   // Dark gray
         }
     }
 
@@ -197,24 +177,17 @@ impl Theme {
     fn light() -> Self {
         Self {
             is_dark: false,
-            primary: Color::Ansi256(232),    // Near black
-            secondary: Color::Ansi256(238),  // Dark gray
-            accent: Color::Ansi256(27),      // Blue
-            success: Color::Ansi256(28),     // Dark green
-            warning: Color::Ansi256(172),    // Orange
-            error: Color::Ansi256(160),      // Dark red
-            muted: Color::Ansi256(247),      // Light gray
-            background: Color::Ansi256(255), // White
+            primary: Color::Ansi256(232), // Near black
+            accent: Color::Ansi256(27),   // Blue
+            success: Color::Ansi256(28),  // Dark green
+            warning: Color::Ansi256(172), // Orange
+            error: Color::Ansi256(160),   // Dark red
+            muted: Color::Ansi256(247),   // Light gray
         }
     }
 
     fn header_style(&self) -> Style {
-        Style::builder()
-            .bold(true)
-            .build()
-            .fg(self.accent.clone())
-            .border(BorderStyle::Double)
-            .padding(&[0, 1])
+        Style::new().bold(true).fg(self.accent.clone()).border(BorderStyle::Double).padding(&[0, 1])
     }
 
     fn content_style(&self) -> Style {
@@ -222,15 +195,15 @@ impl Theme {
     }
 
     fn success_style(&self) -> Style {
-        Style::builder().bold(true).build().fg(self.success.clone())
+        Style::new().bold(true).fg(self.success.clone())
     }
 
     fn warning_style(&self) -> Style {
-        Style::builder().bold(true).build().fg(self.warning.clone())
+        Style::new().bold(true).fg(self.warning.clone())
     }
 
     fn error_style(&self) -> Style {
-        Style::builder().bold(true).build().fg(self.error.clone())
+        Style::new().bold(true).fg(self.error.clone())
     }
 
     fn muted_style(&self) -> Style {

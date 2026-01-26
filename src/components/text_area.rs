@@ -471,7 +471,7 @@ impl TextArea {
         let byte_offset = self.col_to_byte_offset(line, self.cursor.col);
         let before = &line[..byte_offset];
         let trimmed = before.trim_end();
-        let word_start_byte = trimmed.rfind(char::is_whitespace).map(|i| i + 1).unwrap_or(0);
+        let word_start_byte = trimmed.rfind(char::is_whitespace).map_or(0, |i| i + 1);
         let word_start_col = self.byte_offset_to_col(line, word_start_byte);
 
         // Remove from word_start to cursor

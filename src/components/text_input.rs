@@ -237,7 +237,7 @@ impl TextInput {
         // Find start of current/previous word
         let before = &self.value[..self.cursor];
         let trimmed = before.trim_end();
-        let word_start = trimmed.rfind(char::is_whitespace).map(|i| i + 1).unwrap_or(0);
+        let word_start = trimmed.rfind(char::is_whitespace).map_or(0, |i| i + 1);
 
         // Remove characters from word_start to cursor
         self.value = format!("{}{}", &self.value[..word_start], &self.value[self.cursor..]);

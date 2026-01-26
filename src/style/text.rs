@@ -73,31 +73,19 @@ impl Spacing {
 
 /// Text style with colors, attributes, padding, margins, borders, and dimensions.
 ///
-/// # Examples
+/// # Example
 ///
-/// Using the builder API (recommended):
+/// ```rust
+/// use teapot::style::{Style, Color, Position, BorderStyle};
 ///
-/// ```no_run
-/// use teapot::style::{Style, Color, Position};
-///
-/// let style = Style::builder()
+/// let style = Style::new()
 ///     .foreground(Color::Red)
 ///     .bold(true)
 ///     .width(20)
-///     .build();
-/// ```
-///
-/// Using the fluent API for complex operations:
-///
-/// ```no_run
-/// use teapot::style::{Style, Color, BorderStyle};
-///
-/// let style = Style::builder().build()
-///     .padding(&[1, 2])  // CSS-style shorthand
+///     .padding(&[1, 2])
 ///     .border(BorderStyle::Rounded);
 /// ```
-#[derive(Debug, Clone, Default, bon::Builder)]
-#[builder(on(Color, into))]
+#[derive(Debug, Clone, Default)]
 #[must_use = "styles do nothing unless rendered"]
 pub struct Style {
     // Colors
@@ -114,9 +102,7 @@ pub struct Style {
     strikethrough: Option<bool>,
 
     // Spacing
-    #[builder(default)]
     padding: Spacing,
-    #[builder(default)]
     margin: Spacing,
 
     // Dimensions
@@ -126,9 +112,7 @@ pub struct Style {
     max_height: Option<usize>,
 
     // Alignment
-    #[builder(default)]
     align_horizontal: Position,
-    #[builder(default)]
     align_vertical: Position,
 
     // Border
@@ -137,7 +121,6 @@ pub struct Style {
     border_background: Option<Color>,
 
     // Rendering options
-    #[builder(default)]
     inline: bool,
 }
 
@@ -150,18 +133,26 @@ impl Style {
     // ========== Colors ==========
 
     /// Set the foreground color.
-    ///
-    /// Convenience alias maintained for fluent API usage on built styles.
-    pub fn fg(mut self, color: Color) -> Self {
-        self.foreground = Some(color);
+    pub fn foreground(mut self, color: impl Into<Color>) -> Self {
+        self.foreground = Some(color.into());
+        self
+    }
+
+    /// Set the foreground color (alias for `foreground`).
+    pub fn fg(mut self, color: impl Into<Color>) -> Self {
+        self.foreground = Some(color.into());
         self
     }
 
     /// Set the background color.
-    ///
-    /// Convenience alias maintained for fluent API usage on built styles.
-    pub fn bg(mut self, color: Color) -> Self {
-        self.background = Some(color);
+    pub fn background(mut self, color: impl Into<Color>) -> Self {
+        self.background = Some(color.into());
+        self
+    }
+
+    /// Set the background color (alias for `background`).
+    pub fn bg(mut self, color: impl Into<Color>) -> Self {
+        self.background = Some(color.into());
         self
     }
 
@@ -178,6 +169,48 @@ impl Style {
     }
 
     // ========== Text Attributes ==========
+
+    /// Set bold attribute.
+    pub fn bold(mut self, value: bool) -> Self {
+        self.bold = Some(value);
+        self
+    }
+
+    /// Set dim attribute.
+    pub fn dim(mut self, value: bool) -> Self {
+        self.dim = Some(value);
+        self
+    }
+
+    /// Set italic attribute.
+    pub fn italic(mut self, value: bool) -> Self {
+        self.italic = Some(value);
+        self
+    }
+
+    /// Set underline attribute.
+    pub fn underline(mut self, value: bool) -> Self {
+        self.underline = Some(value);
+        self
+    }
+
+    /// Set blink attribute.
+    pub fn blink(mut self, value: bool) -> Self {
+        self.blink = Some(value);
+        self
+    }
+
+    /// Set reverse attribute.
+    pub fn reverse(mut self, value: bool) -> Self {
+        self.reverse = Some(value);
+        self
+    }
+
+    /// Set strikethrough attribute.
+    pub fn strikethrough(mut self, value: bool) -> Self {
+        self.strikethrough = Some(value);
+        self
+    }
 
     /// Unset bold attribute.
     pub fn unset_bold(mut self) -> Self {
@@ -339,6 +372,30 @@ impl Style {
 
     // ========== Dimensions ==========
 
+    /// Set width.
+    pub fn width(mut self, value: usize) -> Self {
+        self.width = Some(value);
+        self
+    }
+
+    /// Set height.
+    pub fn height(mut self, value: usize) -> Self {
+        self.height = Some(value);
+        self
+    }
+
+    /// Set max width.
+    pub fn max_width(mut self, value: usize) -> Self {
+        self.max_width = Some(value);
+        self
+    }
+
+    /// Set max height.
+    pub fn max_height(mut self, value: usize) -> Self {
+        self.max_height = Some(value);
+        self
+    }
+
     /// Unset width.
     pub fn unset_width(mut self) -> Self {
         self.width = None;
@@ -373,6 +430,18 @@ impl Style {
 
     // ========== Alignment ==========
 
+    /// Set horizontal alignment.
+    pub fn align_horizontal(mut self, pos: Position) -> Self {
+        self.align_horizontal = pos;
+        self
+    }
+
+    /// Set vertical alignment.
+    pub fn align_vertical(mut self, pos: Position) -> Self {
+        self.align_vertical = pos;
+        self
+    }
+
     /// Set horizontal and vertical alignment.
     pub fn align(mut self, h: Position, v: Position) -> Self {
         self.align_horizontal = h;
@@ -404,6 +473,18 @@ impl Style {
         self
     }
 
+    /// Set the border foreground color.
+    pub fn border_foreground(mut self, color: impl Into<Color>) -> Self {
+        self.border_foreground = Some(color.into());
+        self
+    }
+
+    /// Set the border background color.
+    pub fn border_background(mut self, color: impl Into<Color>) -> Self {
+        self.border_background = Some(color.into());
+        self
+    }
+
     /// Unset border.
     pub fn unset_border(mut self) -> Self {
         self.border = None;
@@ -416,6 +497,12 @@ impl Style {
     }
 
     // ========== Rendering Options ==========
+
+    /// Set inline mode.
+    pub fn inline(mut self, value: bool) -> Self {
+        self.inline = value;
+        self
+    }
 
     /// Get inline setting.
     pub fn get_inline(&self) -> bool {
@@ -869,17 +956,17 @@ pub fn colored(text: &str, color: Color) -> String {
 
 /// Create a bold string.
 pub fn bold(text: &str) -> String {
-    Style::builder().bold(true).build().render(text)
+    Style::new().bold(true).render(text)
 }
 
 /// Create a dim string.
 pub fn dim(text: &str) -> String {
-    Style::builder().dim(true).build().render(text)
+    Style::new().dim(true).render(text)
 }
 
 /// Create an underlined string.
 pub fn underline(text: &str) -> String {
-    Style::builder().underline(true).build().render(text)
+    Style::new().underline(true).render(text)
 }
 
 #[cfg(test)]
@@ -894,7 +981,7 @@ mod tests {
 
     #[test]
     fn test_bold() {
-        let result = Style::builder().bold(true).build().render("text");
+        let result = Style::new().bold(true).render("text");
         assert!(result.starts_with("\x1b[1m"));
         assert!(result.ends_with("\x1b[0m"));
     }
@@ -907,7 +994,7 @@ mod tests {
 
     #[test]
     fn test_combined() {
-        let result = Style::builder().bold(true).build().fg(Color::Green).render("text");
+        let result = Style::new().bold(true).fg(Color::Green).render("text");
         assert!(result.contains("\x1b[1m"));
         assert!(result.contains("\x1b[32m"));
     }
@@ -942,15 +1029,15 @@ mod tests {
 
     #[test]
     fn test_dimensions() {
-        let style = Style::builder().width(10).build();
+        let style = Style::new().width(10);
         let result = style.render("hi");
         assert_eq!(str_width(&result), 10);
     }
 
     #[test]
     fn test_inherit() {
-        let parent = Style::builder().foreground(Color::Red).bold(true).build();
-        let child = Style::builder().italic(true).build().inherit(&parent);
+        let parent = Style::new().foreground(Color::Red).bold(true);
+        let child = Style::new().italic(true).inherit(&parent);
 
         assert!(child.foreground.is_some());
         assert_eq!(child.bold, Some(true));
@@ -959,13 +1046,13 @@ mod tests {
 
     #[test]
     fn test_unset() {
-        let style = Style::builder().bold(true).build().unset_bold();
+        let style = Style::new().bold(true).unset_bold();
         assert!(style.bold.is_none());
     }
 
     #[test]
     fn test_alignment() {
-        let style = Style::builder().width(10).align_horizontal(Position::Center).build();
+        let style = Style::new().width(10).align_horizontal(Position::Center);
         let result = style.render("hi");
         // "hi" should be centered in 10 chars: "    hi    "
         assert!(result.starts_with("    "));
