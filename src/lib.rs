@@ -88,19 +88,22 @@
 //!
 //! The `forms` module provides declarative form building:
 //!
-//! ```rust,ignore
-//! use teapot::forms::{Form, Group, Input, Select, Confirm};
+//! ```no_run
+//! use teapot::forms::{Form, Group, Field};
 //!
 //! let form = Form::new()
 //!     .group(
 //!         Group::new()
-//!             .field(Input::new("name").title("Your name"))
-//!             .field(Select::new("color").title("Favorite color")
-//!                 .options(["Red", "Green", "Blue"]))
+//!             .field(Field::input().key("name").title("Your name").build())
+//!             .field(Field::select()
+//!                 .key("color")
+//!                 .title("Favorite color")
+//!                 .options(vec!["Red".to_string(), "Green".to_string(), "Blue".to_string()])
+//!                 .build())
 //!     )
 //!     .group(
 //!         Group::new()
-//!             .field(Confirm::new("agree").title("Do you agree?"))
+//!             .field(Field::confirm().key("agree").title("Do you agree?").build())
 //!     );
 //! ```
 //!
@@ -120,12 +123,14 @@
 //!
 //! Forms can be run in accessible mode:
 //!
-//! ```rust,ignore
+//! ```no_run
+//! use teapot::forms::{Form, Group, Field};
+//!
 //! let mut form = Form::new()
 //!     .group(Group::new()
-//!         .field(InputField::new("name").title("Your Name").build()));
+//!         .field(Field::input().key("name").title("Your Name").build()));
 //!
-//! if let Some(results) = form.run_accessible()? {
+//! if let Some(results) = form.run_accessible().unwrap() {
 //!     println!("Name: {}", results.get_string("name").unwrap_or(""));
 //! }
 //! ```

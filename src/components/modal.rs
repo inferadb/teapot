@@ -5,7 +5,7 @@
 //!
 //! # Example
 //!
-//! ```rust,ignore
+//! ```no_run
 //! use teapot::components::Modal;
 //!
 //! let modal = Modal::new(60, 10)
@@ -14,6 +14,7 @@
 //!     .footer_hint("esc", "close");
 //!
 //! // Render the modal centered on a terminal of given size
+//! let background_content = String::new();
 //! let output = modal.render_overlay(80, 24, &background_content);
 //! ```
 

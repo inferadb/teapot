@@ -195,7 +195,9 @@ impl TextArea {
     ///
     /// # Example
     ///
-    /// ```rust,ignore
+    /// ```no_run
+    /// use teapot::components::TextArea;
+    ///
     /// let textarea = TextArea::new()
     ///     .editor("code --wait")  // Use VS Code
     ///     .editor_extension("md"); // Use markdown extension
@@ -211,7 +213,9 @@ impl TextArea {
     ///
     /// # Example
     ///
-    /// ```rust,ignore
+    /// ```no_run
+    /// use teapot::components::TextArea;
+    ///
     /// let textarea = TextArea::new()
     ///     .editor_extension("rs"); // For Rust code
     /// ```

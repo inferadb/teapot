@@ -5,8 +5,8 @@
 //!
 //! # Example
 //!
-//! ```rust,ignore
-//! use teapot::components::{TaskList, TaskItem, TaskState};
+//! ```no_run
+//! use teapot::components::TaskList;
 //!
 //! let mut list = TaskList::new()
 //!     .add_task("Clone repository")
@@ -17,7 +17,7 @@
 //! list.start_task(0);
 //!
 //! // Complete it with a detail
-//! list.complete_task(0, Some("/path/to/repo"));
+//! list.complete_task(0, Some("/path/to/repo".to_string()));
 //! ```
 
 use std::time::{Duration, Instant};

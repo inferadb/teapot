@@ -8,10 +8,9 @@
 //! - Dynamic content (title_fn, description_fn)
 //! - Form results extraction
 
-use teapot::forms::{
-    ConfirmField, FilePickerField, Form, FormLayout, Group, InputField, MultiSelectField,
-    NoteField, SelectField,
-};
+use std::sync::Arc;
+
+use teapot::forms::{Field, Form, FormLayout, Group};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n=== Teapot Form Demo ===\n");
@@ -20,6 +19,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     demo_all_field_types()?;
 
     Ok(())
+}
+
+/// Helper to convert string slices to Vec<String> for bon builder options.
+fn options<const N: usize>(items: [&str; N]) -> Vec<String> {
+    items.into_iter().map(String::from).collect()
 }
 
 fn demo_all_field_types() -> Result<(), Box<dyn std::error::Error>> {
@@ -34,23 +38,26 @@ fn demo_all_field_types() -> Result<(), Box<dyn std::error::Error>> {
                 .title("Personal Information")
                 .description("Tell us about yourself")
                 .field(
-                    InputField::new("name")
+                    Field::input()
+                        .key("name")
                         .title("Full Name")
                         .placeholder("John Doe")
                         .description("Your legal name as it appears on documents")
-                        .required()
+                        .required(true)
                         .build(),
                 )
                 .field(
-                    InputField::new("email")
+                    Field::input()
+                        .key("email")
                         .title("Email Address")
                         .placeholder("john@example.com")
                         .description("We'll send confirmation here")
-                        .required()
+                        .required(true)
                         .build(),
                 )
                 .field(
-                    InputField::new("phone")
+                    Field::input()
+                        .key("phone")
                         .title("Phone Number")
                         .placeholder("+1 (555) 123-4567")
                         .description("Optional - for account recovery")
@@ -62,29 +69,32 @@ fn demo_all_field_types() -> Result<(), Box<dyn std::error::Error>> {
                 .title("Preferences")
                 .description("Customize your experience")
                 .field(
-                    SelectField::new("theme")
+                    Field::select()
+                        .key("theme")
                         .title("Color Theme")
                         .description("Choose your preferred appearance")
-                        .options(["Light", "Dark", "System Default", "High Contrast"])
+                        .options(options(["Light", "Dark", "System Default", "High Contrast"]))
                         .build(),
                 )
                 .field(
-                    SelectField::new("language")
+                    Field::select()
+                        .key("language")
                         .title("Language")
-                        .options(["English", "Spanish", "French", "German", "Japanese"])
+                        .options(options(["English", "Spanish", "French", "German", "Japanese"]))
                         .build(),
                 )
                 .field(
-                    MultiSelectField::new("notifications")
+                    Field::multi_select()
+                        .key("notifications")
                         .title("Notification Preferences")
                         .description("Select all that apply (1-3 options)")
-                        .options([
+                        .options(options([
                             "Email updates",
                             "SMS alerts",
                             "Push notifications",
                             "Weekly digest",
                             "Marketing emails",
-                        ])
+                        ]))
                         .min(1)
                         .max(3)
                         .build(),
@@ -94,33 +104,37 @@ fn demo_all_field_types() -> Result<(), Box<dyn std::error::Error>> {
             Group::new()
                 .title("Configuration")
                 .field(
-                    FilePickerField::new("config_file")
+                    Field::file_picker()
+                        .key("config_file")
                         .title("Configuration File")
                         .description("Select your config file (optional)")
-                        .extensions(["toml", "yaml", "json", "ini"])
+                        .extensions(options(["toml", "yaml", "json", "ini"]))
                         .build(),
                 )
                 .field(
-                    NoteField::new(
-                        "Your configuration will be validated after selection.\n\
-                         Supported formats: TOML, YAML, JSON, INI",
-                    )
-                    .title("Note")
-                    .build(),
+                    Field::note()
+                        .content(
+                            "Your configuration will be validated after selection.\n\
+                             Supported formats: TOML, YAML, JSON, INI",
+                        )
+                        .title("Note")
+                        .build(),
                 ),
         )
         .group(
             Group::new()
                 .title("Confirmation")
                 .field(
-                    ConfirmField::new("terms")
+                    Field::confirm()
+                        .key("terms")
                         .title("I agree to the Terms of Service")
                         .description("You must accept to continue")
                         .default(false)
                         .build(),
                 )
                 .field(
-                    ConfirmField::new("newsletter")
+                    Field::confirm()
+                        .key("newsletter")
                         .title("Subscribe to newsletter")
                         .description("Get weekly updates and tips")
                         .default(true)
@@ -166,15 +180,17 @@ fn demo_stacked_layout() -> Result<(), Box<dyn std::error::Error>> {
         .layout(FormLayout::Stack) // All groups visible at once
         .group(
             Group::new().title("Rating").field(
-                SelectField::new("rating")
+                Field::select()
+                    .key("rating")
                     .title("How would you rate our service?")
-                    .options(["Excellent", "Good", "Average", "Poor"])
+                    .options(options(["Excellent", "Good", "Average", "Poor"]))
                     .build(),
             ),
         )
         .group(
             Group::new().title("Feedback").field(
-                InputField::new("feedback")
+                Field::input()
+                    .key("feedback")
                     .title("Additional comments")
                     .placeholder("Your feedback here...")
                     .build(),
@@ -202,14 +218,14 @@ fn demo_columns_layout() -> Result<(), Box<dyn std::error::Error>> {
         .group(
             Group::new()
                 .title("Left Column")
-                .field(InputField::new("first_name").title("First Name").build())
-                .field(InputField::new("city").title("City").build()),
+                .field(Field::input().key("first_name").title("First Name").build())
+                .field(Field::input().key("city").title("City").build()),
         )
         .group(
             Group::new()
                 .title("Right Column")
-                .field(InputField::new("last_name").title("Last Name").build())
-                .field(InputField::new("country").title("Country").build()),
+                .field(Field::input().key("last_name").title("Last Name").build())
+                .field(Field::input().key("country").title("Country").build()),
         );
 
     form.run_accessible()?;
@@ -218,10 +234,7 @@ fn demo_columns_layout() -> Result<(), Box<dyn std::error::Error>> {
 
 #[allow(dead_code)]
 fn demo_dynamic_content() -> Result<(), Box<dyn std::error::Error>> {
-    use std::sync::{
-        Arc,
-        atomic::{AtomicUsize, Ordering},
-    };
+    use std::sync::atomic::{AtomicUsize, Ordering};
 
     println!("--- Dynamic Content Demo ---\n");
 
@@ -231,14 +244,15 @@ fn demo_dynamic_content() -> Result<(), Box<dyn std::error::Error>> {
     let mut form = Form::new().title("Login").group(
         Group::new()
             .field(
-                InputField::new("password")
-                    .title_fn(move || {
+                Field::input()
+                    .key("password")
+                    .title_fn(Arc::new(move || {
                         format!("Password (attempt {})", attempt_clone.load(Ordering::SeqCst))
-                    })
-                    .description_fn(|| "Must be at least 8 characters".to_string())
+                    }))
+                    .description_fn(Arc::new(|| "Must be at least 8 characters".to_string()))
                     .build(),
             )
-            .field(ConfirmField::new("remember").title("Remember me").build()),
+            .field(Field::confirm().key("remember").title("Remember me").build()),
     );
 
     form.run_accessible()?;

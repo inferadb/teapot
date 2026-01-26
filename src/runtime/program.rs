@@ -1,4 +1,10 @@
 //! Program runner that manages the event loop.
+//!
+//! # Fluent API Design
+//!
+//! [`Program`] uses fluent method chaining for configuration. This pattern was evaluated
+//! for `bon` builder macro conversion but **intentionally kept** because the Program is
+//! used directly after configuration (no intermediate builder type). See PRD.md Task 10.
 
 use std::{
     collections::HashMap,
@@ -164,21 +170,34 @@ impl<M: Model> Program<M> {
     ///
     /// # Example
     ///
-    /// ```rust,ignore
-    /// use teapot::Program;
+    /// ```no_run
+    /// use teapot::runtime::{Program, Model, Cmd};
+    /// use teapot::terminal::Event;
     ///
+    /// struct MyModel { has_unsaved_changes: bool }
+    ///
+    /// #[derive(Debug)]
+    /// enum Msg { Quit }
+    ///
+    /// impl Model for MyModel {
+    ///     type Message = Msg;
+    ///     fn init(&self) -> Option<Cmd<Self::Message>> { None }
+    ///     fn update(&mut self, _msg: Self::Message) -> Option<Cmd<Self::Message>> { None }
+    ///     fn view(&self) -> String { String::new() }
+    ///     fn handle_event(&self, _event: Event) -> Option<Self::Message> { None }
+    /// }
+    ///
+    /// let model = MyModel { has_unsaved_changes: false };
     /// Program::new(model)
     ///     .with_filter(|model, msg| {
-    ///         // Log all messages
     ///         eprintln!("Message received: {:?}", msg);
-    ///         // Block quit if unsaved changes
     ///         if matches!(msg, Msg::Quit) && model.has_unsaved_changes {
-    ///             None // Block the quit
+    ///             None
     ///         } else {
-    ///             Some(msg) // Pass through
+    ///             Some(msg)
     ///         }
     ///     })
-    ///     .run()
+    ///     .run();
     /// ```
     pub fn with_filter<F>(mut self, filter: F) -> Self
     where

@@ -4,30 +4,31 @@
 //!
 //! # Example
 //!
-//! ```rust,ignore
-//! use teapot::forms::{Form, Group, Input, Select, Confirm};
+//! ```no_run
+//! use teapot::forms::{Form, Group, Field};
+//! use teapot::runtime::Program;
 //!
 //! let form = Form::new()
 //!     .title("User Registration")
 //!     .group(
 //!         Group::new()
 //!             .title("Personal Info")
-//!             .field(Input::new("name").title("Your name").required())
-//!             .field(Input::new("email").title("Email").validate(|v| {
-//!                 if v.contains('@') { Ok(()) } else { Err("Invalid email") }
-//!             }))
+//!             .field(Field::input().key("name").title("Your name").required(true).build())
+//!             .field(Field::input().key("email").title("Email").build())
 //!     )
 //!     .group(
 //!         Group::new()
 //!             .title("Preferences")
-//!             .field(Select::new("theme").title("Theme")
-//!                 .options(["Light", "Dark", "System"]))
-//!             .field(Confirm::new("newsletter").title("Subscribe to newsletter?"))
+//!             .field(Field::select()
+//!                 .key("theme")
+//!                 .title("Theme")
+//!                 .options(vec!["Light".to_string(), "Dark".to_string(), "System".to_string()])
+//!                 .build())
+//!             .field(Field::confirm().key("newsletter").title("Subscribe to newsletter?").build())
 //!     );
 //!
-//! let results = form.run()?;
-//! let name = results.get_string("name")?;
-//! let theme = results.get_string("theme")?;
+//! // Run the form with Program
+//! Program::new(form).run();
 //! ```
 
 mod field;
@@ -36,6 +37,7 @@ mod group;
 mod validation;
 
 // Re-export field builders
+#[allow(deprecated)]
 pub use field::{
     ConfirmField, Field, FieldKind, FieldValue, FilePickerField, InputField, MultiSelectField,
     Note, NoteField, SelectField,

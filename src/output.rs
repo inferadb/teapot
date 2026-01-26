@@ -5,7 +5,7 @@
 //!
 //! # Example
 //!
-//! ```rust,ignore
+//! ```no_run
 //! use teapot::output;
 //!
 //! output::success("Operation completed");
@@ -24,7 +24,7 @@ const RESET: &str = "\x1b[0m";
 ///
 /// # Example
 ///
-/// ```rust,ignore
+/// ```no_run
 /// use teapot::output;
 /// output::success("Build completed successfully");
 /// // Output: ✓ Build completed successfully
@@ -41,7 +41,7 @@ pub fn success(message: &str) {
 ///
 /// # Example
 ///
-/// ```rust,ignore
+/// ```no_run
 /// use teapot::output;
 /// output::warning("Configuration file not found, using defaults");
 /// // Output: ⚠ Configuration file not found, using defaults
@@ -58,7 +58,7 @@ pub fn warning(message: &str) {
 ///
 /// # Example
 ///
-/// ```rust,ignore
+/// ```no_run
 /// use teapot::output;
 /// output::error("Failed to connect to server");
 /// // Output: ✗ Failed to connect to server
@@ -75,7 +75,7 @@ pub fn error(message: &str) {
 ///
 /// # Example
 ///
-/// ```rust,ignore
+/// ```no_run
 /// use teapot::output;
 /// output::info("Checking dependencies...");
 /// // Output: ○ Checking dependencies...
@@ -92,7 +92,7 @@ pub fn info(message: &str) {
 ///
 /// # Example
 ///
-/// ```rust,ignore
+/// ```no_run
 /// use teapot::output;
 /// output::kv("Version", "1.2.3");
 /// // Output: Version: 1.2.3
@@ -116,7 +116,7 @@ pub fn kv(key: &str, value: &str) {
 ///
 /// # Example
 ///
-/// ```rust,ignore
+/// ```no_run
 /// use teapot::output;
 /// output::header("Configuration");
 /// // Output: Configuration
@@ -143,7 +143,7 @@ pub fn header(title: &str) {
 ///
 /// # Example
 ///
-/// ```rust,ignore
+/// ```no_run
 /// use teapot::output;
 /// output::phase("Installing dependencies");
 /// // Output: ━━━ Installing dependencies ━━━

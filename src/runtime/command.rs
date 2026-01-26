@@ -134,7 +134,7 @@ impl<M> Cmd<M> {
     ///
     /// # Example
     ///
-    /// ```rust,ignore
+    /// ```no_run
     /// use teapot::Cmd;
     ///
     /// enum Msg { Data(String) }
@@ -164,15 +164,17 @@ impl<M> Cmd<M> {
     ///
     /// # Example
     ///
-    /// ```rust,ignore
+    /// ```no_run
     /// use teapot::Cmd;
     /// use std::process::Command;
     ///
     /// enum Msg { EditorClosed(bool) }
     ///
     /// // Open a file in the user's default editor
+    /// let mut command = Command::new("vim");
+    /// command.arg("file.txt");
     /// let cmd: Cmd<Msg> = Cmd::run_process(
-    ///     Command::new("vim").arg("file.txt"),
+    ///     command,
     ///     |result| Msg::EditorClosed(result.map(|s| s.success()).unwrap_or(false))
     /// );
     /// ```
@@ -442,14 +444,16 @@ where
 ///
 /// # Example
 ///
-/// ```rust,ignore
+/// ```no_run
 /// use teapot::cmd;
 /// use std::process::Command;
 ///
 /// enum Msg { EditorClosed(bool) }
 ///
+/// let mut command = Command::new("vim");
+/// command.arg("file.txt");
 /// let cmd: teapot::Cmd<Msg> = cmd::run_process(
-///     Command::new("vim").arg("file.txt"),
+///     command,
 ///     |result| Msg::EditorClosed(result.map(|s| s.success()).unwrap_or(false))
 /// );
 /// ```

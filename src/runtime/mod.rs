@@ -167,13 +167,27 @@ pub trait Model: Sized {
     ///
     /// # Example
     ///
-    /// ```rust,ignore
-    /// fn subscriptions(&self) -> Sub<Self::Message> {
-    ///     if self.is_loading {
-    ///         // Animate spinner while loading
-    ///         Sub::every_millis("spinner", 80, || Msg::SpinnerTick)
-    ///     } else {
-    ///         Sub::none()
+    /// ```no_run
+    /// use teapot::runtime::{Model, Sub, Cmd};
+    /// use teapot::terminal::Event;
+    ///
+    /// struct MyModel { is_loading: bool }
+    /// enum Msg { SpinnerTick }
+    ///
+    /// impl Model for MyModel {
+    ///     type Message = Msg;
+    ///
+    ///     fn init(&self) -> Option<Cmd<Self::Message>> { None }
+    ///     fn update(&mut self, _msg: Self::Message) -> Option<Cmd<Self::Message>> { None }
+    ///     fn view(&self) -> String { String::new() }
+    ///     fn handle_event(&self, _event: Event) -> Option<Self::Message> { None }
+    ///
+    ///     fn subscriptions(&self) -> Sub<Self::Message> {
+    ///         if self.is_loading {
+    ///             Sub::every_millis("spinner", 80, || Msg::SpinnerTick)
+    ///         } else {
+    ///             Sub::none()
+    ///         }
     ///     }
     /// }
     /// ```

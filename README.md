@@ -248,22 +248,25 @@ Multi-step forms with validation, inspired by [Huh](https://github.com/charmbrac
 ### Basic Form
 
 ```rust
-use teapot::forms::{Form, Group, InputField, SelectField, ConfirmField};
+use teapot::forms::{Form, Group, Field};
 
 let form = Form::new()
     .title("User Registration")
     .group(
         Group::new()
             .title("Personal Info")
-            .field(InputField::new("name").title("Your name").required().build())
-            .field(InputField::new("email").title("Email").build())
+            .field(Field::input().key("name").title("Your name").required(true).build())
+            .field(Field::input().key("email").title("Email").build())
     )
     .group(
         Group::new()
             .title("Preferences")
-            .field(SelectField::new("theme").title("Theme")
-                .options(["Light", "Dark", "System"]).build())
-            .field(ConfirmField::new("newsletter").title("Subscribe?").build())
+            .field(Field::select()
+                .key("theme")
+                .title("Theme")
+                .options(vec!["Light".into(), "Dark".into(), "System".into()])
+                .build())
+            .field(Field::confirm().key("newsletter").title("Subscribe?").build())
     );
 ```
 
@@ -287,48 +290,51 @@ let columns = Form::new().layout(FormLayout::Columns(2));
 ### All Field Types
 
 ```rust
-use teapot::forms::{
-    InputField, SelectField, MultiSelectField, ConfirmField,
-    NoteField, FilePickerField
-};
+use teapot::forms::Field;
 
 // Text input with validation
-InputField::new("email")
+Field::input()
+    .key("email")
     .title("Email Address")
     .placeholder("user@example.com")
-    .required()
+    .required(true)
     .build();
 
 // Single selection
-SelectField::new("country")
+Field::select()
+    .key("country")
     .title("Country")
-    .options(["USA", "Canada", "UK", "Germany"])
+    .options(vec!["USA".into(), "Canada".into(), "UK".into(), "Germany".into()])
     .build();
 
 // Multiple selection with constraints
-MultiSelectField::new("languages")
+Field::multi_select()
+    .key("languages")
     .title("Languages")
-    .options(["Rust", "Go", "Python", "TypeScript"])
+    .options(vec!["Rust".into(), "Go".into(), "Python".into(), "TypeScript".into()])
     .min(1)
     .max(3)
     .build();
 
 // Yes/No confirmation
-ConfirmField::new("agree")
+Field::confirm()
+    .key("agree")
     .title("Accept terms?")
     .default(false)
     .build();
 
 // Display-only note
-NoteField::new("Please review carefully before proceeding.")
+Field::note()
+    .content("Please review carefully before proceeding.")
     .title("Important")
     .build();
 
 // File/directory picker
-FilePickerField::new("config_file")
+Field::file_picker()
+    .key("config_file")
     .title("Select config file")
-    .directory("/etc")
-    .extensions(["toml", "yaml", "json"])
+    .directory(std::path::PathBuf::from("/etc"))
+    .extensions(vec!["toml".into(), "yaml".into(), "json".into()])
     .build();
 ```
 
@@ -339,13 +345,15 @@ Field titles and descriptions can update dynamically:
 ```rust
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use teapot::forms::Field;
 
 let attempt = Arc::new(AtomicUsize::new(1));
 let attempt_clone = attempt.clone();
 
-InputField::new("password")
-    .title_fn(move || format!("Password (attempt {})", attempt_clone.load(Ordering::SeqCst)))
-    .description_fn(|| "Must be at least 8 characters".to_string())
+Field::input()
+    .key("password")
+    .title_fn(Arc::new(move || format!("Password (attempt {})", attempt_clone.load(Ordering::SeqCst))))
+    .description_fn(Arc::new(|| "Must be at least 8 characters".to_string()))
     .build();
 ```
 
@@ -378,11 +386,12 @@ Styling system inspired by [Lip Gloss](https://github.com/charmbracelet/lipgloss
 ```rust
 use teapot::style::{Style, Color, Border};
 
-let styled = Style::new()
-    .fg(Color::Cyan)
-    .bg(Color::Black)
-    .bold()
-    .italic()
+let styled = Style::builder()
+    .foreground(Color::Cyan)
+    .background(Color::Black)
+    .bold(true)
+    .italic(true)
+    .build()
     .border(Border::Rounded)
     .render("Hello, World!");
 ```
@@ -412,12 +421,13 @@ Style::new().margin(&[1, 2, 3, 4]);
 Control width, height, and alignment:
 
 ```rust
-use teapot::style::{Style, Position};
+use teapot::style::{Style, Border, Position};
 
-let box_style = Style::new()
+let box_style = Style::builder()
     .width(40)
     .height(10)
     .max_width(80)
+    .build()
     .align(Position::Center, Position::Center)
     .border(Border::Rounded);
 ```
@@ -465,18 +475,20 @@ let complete = Color::Complete {
 Build styles incrementally:
 
 ```rust
-use teapot::style::Style;
+use teapot::style::{Style, Color};
 
-let base = Style::new()
-    .fg(Color::White)
-    .bold();
+let base = Style::builder()
+    .foreground(Color::White)
+    .bold(true)
+    .build();
 
-let highlight = Style::new()
-    .inherit(&base)       // Copy unset properties from base
-    .bg(Color::Blue);
+let highlight = Style::builder()
+    .background(Color::Blue)
+    .build()
+    .inherit(&base);       // Copy unset properties from base
 
 // Unset specific properties
-let plain = highlight.unset_bold().unset_bg();
+let plain = highlight.unset_bold().unset_background();
 ```
 
 ## Program Configuration
@@ -548,15 +560,20 @@ Spawn external processes with terminal teardown/restore:
 use teapot::Cmd;
 use std::process::Command;
 
-let mut cmd = Command::new("vim");
-cmd.arg("file.txt");
+enum Msg {
+    EditorClosed(bool),
+    EditorFailed,
+}
 
-Cmd::run_process(cmd, |result| {
+let mut command = Command::new("vim");
+command.arg("file.txt");
+
+let cmd: Cmd<Msg> = Cmd::run_process(command, |result| {
     match result {
         Ok(status) => Msg::EditorClosed(status.success()),
         Err(_) => Msg::EditorFailed,
     }
-})
+});
 ```
 
 ## Architecture
@@ -626,16 +643,19 @@ ACCESSIBLE=1 ./my-app
 Use `Form::run_accessible()` for a fully accessible form experience:
 
 ```rust
-use teapot::forms::{Form, Group, InputField, SelectField, ConfirmField};
+use teapot::forms::{Form, Group, Field};
 
 let mut form = Form::new()
     .title("User Survey")
     .group(
         Group::new()
-            .field(InputField::new("name").title("Your name").build())
-            .field(SelectField::new("color").title("Favorite color")
-                .options(["Red", "Green", "Blue"]).build())
-            .field(ConfirmField::new("subscribe").title("Subscribe to newsletter?").build())
+            .field(Field::input().key("name").title("Your name").build())
+            .field(Field::select()
+                .key("color")
+                .title("Favorite color")
+                .options(vec!["Red".into(), "Green".into(), "Blue".into()])
+                .build())
+            .field(Field::confirm().key("subscribe").title("Subscribe to newsletter?").build())
     );
 
 // Run in accessible mode (line-based prompts)

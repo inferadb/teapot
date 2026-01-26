@@ -34,10 +34,14 @@ fn main() {
 fn demo_basic_styling() {
     println!("--- Basic Styling ---\n");
 
-    let bold = Style::new().bold(true).render("Bold text");
-    let italic = Style::new().italic(true).render("Italic text");
-    let underline = Style::new().underline(true).render("Underlined");
-    let colored = Style::new().fg(Color::Cyan).bg(Color::Black).render("Cyan on black");
+    let bold = Style::builder().bold(true).build().render("Bold text");
+    let italic = Style::builder().italic(true).build().render("Italic text");
+    let underline = Style::builder().underline(true).build().render("Underlined");
+    let colored = Style::builder()
+        .foreground(Color::Cyan)
+        .background(Color::Black)
+        .build()
+        .render("Cyan on black");
 
     println!("{}", bold);
     println!("{}", italic);
@@ -50,14 +54,22 @@ fn demo_css_shorthand() {
     println!("--- CSS Shorthand ---\n");
 
     // Padding examples
-    let p1 = Style::new().padding(&[1]).bg(Color::Blue).render("Padding: 1 all sides");
+    let p1 = Style::builder()
+        .background(Color::Blue)
+        .build()
+        .padding(&[1])
+        .render("Padding: 1 all sides");
 
-    let p2 =
-        Style::new().padding(&[0, 2]).bg(Color::Green).render("Padding: 0 vertical, 2 horizontal");
+    let p2 = Style::builder()
+        .background(Color::Green)
+        .build()
+        .padding(&[0, 2])
+        .render("Padding: 0 vertical, 2 horizontal");
 
-    let p3 = Style::new()
+    let p3 = Style::builder()
+        .background(Color::Magenta)
+        .build()
         .padding(&[1, 2, 1, 2])
-        .bg(Color::Magenta)
         .render("Padding: 1 top, 2 right, 1 bottom, 2 left");
 
     println!("{}\n", p1);
@@ -87,14 +99,26 @@ fn demo_layout() {
     println!("--- Layout Utilities ---\n");
 
     // Create some boxes
-    let box1 =
-        Style::new().border(BorderStyle::Rounded).padding(&[0, 1]).fg(Color::Red).render("Box 1");
+    let box1 = Style::builder()
+        .foreground(Color::Red)
+        .build()
+        .border(BorderStyle::Rounded)
+        .padding(&[0, 1])
+        .render("Box 1");
 
-    let box2 =
-        Style::new().border(BorderStyle::Rounded).padding(&[0, 1]).fg(Color::Green).render("Box 2");
+    let box2 = Style::builder()
+        .foreground(Color::Green)
+        .build()
+        .border(BorderStyle::Rounded)
+        .padding(&[0, 1])
+        .render("Box 2");
 
-    let box3 =
-        Style::new().border(BorderStyle::Rounded).padding(&[0, 1]).fg(Color::Blue).render("Box 3");
+    let box3 = Style::builder()
+        .foreground(Color::Blue)
+        .build()
+        .border(BorderStyle::Rounded)
+        .padding(&[0, 1])
+        .render("Box 3");
 
     // Horizontal join (default alignment)
     println!("Horizontal join:");
@@ -153,7 +177,7 @@ fn demo_adaptive_colors() {
         ansi: 3, // Yellow fallback for 16-color terminals
     };
 
-    let orange = Style::new().fg(complete).bold(true).render("Orange text");
+    let orange = Style::builder().bold(true).build().fg(complete).render("Orange text");
     println!("{}\n", orange);
 }
 
@@ -161,7 +185,7 @@ fn demo_inheritance() {
     println!("--- Style Inheritance ---\n");
 
     // Base style
-    let base = Style::new().fg(Color::White).bold(true);
+    let base = Style::builder().foreground(Color::White).bold(true).build();
 
     // Derived styles
     let error = Style::new().inherit(&base).fg(Color::Red);

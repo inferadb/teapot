@@ -12,6 +12,9 @@ keywords = ["tui", "terminal", "cli", "teapot", "elm"]
 categories = ["command-line-interface", "gui"]
 
 [dependencies]
+# Builder pattern macros
+bon = "3.8"
+
 # Terminal backend
 crossterm = "0.29"
 

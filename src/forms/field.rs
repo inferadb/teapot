@@ -155,6 +155,273 @@ impl Field {
     }
 }
 
+// ============================================================================
+// Field Builders (bon-generated)
+// ============================================================================
+
+#[bon::bon]
+impl Field {
+    /// Create an input field using the builder pattern.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// use teapot::forms::Field;
+    ///
+    /// let field = Field::input()
+    ///     .key("username")
+    ///     .title("Username")
+    ///     .placeholder("Enter your username")
+    ///     .required(true)
+    ///     .build();
+    /// ```
+    #[builder(on(String, into), finish_fn = build)]
+    pub fn input(
+        key: String,
+        #[builder(default)] title: String,
+        description: Option<String>,
+        #[builder(default)] placeholder: String,
+        #[builder(default = String::new())] default_value: String,
+        #[builder(default)] required: bool,
+        #[builder(default)] hidden: bool,
+        title_fn: Option<DynamicString>,
+        description_fn: Option<DynamicString>,
+    ) -> Self {
+        let input = TextInput::new().placeholder(placeholder).value(default_value).hidden(hidden);
+
+        Field {
+            key,
+            title,
+            title_fn,
+            description,
+            description_fn,
+            required,
+            inner: FieldInner::Input(input),
+        }
+    }
+
+    /// Create a select field using the builder pattern.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// use teapot::forms::Field;
+    ///
+    /// let field = Field::select()
+    ///     .key("color")
+    ///     .title("Favorite Color")
+    ///     .options(vec!["Red".to_string(), "Green".to_string(), "Blue".to_string()])
+    ///     .build();
+    /// ```
+    #[builder(on(String, into), finish_fn = build)]
+    pub fn select(
+        key: String,
+        #[builder(default)] title: String,
+        description: Option<String>,
+        #[builder(default)] options: Vec<String>,
+        _default_index: Option<usize>,
+        title_fn: Option<DynamicString>,
+        description_fn: Option<DynamicString>,
+    ) -> Self {
+        let select = Select::new(&title).options(options);
+
+        Field {
+            key,
+            title: String::new(), // Title is in the Select component
+            title_fn,
+            description,
+            description_fn,
+            required: false,
+            inner: FieldInner::Select(select),
+        }
+    }
+
+    /// Create a multi-select field using the builder pattern.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// use teapot::forms::Field;
+    ///
+    /// let field = Field::multi_select()
+    ///     .key("languages")
+    ///     .title("Programming Languages")
+    ///     .options(vec!["Rust".to_string(), "Python".to_string(), "TypeScript".to_string()])
+    ///     .min(1)
+    ///     .max(3)
+    ///     .build();
+    /// ```
+    #[builder(on(String, into), finish_fn = build)]
+    pub fn multi_select(
+        key: String,
+        #[builder(default)] title: String,
+        description: Option<String>,
+        #[builder(default)] options: Vec<String>,
+        min: Option<usize>,
+        max: Option<usize>,
+        title_fn: Option<DynamicString>,
+        description_fn: Option<DynamicString>,
+    ) -> Self {
+        let mut select = MultiSelect::new(&title).options(options);
+
+        if let Some(min_val) = min {
+            select = select.min(min_val);
+        }
+        if let Some(max_val) = max {
+            select = select.max(max_val);
+        }
+
+        Field {
+            key,
+            title: String::new(), // Title is in the MultiSelect component
+            title_fn,
+            description,
+            description_fn,
+            required: min.is_some_and(|m| m > 0),
+            inner: FieldInner::MultiSelect(select),
+        }
+    }
+
+    /// Create a confirm field using the bon builder pattern.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use teapot::forms::Field;
+    ///
+    /// let field = Field::confirm()
+    ///     .key("agree")
+    ///     .title("Do you agree to the terms?")
+    ///     .default(false)
+    ///     .build();
+    /// ```
+    #[builder(on(String, into), finish_fn = build)]
+    pub fn confirm(
+        key: String,
+        #[builder(default)] title: String,
+        description: Option<String>,
+        #[builder(default)] default: bool,
+        title_fn: Option<DynamicString>,
+        description_fn: Option<DynamicString>,
+    ) -> Self {
+        let confirm = Confirm::new(&title).default(default);
+
+        Field {
+            key,
+            title: String::new(), // Title is in the Confirm component
+            title_fn,
+            description,
+            description_fn,
+            required: false,
+            inner: FieldInner::Confirm(confirm),
+        }
+    }
+
+    /// Create a note field using the bon builder pattern.
+    ///
+    /// Notes are display-only fields that show information to the user.
+    /// They don't have a key since they don't produce values; a placeholder
+    /// key will be generated automatically unless `key` is provided.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use teapot::forms::Field;
+    ///
+    /// let field = Field::note()
+    ///     .content("This is important information")
+    ///     .title("Notice")
+    ///     .build();
+    /// ```
+    #[builder(on(String, into), finish_fn = build)]
+    pub fn note(
+        content: String,
+        #[builder(default)] title: String,
+        description: Option<String>,
+        key: Option<String>,
+        title_fn: Option<DynamicString>,
+        description_fn: Option<DynamicString>,
+    ) -> Self {
+        let generated_key = key.unwrap_or_else(|| {
+            format!(
+                "_note_{}",
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .unwrap_or_default()
+                    .as_nanos()
+            )
+        });
+
+        Field {
+            key: generated_key,
+            title,
+            title_fn,
+            description,
+            description_fn,
+            required: false,
+            inner: FieldInner::Note(Note::new(content)),
+        }
+    }
+
+    /// Create a file picker field using the bon builder pattern.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use teapot::forms::Field;
+    ///
+    /// let field = Field::file_picker()
+    ///     .key("config")
+    ///     .title("Select Config File")
+    ///     .extensions(vec!["toml".to_string(), "yaml".to_string()])
+    ///     .build();
+    /// ```
+    #[builder(on(String, into), finish_fn = build)]
+    pub fn file_picker(
+        key: String,
+        #[builder(default)] title: String,
+        description: Option<String>,
+        directory: Option<std::path::PathBuf>,
+        #[builder(default)] show_hidden: bool,
+        #[builder(default)] dirs_only: bool,
+        #[builder(default)] files_only: bool,
+        #[builder(default)] extensions: Vec<String>,
+        #[builder(default = 10)] height: usize,
+        #[builder(default)] required: bool,
+        title_fn: Option<DynamicString>,
+        description_fn: Option<DynamicString>,
+    ) -> Self {
+        let mut picker = FilePicker::new().height(height);
+
+        if !title.is_empty() {
+            picker = picker.title(&title);
+        }
+
+        if let Some(dir) = directory {
+            picker = picker.directory(dir);
+        }
+
+        picker = picker.show_hidden(show_hidden);
+
+        if dirs_only {
+            picker = picker.dirs_only();
+        } else if files_only {
+            picker = picker.files_only();
+        }
+
+        if !extensions.is_empty() {
+            picker = picker.extensions(extensions);
+        }
+
+        Field {
+            key,
+            title: String::new(), // Title is in the FilePicker component
+            title_fn,
+            description,
+            description_fn,
+            required,
+            inner: FieldInner::FilePicker(picker),
+        }
+    }
+}
+
 /// A display-only note field.
 #[derive(Debug, Clone)]
 pub struct Note {
@@ -469,6 +736,7 @@ impl Field {
 }
 
 /// Builder for text input fields.
+#[deprecated(since = "0.2.0", note = "Use `Field::input()` builder instead")]
 pub struct InputField {
     key: String,
     title: String,
@@ -482,6 +750,7 @@ pub struct InputField {
     validators: Vec<Validator<String>>,
 }
 
+#[allow(deprecated)]
 impl Clone for InputField {
     fn clone(&self) -> Self {
         Self {
@@ -499,6 +768,7 @@ impl Clone for InputField {
     }
 }
 
+#[allow(deprecated)]
 impl std::fmt::Debug for InputField {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("InputField")
@@ -515,6 +785,7 @@ impl std::fmt::Debug for InputField {
     }
 }
 
+#[allow(deprecated)]
 impl InputField {
     /// Create a new input field.
     pub fn new(key: impl Into<String>) -> Self {
@@ -545,15 +816,17 @@ impl InputField {
     ///
     /// # Example
     ///
-    /// ```rust,ignore
+    /// ```no_run
     /// use std::sync::Arc;
     /// use std::sync::atomic::{AtomicUsize, Ordering};
+    /// use teapot::forms::Field;
     ///
     /// let counter = Arc::new(AtomicUsize::new(0));
     /// let counter_clone = counter.clone();
     ///
-    /// let field = InputField::new("name")
-    ///     .title_fn(move || format!("Name (attempt {})", counter_clone.load(Ordering::SeqCst)))
+    /// let field = Field::input()
+    ///     .key("name")
+    ///     .title_fn(Arc::new(move || format!("Name (attempt {})", counter_clone.load(Ordering::SeqCst))))
     ///     .build();
     /// ```
     pub fn title_fn<F>(mut self, f: F) -> Self
@@ -627,6 +900,7 @@ impl InputField {
 }
 
 /// Builder for select fields.
+#[deprecated(since = "0.2.0", note = "Use `Field::select()` builder instead")]
 pub struct SelectField {
     key: String,
     title: String,
@@ -637,6 +911,7 @@ pub struct SelectField {
     default: Option<usize>,
 }
 
+#[allow(deprecated)]
 impl Clone for SelectField {
     fn clone(&self) -> Self {
         Self {
@@ -651,6 +926,7 @@ impl Clone for SelectField {
     }
 }
 
+#[allow(deprecated)]
 impl std::fmt::Debug for SelectField {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("SelectField")
@@ -661,6 +937,7 @@ impl std::fmt::Debug for SelectField {
     }
 }
 
+#[allow(deprecated)]
 impl SelectField {
     /// Create a new select field.
     pub fn new(key: impl Into<String>) -> Self {
@@ -738,6 +1015,7 @@ impl SelectField {
 }
 
 /// Builder for multi-select fields.
+#[deprecated(since = "0.2.0", note = "Use `Field::multi_select()` builder instead")]
 pub struct MultiSelectField {
     key: String,
     title: String,
@@ -749,6 +1027,7 @@ pub struct MultiSelectField {
     max: Option<usize>,
 }
 
+#[allow(deprecated)]
 impl Clone for MultiSelectField {
     fn clone(&self) -> Self {
         Self {
@@ -764,6 +1043,7 @@ impl Clone for MultiSelectField {
     }
 }
 
+#[allow(deprecated)]
 impl std::fmt::Debug for MultiSelectField {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("MultiSelectField")
@@ -774,6 +1054,7 @@ impl std::fmt::Debug for MultiSelectField {
     }
 }
 
+#[allow(deprecated)]
 impl MultiSelectField {
     /// Create a new multi-select field.
     pub fn new(key: impl Into<String>) -> Self {
@@ -865,6 +1146,7 @@ impl MultiSelectField {
 }
 
 /// Builder for confirm fields.
+#[deprecated(since = "0.2.0", note = "Use `Field::confirm()` builder instead")]
 pub struct ConfirmField {
     key: String,
     title: String,
@@ -874,6 +1156,7 @@ pub struct ConfirmField {
     default: bool,
 }
 
+#[allow(deprecated)]
 impl Clone for ConfirmField {
     fn clone(&self) -> Self {
         Self {
@@ -887,6 +1170,7 @@ impl Clone for ConfirmField {
     }
 }
 
+#[allow(deprecated)]
 impl std::fmt::Debug for ConfirmField {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("ConfirmField")
@@ -897,6 +1181,7 @@ impl std::fmt::Debug for ConfirmField {
     }
 }
 
+#[allow(deprecated)]
 impl ConfirmField {
     /// Create a new confirm field.
     pub fn new(key: impl Into<String>) -> Self {
@@ -966,6 +1251,7 @@ impl ConfirmField {
 ///
 /// Notes display information to the user and require acknowledgment
 /// (pressing Enter) to proceed.
+#[deprecated(since = "0.2.0", note = "Use `Field::note()` builder instead")]
 pub struct NoteField {
     title: String,
     title_fn: Option<DynamicString>,
@@ -974,6 +1260,7 @@ pub struct NoteField {
     description_fn: Option<DynamicString>,
 }
 
+#[allow(deprecated)]
 impl Clone for NoteField {
     fn clone(&self) -> Self {
         Self {
@@ -986,6 +1273,7 @@ impl Clone for NoteField {
     }
 }
 
+#[allow(deprecated)]
 impl std::fmt::Debug for NoteField {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("NoteField")
@@ -995,6 +1283,7 @@ impl std::fmt::Debug for NoteField {
     }
 }
 
+#[allow(deprecated)]
 impl NoteField {
     /// Create a new note field with content.
     pub fn new(content: impl Into<String>) -> Self {
@@ -1080,6 +1369,7 @@ impl NoteField {
 }
 
 /// Builder for file picker fields.
+#[deprecated(since = "0.2.0", note = "Use `Field::file_picker()` builder instead")]
 pub struct FilePickerField {
     key: String,
     title: String,
@@ -1095,6 +1385,7 @@ pub struct FilePickerField {
     required: bool,
 }
 
+#[allow(deprecated)]
 impl Clone for FilePickerField {
     fn clone(&self) -> Self {
         Self {
@@ -1114,6 +1405,7 @@ impl Clone for FilePickerField {
     }
 }
 
+#[allow(deprecated)]
 impl std::fmt::Debug for FilePickerField {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("FilePickerField")
@@ -1133,6 +1425,7 @@ impl std::fmt::Debug for FilePickerField {
     }
 }
 
+#[allow(deprecated)]
 impl FilePickerField {
     /// Create a new file picker field.
     pub fn new(key: impl Into<String>) -> Self {

@@ -1,5 +1,18 @@
 //! Reusable UI components (Bubbles equivalent).
 //!
+//! # Fluent API Design
+//!
+//! Components use fluent method chaining (e.g., `TextInput::new().placeholder("...")`).
+//! This pattern was evaluated for `bon` builder macro conversion but **intentionally kept**
+//! because:
+//!
+//! 1. **Elm Architecture idiom**: Components are configuration objects used directly, not
+//!    intermediate builders that produce a separate type
+//! 2. **No terminal `.build()` call**: Components are used immediately after configuration
+//! 3. **Natural chaining**: `Table::new().columns([...]).rows([...])` reads idiomatically
+//!
+//! See PRD.md Task 10 for the full evaluation.
+//!
 //! This module provides composable widgets that implement the Model trait:
 //!
 //! - [`Spinner`] - Animated loading indicator

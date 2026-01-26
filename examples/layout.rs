@@ -29,13 +29,14 @@ fn demo_dashboard() {
     println!("--- Dashboard Layout ---\n");
 
     // Create sidebar
-    let sidebar_style = Style::new().border(BorderStyle::Rounded).fg(Color::Cyan).width(20);
+    let sidebar_style =
+        Style::builder().foreground(Color::Cyan).width(20).build().border(BorderStyle::Rounded);
 
     let sidebar_content = "Navigation\n\n• Dashboard\n• Settings\n• Profile\n• Help\n• Logout";
     let sidebar = sidebar_style.render(sidebar_content);
 
     // Create main content area
-    let main_style = Style::new().border(BorderStyle::Rounded).fg(Color::White);
+    let main_style = Style::builder().foreground(Color::White).build().border(BorderStyle::Rounded);
 
     let main_content = "Welcome to Teapot!\n\n\
         This is the main content area.\n\
@@ -46,7 +47,8 @@ fn demo_dashboard() {
     let main_area = main_style.render(main_content);
 
     // Create stats panel
-    let stats_style = Style::new().border(BorderStyle::Single).fg(Color::Green).width(20);
+    let stats_style =
+        Style::builder().foreground(Color::Green).width(20).build().border(BorderStyle::Single);
 
     let stats_content = "Statistics\n\n↑ 42% Traffic\n↓ 12% Errors\n→ 1.2k Users";
     let stats = stats_style.render(stats_content);
@@ -60,7 +62,8 @@ fn demo_card_grid() {
     println!("--- Card Grid ---\n");
 
     // Create cards
-    let card_style = Style::new().border(BorderStyle::Rounded).padding(&[0, 1]).width(18);
+    let card_style =
+        Style::builder().width(18).build().border(BorderStyle::Rounded).padding(&[0, 1]);
 
     let card1 = card_style.clone().fg(Color::Red).render("Error\n━━━━━━━━\n23 issues");
 
@@ -84,10 +87,11 @@ fn demo_status_bar() {
     let width = 60;
 
     // Left section: mode indicator
-    let mode = Style::new()
-        .bg(Color::Blue)
-        .fg(Color::White)
+    let mode = Style::builder()
+        .background(Color::Blue)
+        .foreground(Color::White)
         .bold(true)
+        .build()
         .padding(&[0, 1])
         .render(" NORMAL ");
 
@@ -95,9 +99,10 @@ fn demo_status_bar() {
     let filename = "src/main.rs [+]";
 
     // Right section: position
-    let position = Style::new()
-        .bg(Color::BrightBlack)
-        .fg(Color::White)
+    let position = Style::builder()
+        .background(Color::BrightBlack)
+        .foreground(Color::White)
+        .build()
         .padding(&[0, 1])
         .render(" Ln 42, Col 15 ");
 
@@ -111,7 +116,7 @@ fn demo_status_bar() {
     let status_bar = format!("{}{}{}", mode, centered_filename, position);
 
     // Add a border around it
-    let bar_style = Style::new().border(BorderStyle::Single).width(width);
+    let bar_style = Style::builder().width(width).build().border(BorderStyle::Single);
     println!("{}\n", bar_style.render(&status_bar));
 }
 
@@ -119,19 +124,20 @@ fn demo_dialog() {
     println!("--- Dialog Box ---\n");
 
     // Dialog content
-    let title = Style::new().bold(true).fg(Color::Cyan).render("Confirm Action");
+    let title = Style::builder().bold(true).build().fg(Color::Cyan).render("Confirm Action");
 
     let message = "Are you sure you want to delete\nthis file? This cannot be undone.";
 
     let buttons = {
         let cancel = Style::new().border(BorderStyle::Rounded).padding(&[0, 2]).render("Cancel");
 
-        let confirm = Style::new()
+        let confirm = Style::builder()
+            .background(Color::Red)
+            .foreground(Color::White)
+            .bold(true)
+            .build()
             .border(BorderStyle::Rounded)
             .padding(&[0, 2])
-            .bg(Color::Red)
-            .fg(Color::White)
-            .bold(true)
             .render("Delete");
 
         join_horizontal_with(Position::Center, &[&cancel, &confirm])
