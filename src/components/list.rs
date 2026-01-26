@@ -52,6 +52,7 @@ pub enum ListMsg {
 
 /// A filterable, paginated list component.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct List<T> {
     title: String,
     items: Vec<(T, String)>,
@@ -300,10 +301,6 @@ impl<T: Clone> List<T> {
         if self.cursor >= self.offset + self.height {
             self.offset = self.cursor.saturating_sub(self.height - 1);
         }
-    }
-
-    fn max_offset(&self) -> usize {
-        self.filtered_indices.len().saturating_sub(self.height)
     }
 
     fn visible_range(&self) -> (usize, usize) {

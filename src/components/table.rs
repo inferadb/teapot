@@ -29,6 +29,7 @@ use crate::{
 
 /// Column alignment.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Align {
     /// Left-aligned text.
     #[default]
@@ -41,6 +42,7 @@ pub enum Align {
 
 /// Column definition for the table.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct Column {
     /// Column header text.
     pub title: String,
@@ -111,6 +113,7 @@ pub enum TableMsg {
 
 /// A scrollable table component.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct Table {
     columns: Vec<Column>,
     rows: Vec<Vec<String>>,

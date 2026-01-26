@@ -42,36 +42,6 @@ pub fn wrap_text(text: &str, width: usize) -> Vec<String> {
     lines
 }
 
-/// Truncate text to fit within a width.
-pub fn truncate_text(text: &str, max_width: usize, ellipsis: &str) -> String {
-    let text_width = measure_text(text);
-    let ellipsis_width = measure_text(ellipsis);
-
-    if text_width <= max_width {
-        return text.to_string();
-    }
-
-    if max_width <= ellipsis_width {
-        return ellipsis[..max_width.min(ellipsis.len())].to_string();
-    }
-
-    let target_width = max_width - ellipsis_width;
-    let mut result = String::new();
-    let mut current_width = 0;
-
-    for c in text.chars() {
-        let char_width = unicode_width::UnicodeWidthChar::width(c).unwrap_or(0);
-        if current_width + char_width > target_width {
-            break;
-        }
-        result.push(c);
-        current_width += char_width;
-    }
-
-    result.push_str(ellipsis);
-    result
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -87,11 +57,5 @@ mod tests {
     fn test_wrap_text() {
         let wrapped = wrap_text("hello world foo bar", 10);
         assert_eq!(wrapped, vec!["hello", "world foo", "bar"]);
-    }
-
-    #[test]
-    fn test_truncate_text() {
-        assert_eq!(truncate_text("hello world", 8, "..."), "hello...");
-        assert_eq!(truncate_text("hi", 10, "..."), "hi");
     }
 }

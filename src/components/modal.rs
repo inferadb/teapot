@@ -51,6 +51,7 @@ impl ModalBorder {
 
 /// A footer hint for the modal.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct ModalHint {
     /// The keyboard shortcut.
     pub shortcut: String,
@@ -67,6 +68,7 @@ impl ModalHint {
 
 /// A modal dialog overlay.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct Modal {
     /// Modal width.
     width: usize,
@@ -365,11 +367,8 @@ impl Modal {
                 let modal_row = row - start_row;
                 let modal_line = &modal_lines[modal_row];
 
-                // Get background line
-                let bg_line = bg_lines.get(row).copied().unwrap_or("");
-
-                // Compose: bg prefix + modal + bg suffix
-                compose_overlay_line(bg_line, modal_line, start_col, modal_width, term_width)
+                // Compose modal line centered at position
+                compose_overlay_line(modal_line, start_col, modal_width, term_width)
             } else {
                 // Pure background line
                 let bg_line = bg_lines.get(row).copied().unwrap_or("");
@@ -388,20 +387,15 @@ impl Modal {
 
 /// Compose a line with modal overlay on background.
 fn compose_overlay_line(
-    _bg_line: &str, // TODO: Could blend background with modal edges
     modal_line: &str,
     start_col: usize,
     modal_width: usize,
     term_width: usize,
 ) -> String {
-    // For simplicity, we'll extract visual portions of the background
-    // This is tricky with ANSI codes, so we'll use a simpler approach:
-    // Just take the modal line and pad it to position
-
     let reset = "\x1b[0m";
     let mut result = String::new();
 
-    // Left padding (could show background here, but ANSI makes it complex)
+    // Left padding
     result.push_str(&" ".repeat(start_col));
 
     // Modal content

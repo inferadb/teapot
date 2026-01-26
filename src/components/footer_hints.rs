@@ -39,6 +39,7 @@ pub enum FooterHintsMsg {}
 /// Renders hints in the format: `key desc  key desc  key desc`
 /// with optional scroll indicators and separator line.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct FooterHints {
     /// Keyboard shortcuts as (key, description) pairs.
     hints: Vec<(String, String)>,

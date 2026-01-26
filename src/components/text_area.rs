@@ -78,6 +78,7 @@ pub enum TextAreaMsg {
 
 /// Cursor position in the text area.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct CursorPos {
     /// Row (line number, 0-indexed).
     pub row: usize,
@@ -87,6 +88,7 @@ pub struct CursorPos {
 
 /// A multi-line text area component.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct TextArea {
     lines: Vec<String>,
     cursor: CursorPos,

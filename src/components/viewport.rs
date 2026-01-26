@@ -39,6 +39,7 @@ pub enum ViewportMsg {
 
 /// A scrollable viewport component.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct Viewport {
     content: String,
     lines: Vec<String>,

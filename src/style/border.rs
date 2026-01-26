@@ -2,6 +2,7 @@
 
 /// Border style configuration.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Border {
     /// Border style to use.
     pub style: BorderStyle,
@@ -44,6 +45,7 @@ impl Border {
 
 /// Predefined border styles.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum BorderStyle {
     /// No border.
     #[default]
@@ -206,63 +208,3 @@ const BLOCK_CHARS: BorderChars = BorderChars {
     middle_bottom: '█',
     cross: '█',
 };
-
-/// Render a string inside a box.
-pub fn boxed(content: &str, style: BorderStyle, width: usize) -> String {
-    let chars = style.chars();
-    let inner_width = width.saturating_sub(2);
-
-    let mut lines = Vec::new();
-
-    // Top border
-    lines.push(format!(
-        "{}{}{}",
-        chars.top_left,
-        chars.top.to_string().repeat(inner_width),
-        chars.top_right
-    ));
-
-    // Content lines
-    for line in content.lines() {
-        let padded = super::pad_right(line, inner_width);
-        let truncated = super::truncate(&padded, inner_width);
-        lines.push(format!("{}{}{}", chars.left, truncated, chars.right));
-    }
-
-    // Bottom border
-    lines.push(format!(
-        "{}{}{}",
-        chars.bottom_left,
-        chars.bottom.to_string().repeat(inner_width),
-        chars.bottom_right
-    ));
-
-    lines.join("\n")
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_boxed_ascii() {
-        let result = boxed("hello", BorderStyle::Ascii, 10);
-        assert!(result.contains("+--------+"));
-        assert!(result.contains("|hello   |"));
-    }
-
-    #[test]
-    fn test_boxed_single() {
-        let result = boxed("test", BorderStyle::Single, 8);
-        assert!(result.contains("┌──────┐"));
-        assert!(result.contains("│test  │"));
-        assert!(result.contains("└──────┘"));
-    }
-
-    #[test]
-    fn test_boxed_rounded() {
-        let result = boxed("hi", BorderStyle::Rounded, 6);
-        assert!(result.contains("╭────╮"));
-        assert!(result.contains("╰────╯"));
-    }
-}

@@ -56,6 +56,7 @@ pub type StepExecutor = Arc<dyn Fn() -> Result<Option<String>, String> + Send + 
 
 /// A step in the task progress.
 #[derive(Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct TaskStep {
     /// Step name displayed to user.
     pub name: String,
@@ -153,6 +154,7 @@ pub enum TaskProgressMsg {
 
 /// Configuration for footer hints.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct HintConfig {
     /// Hints shown during confirmation phase.
     pub confirming: Vec<(String, String)>,
@@ -202,6 +204,7 @@ impl std::fmt::Debug for ConfirmationConfig {
 
 /// Full configuration for task progress view.
 #[derive(Debug, Default)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct TaskProgressConfig {
     /// Whether to auto-start execution.
     pub auto_start: bool,

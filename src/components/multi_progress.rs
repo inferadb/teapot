@@ -42,6 +42,7 @@ pub enum MultiProgressMsg {
 
 /// Status of a task in the multi-progress.
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum TaskStatus {
     /// Task is in progress.
     InProgress,
@@ -53,6 +54,7 @@ pub enum TaskStatus {
 
 /// A single task within the multi-progress.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct Task {
     /// Unique identifier for the task.
     pub id: String,
@@ -91,6 +93,7 @@ impl Task {
 
 /// A multi-progress component for tracking parallel operations.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct MultiProgress {
     tasks: Vec<Task>,
     task_index: HashMap<String, usize>,
@@ -322,7 +325,7 @@ impl MultiProgress {
     /// Remove a task.
     pub fn remove_task(&mut self, id: &str) {
         if let Some(&idx) = self.task_index.get(id) {
-            self.tasks.remove(idx);
+            drop(self.tasks.remove(idx));
             self.task_index.remove(id);
             // Rebuild index
             self.task_index.clear();

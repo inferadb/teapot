@@ -96,20 +96,6 @@ impl KeyBindings {
     }
 }
 
-/// Common key bindings for navigation.
-pub fn navigation_bindings() -> KeyBindings {
-    KeyBindings::new()
-        .add(KeyCode::Up, "up")
-        .add(KeyCode::Down, "down")
-        .add(KeyCode::Enter, "select")
-        .add(KeyCode::Esc, "cancel")
-}
-
-/// Common key bindings for text input.
-pub fn text_input_bindings() -> KeyBindings {
-    KeyBindings::new().add(KeyCode::Enter, "submit").add(KeyCode::Esc, "cancel")
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

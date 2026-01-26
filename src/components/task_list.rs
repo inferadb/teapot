@@ -33,6 +33,7 @@ const SPINNER_FRAMES: &[&str] = &["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦
 
 /// State of a task.
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum TaskState {
     /// Task is waiting to start.
     Pending,
@@ -77,6 +78,7 @@ impl TaskState {
 
 /// A single task in the list.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct TaskItem {
     /// Task name/description.
     pub name: String,
@@ -110,6 +112,7 @@ pub enum TaskListMsg {
 
 /// A list of tasks with status indicators.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct TaskList {
     /// The tasks.
     tasks: Vec<TaskItem>,

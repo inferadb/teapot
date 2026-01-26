@@ -6,6 +6,7 @@ use std::env;
 
 /// A terminal color.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Color {
     /// Use the terminal's default color.
     #[default]
@@ -261,6 +262,7 @@ pub fn has_dark_background() -> bool {
 
 /// Get the terminal's color profile.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ColorProfile {
     /// No color support (1-bit).
     Ascii,

@@ -37,6 +37,7 @@ pub enum TitleBarMsg {}
 /// - Title only: `//  Title  ///////////////...`
 /// - With subtitle: `//  Title  /////...  Subtitle  //`
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct TitleBar {
     /// The main title text.
     title: String,

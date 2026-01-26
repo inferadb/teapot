@@ -69,6 +69,7 @@ pub enum StatusBadgeMsg {}
 
 /// A colored status indicator badge.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct StatusBadge {
     label: String,
     icon: Option<String>,

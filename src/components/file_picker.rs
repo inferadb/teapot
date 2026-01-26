@@ -42,6 +42,7 @@ pub enum FilePickerMsg {
 
 /// An entry in the file picker.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct FileEntry {
     /// The file/directory name.
     pub name: String,
@@ -69,6 +70,7 @@ impl FileEntry {
 
 /// A file picker component for selecting files or directories.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct FilePicker {
     title: String,
     current_dir: PathBuf,

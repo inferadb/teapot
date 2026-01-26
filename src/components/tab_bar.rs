@@ -25,6 +25,7 @@ use crate::{
 
 /// A single tab in the tab bar.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct Tab {
     /// Unique identifier for the tab.
     pub id: String,
@@ -66,6 +67,7 @@ pub enum TabBarMsg {
 
 /// A horizontal tab bar component.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct TabBar {
     tabs: Vec<Tab>,
     selected: String,

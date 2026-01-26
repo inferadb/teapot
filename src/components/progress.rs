@@ -34,6 +34,7 @@ pub enum ProgressMsg {
 
 /// A progress bar component.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct Progress {
     current: u64,
     total: u64,

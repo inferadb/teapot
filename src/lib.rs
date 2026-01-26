@@ -1,6 +1,3 @@
-// Library crate: public API may not be used internally
-#![allow(dead_code)]
-
 //! # Teapot
 //!
 //! A Rust-native terminal UI framework following the Elm Architecture,
@@ -71,18 +68,18 @@
 //!
 //! ## Components
 //!
-//! The `components` module provides reusable UI widgets:
+//! The [`components`] module provides reusable UI widgets:
 //!
-//! - [`Spinner`] - Animated loading indicators
-//! - [`Progress`] - Progress bars
-//! - [`TextInput`] - Single-line text input
-//! - [`TextArea`] - Multi-line text input
-//! - [`Select`] - Single option selection
-//! - [`MultiSelect`] - Multiple option selection
-//! - [`Confirm`] - Yes/No confirmation
-//! - [`List`] - Filterable, paginated list
-//! - [`Table`] - Scrollable data table
-//! - [`MultiProgress`] - Multiple parallel progress bars
+//! - [`components::Spinner`] - Animated loading indicators
+//! - [`components::Progress`] - Progress bars
+//! - [`components::TextInput`] - Single-line text input
+//! - [`components::TextArea`] - Multi-line text input
+//! - [`components::Select`] - Single option selection
+//! - [`components::MultiSelect`] - Multiple option selection
+//! - [`components::Confirm`] - Yes/No confirmation
+//! - [`components::List`] - Filterable, paginated list
+//! - [`components::Table`] - Scrollable data table
+//! - [`components::MultiProgress`] - Multiple parallel progress bars
 //!
 //! ## Forms
 //!
@@ -126,18 +123,22 @@
 //! ```no_run
 //! use teapot::forms::{Form, Group, Field};
 //!
-//! let mut form = Form::new()
-//!     .group(Group::new()
-//!         .field(Field::input().key("name").title("Your Name").build()));
+//! fn main() -> Result<(), teapot::Error> {
+//!     let mut form = Form::new()
+//!         .group(Group::new()
+//!             .field(Field::input().key("name").title("Your Name").build()));
 //!
-//! if let Some(results) = form.run_accessible().unwrap() {
-//!     println!("Name: {}", results.get_string("name").unwrap_or(""));
+//!     if let Some(results) = form.run_accessible()? {
+//!         println!("Name: {}", results.get_string("name").unwrap_or(""));
+//!     }
+//!     Ok(())
 //! }
 //! ```
 //!
-//! Components implement the [`Accessible`] trait for custom accessible handling.
+//! Components implement the [`runtime::Accessible`] trait for custom accessible handling.
 
 pub mod components;
+pub mod error;
 pub mod forms;
 pub mod output;
 pub mod runtime;
@@ -145,25 +146,10 @@ pub mod style;
 pub mod terminal;
 pub mod util;
 
-// Re-export core types at crate root
-// Re-export commonly used components
-pub use components::{
-    BadgeVariant, Column, Confirm, FilePicker, FooterHints, List, MultiProgress, MultiSelect,
-    Progress, Select, Spinner, StatusBadge, Tab, TabBar, Table, TaskList, TaskProgressView,
-    TaskStep, TextArea, TextInput, TitleBar,
-};
-// Re-export form types
-pub use forms::{Form, Group};
-// Re-export cmd module for Bubble Tea-style function calls
-pub use runtime::cmd;
-pub use runtime::{Accessible, AccessibleInput, Cmd, Model, Program, ProgramOptions, Sub};
-// Re-export ANSI constants for convenience
-pub use style::{
-    BLINK, BOLD, CLEAR_LINE, CR, CURSOR_UP, DIM, HIDDEN, ITALIC, RESET, REVERSE, STRIKETHROUGH,
-    UNDERLINE,
-};
-// Re-export style types
-pub use style::{Border, Color, Style};
-pub use terminal::{Event, KeyCode, KeyEvent, KeyModifiers, MouseEvent};
-// Re-export utility types
-pub use util::{ManagedWorker, ScrollState, WorkerHandle};
+// Core framework types only at crate root.
+// Import components via `teapot::components::*`
+// Import styles via `teapot::style::*`
+// Import forms via `teapot::forms::*`
+pub use error::{Error, Result};
+pub use runtime::{Cmd, Model, Program, Sub};
+pub use terminal::{Event, KeyCode, KeyModifiers};

@@ -2,16 +2,17 @@
 //!
 //! # Fluent API Design
 //!
-//! Components use fluent method chaining (e.g., `TextInput::new().placeholder("...")`).
-//! This pattern was evaluated for `bon` builder macro conversion but **intentionally kept**
-//! because:
+//! Components use a fluent API pattern with self-consuming setters:
 //!
-//! 1. **Elm Architecture idiom**: Components are configuration objects used directly, not
-//!    intermediate builders that produce a separate type
-//! 2. **No terminal `.build()` call**: Components are used immediately after configuration
-//! 3. **Natural chaining**: `Table::new().columns([...]).rows([...])` reads idiomatically
+//! ```rust
+//! use teapot::components::TextInput;
 //!
-//! See PRD.md Task 10 for the full evaluation.
+//! let input = TextInput::new()
+//!     .placeholder("Enter your name...")
+//!     .prompt("> ");
+//! ```
+//!
+//! This pattern is used consistently across all components.
 //!
 //! This module provides composable widgets that implement the Model trait:
 //!

@@ -91,7 +91,8 @@ use teapot::components::TextInput;
 
 let input = TextInput::new()
     .placeholder("Enter your name...")
-    .prompt("> ");
+    .prompt("> ")
+    .build();
 ```
 
 ### Text Area

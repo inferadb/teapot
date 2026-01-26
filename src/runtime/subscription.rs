@@ -39,6 +39,7 @@ use std::time::Duration;
 /// Subscriptions are declared by the model and managed by the runtime.
 /// The runtime calls each active subscription's generator function at
 /// the appropriate interval or event.
+#[must_use = "subscriptions do nothing unless returned from subscriptions()"]
 pub struct Sub<M> {
     inner: SubInner<M>,
 }
@@ -170,7 +171,8 @@ impl<M> Sub<M> {
         if subs.is_empty() {
             Self::none()
         } else if subs.len() == 1 {
-            subs.into_iter().next().unwrap()
+            // We know there's exactly one element due to the length check above
+            subs.into_iter().next().unwrap_or_else(Self::none)
         } else {
             Self { inner: SubInner::Batch(subs) }
         }

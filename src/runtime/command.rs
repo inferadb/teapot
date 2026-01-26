@@ -33,6 +33,7 @@ use std::{
 /// // Create a quit command
 /// let quit_cmd: Cmd<Msg> = Cmd::quit();
 /// ```
+#[must_use = "commands do nothing unless returned from update()"]
 pub struct Cmd<M> {
     inner: CmdInner<M>,
 }
@@ -273,16 +274,6 @@ impl<M> Cmd<M> {
         }
     }
 
-    /// Check if this is a quit command.
-    pub(crate) fn is_quit(&self) -> bool {
-        matches!(self.inner, CmdInner::Quit)
-    }
-
-    /// Check if this is a no-op command.
-    pub(crate) fn is_none(&self) -> bool {
-        matches!(self.inner, CmdInner::None)
-    }
-
     /// Execute this command synchronously, returning messages.
     ///
     /// This is used by the runtime to process commands.
@@ -350,7 +341,7 @@ pub(crate) enum CmdResult<M> {
 /// # Example
 ///
 /// ```rust
-/// use teapot::cmd;
+/// use teapot::runtime::cmd;
 ///
 /// enum Msg { Done }
 ///
@@ -367,7 +358,7 @@ pub fn none<M>() -> Cmd<M> {
 /// # Example
 ///
 /// ```rust
-/// use teapot::cmd;
+/// use teapot::runtime::cmd;
 ///
 /// enum Msg { Quit }
 ///
@@ -384,7 +375,7 @@ pub fn quit<M>() -> Cmd<M> {
 /// # Example
 ///
 /// ```rust
-/// use teapot::cmd;
+/// use teapot::runtime::cmd;
 ///
 /// enum Msg { A, B }
 ///
@@ -404,7 +395,7 @@ pub fn batch<M>(cmds: Vec<Cmd<M>>) -> Cmd<M> {
 /// # Example
 ///
 /// ```rust
-/// use teapot::cmd;
+/// use teapot::runtime::cmd;
 ///
 /// enum Msg { First, Second }
 ///
@@ -424,7 +415,7 @@ pub fn sequence<M>(cmds: Vec<Cmd<M>>) -> Cmd<M> {
 /// # Example
 ///
 /// ```rust
-/// use teapot::cmd;
+/// use teapot::runtime::cmd;
 /// use std::time::Duration;
 ///
 /// enum Msg { Tick }
@@ -445,7 +436,7 @@ where
 /// # Example
 ///
 /// ```no_run
-/// use teapot::cmd;
+/// use teapot::runtime::cmd;
 /// use std::process::Command;
 ///
 /// enum Msg { EditorClosed(bool) }

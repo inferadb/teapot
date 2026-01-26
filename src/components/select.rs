@@ -43,6 +43,7 @@ pub enum SelectMsg {
 
 /// A single-selection list component.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct Select<T> {
     title: String,
     options: Vec<(T, String)>,

@@ -7,6 +7,7 @@ use super::{
     group::{Group, GroupMsg},
 };
 use crate::{
+    error::Error,
     runtime::{Cmd, Model, accessible::Accessible},
     style::{Color, Position, join_horizontal_with},
     terminal::{Event, KeyCode},
@@ -14,6 +15,7 @@ use crate::{
 
 /// Form layout options.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum FormLayout {
     /// Show one group at a time (default).
     #[default]
@@ -26,6 +28,7 @@ pub enum FormLayout {
 
 /// Form results containing all field values.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct FormResults {
     values: HashMap<String, FieldValue>,
 }
@@ -84,6 +87,7 @@ pub enum FormMsg {
 
 /// A form with multiple groups of fields.
 #[derive(Debug, Clone)]
+#[must_use = "forms do nothing unless run with Program or run_accessible()"]
 pub struct Form {
     title: Option<String>,
     description: Option<String>,
@@ -470,7 +474,11 @@ impl Form {
     /// each field and advancing through groups automatically.
     ///
     /// Returns the form results on success, or None if cancelled.
-    pub fn run_accessible(&mut self) -> std::io::Result<Option<FormResults>> {
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if terminal I/O fails.
+    pub fn run_accessible(&mut self) -> Result<Option<FormResults>, Error> {
         use std::io::{self, BufRead, Write};
 
         self.init_form();
@@ -520,17 +528,16 @@ impl Form {
 }
 
 #[cfg(test)]
-#[allow(deprecated)]
 mod tests {
     use super::*;
-    use crate::forms::{ConfirmField, InputField};
+    use crate::forms::Field;
 
     #[test]
     fn test_form_creation() {
         let form = Form::new().title("Test Form").group(
             Group::new()
-                .field(InputField::new("name").title("Name").build())
-                .field(ConfirmField::new("agree").title("Agree?").build()),
+                .field(Field::input().key("name").title("Name").build())
+                .field(Field::confirm().key("agree").title("Agree?").build()),
         );
 
         assert!(!form.is_submitted());
@@ -551,8 +558,8 @@ mod tests {
     fn test_form_layout_default() {
         let form = Form::new()
             .layout(FormLayout::Default)
-            .group(Group::new().field(InputField::new("a").build()))
-            .group(Group::new().field(InputField::new("b").build()));
+            .group(Group::new().field(Field::input().key("a").build()))
+            .group(Group::new().field(Field::input().key("b").build()));
 
         assert_eq!(form.get_layout(), FormLayout::Default);
     }
@@ -561,8 +568,8 @@ mod tests {
     fn test_form_layout_stack() {
         let form = Form::new()
             .layout(FormLayout::Stack)
-            .group(Group::new().field(InputField::new("a").build()))
-            .group(Group::new().field(InputField::new("b").build()));
+            .group(Group::new().field(Field::input().key("a").build()))
+            .group(Group::new().field(Field::input().key("b").build()));
 
         assert_eq!(form.get_layout(), FormLayout::Stack);
         // In Stack mode, view should contain content from all groups
@@ -574,17 +581,16 @@ mod tests {
     fn test_form_layout_columns() {
         let form = Form::new()
             .layout(FormLayout::Columns(2))
-            .group(Group::new().field(InputField::new("a").build()))
-            .group(Group::new().field(InputField::new("b").build()));
+            .group(Group::new().field(Field::input().key("a").build()))
+            .group(Group::new().field(Field::input().key("b").build()));
 
         assert_eq!(form.get_layout(), FormLayout::Columns(2));
     }
 
     #[test]
     fn test_note_field() {
-        use crate::forms::NoteField;
-
-        let note_field = NoteField::new("This is an important note!").title("Notice").build();
+        let note_field =
+            Field::note().title("Notice").content("This is an important note!").build();
 
         // Notes should not produce a value
         assert!(matches!(note_field.value(), FieldValue::None));
@@ -602,8 +608,9 @@ mod tests {
         let counter = Arc::new(AtomicUsize::new(0));
         let counter_clone = counter.clone();
 
-        let field = InputField::new("test")
-            .title_fn(move || format!("Attempt {}", counter_clone.load(Ordering::SeqCst)))
+        let field = Field::input()
+            .key("test")
+            .title_fn(Arc::new(move || format!("Attempt {}", counter_clone.load(Ordering::SeqCst))))
             .build();
 
         // Initial title should be "Attempt 0"
@@ -624,15 +631,16 @@ mod tests {
         let show_hint = Arc::new(AtomicBool::new(false));
         let show_hint_clone = show_hint.clone();
 
-        let field = InputField::new("password")
+        let field = Field::input()
+            .key("password")
             .title("Password")
-            .description_fn(move || {
+            .description_fn(Arc::new(move || {
                 if show_hint_clone.load(Ordering::SeqCst) {
                     "Hint: It's your birthday!".to_string()
                 } else {
                     "Enter your password".to_string()
                 }
-            })
+            }))
             .build();
 
         // Initially no hint

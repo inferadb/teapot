@@ -40,6 +40,7 @@ impl From<CrosstermEvent> for Event {
 
 /// A keyboard event.
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct KeyEvent {
     /// The key code.
     pub code: KeyCode,
@@ -55,6 +56,7 @@ impl From<CrosstermKeyEvent> for KeyEvent {
 
 /// Key codes for keyboard events.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum KeyCode {
     /// A character key.
     Char(char),
@@ -140,6 +142,7 @@ impl From<CrosstermKeyCode> for KeyCode {
 
 /// Modifier keys.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct KeyModifiers {
     bits: u8,
 }

@@ -10,6 +10,7 @@ use super::{
 
 /// Position for alignment.
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Position {
     /// Top or left alignment.
     #[default]
@@ -29,6 +30,7 @@ impl Position {
 
 /// Spacing values (top, right, bottom, left).
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Spacing {
     pub top: usize,
     pub right: usize,
@@ -96,6 +98,7 @@ impl Spacing {
 /// ```
 #[derive(Debug, Clone, Default, bon::Builder)]
 #[builder(on(Color, into))]
+#[must_use = "styles do nothing unless rendered"]
 pub struct Style {
     // Colors
     foreground: Option<Color>,

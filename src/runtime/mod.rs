@@ -24,7 +24,7 @@ pub use subscription::Sub;
 /// This module provides top-level functions as alternatives to `Cmd::` methods:
 ///
 /// ```rust
-/// use teapot::cmd;
+/// use teapot::runtime::cmd;
 ///
 /// enum Msg { Done }
 ///

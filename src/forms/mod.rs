@@ -34,14 +34,8 @@
 mod field;
 mod form;
 mod group;
-mod validation;
 
-// Re-export field builders
-#[allow(deprecated)]
-pub use field::{
-    ConfirmField, Field, FieldKind, FieldValue, FilePickerField, InputField, MultiSelectField,
-    Note, NoteField, SelectField,
-};
+// Re-export field types
+pub use field::{Field, FieldKind, FieldValue, Note};
 pub use form::{Form, FormLayout, FormMsg, FormResults};
 pub use group::Group;
-pub use validation::{Validator, ValidatorFn};

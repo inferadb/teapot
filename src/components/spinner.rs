@@ -22,6 +22,7 @@ use crate::{
 
 /// Predefined spinner animation styles.
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SpinnerStyle {
     /// Classic line spinner: | / - \
     Line,
@@ -84,6 +85,7 @@ pub enum SpinnerMsg {
 
 /// An animated spinner component.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct Spinner {
     style: SpinnerStyle,
     frame: usize,
@@ -211,6 +213,7 @@ impl Model for Spinner {
 
 /// A multi-spinner for parallel operations.
 #[derive(Debug, Clone)]
+#[must_use = "components do nothing unless used in a view or run with Program"]
 pub struct MultiSpinner {
     spinners: Vec<(String, Spinner)>,
 }

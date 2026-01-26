@@ -15,6 +15,9 @@ categories = ["command-line-interface", "gui"]
 # Builder pattern macros
 bon = "3.8"
 
+# Error handling
+thiserror = "2"
+
 # Terminal backend
 crossterm = "0.29"
 
@@ -22,8 +25,12 @@ crossterm = "0.29"
 unicode-width = "0.2"
 unicode-segmentation = "1"
 
+# Optional serialization
+serde = { version = "1", features = ["derive"], optional = true }
+
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util", "macros", "rt"] }
 
 [features]
 default = []
+serde = ["dep:serde"]

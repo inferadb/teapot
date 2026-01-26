@@ -20,7 +20,7 @@ use crossterm::{
 };
 
 use super::{Model, command::CmdResult, subscription::SubEntry};
-use crate::{Cmd, terminal::Event};
+use crate::{Cmd, error::Error, terminal::Event};
 
 /// Type alias for pending tick entries: (scheduled_time, interval, message_generator)
 type PendingTick<M> = (Instant, Duration, Box<dyn Fn(Instant) -> M + Send>);
@@ -107,7 +107,7 @@ pub type MessageFilter<M, Msg> = Box<dyn Fn(&M, Msg) -> Option<Msg> + Send>;
 ///
 /// # Example
 ///
-/// ```rust,no_run
+/// ```no_run
 /// use teapot::{Model, Program, Cmd, Event, KeyCode};
 ///
 /// struct App { count: i32 }
@@ -133,8 +133,11 @@ pub type MessageFilter<M, Msg> = Box<dyn Fn(&M, Msg) -> Option<Msg> + Send>;
 ///     }
 /// }
 ///
-/// let app = App { count: 0 };
-/// Program::new(app).run().unwrap();
+/// fn main() -> Result<(), teapot::Error> {
+///     let app = App { count: 0 };
+///     Program::new(app).run()?;
+///     Ok(())
+/// }
 /// ```
 pub struct Program<M: Model> {
     model: M,
@@ -289,16 +292,20 @@ impl<M: Model> Program<M> {
     /// Run the program, blocking until it exits.
     ///
     /// Returns the final model state.
-    pub fn run(mut self) -> io::Result<M> {
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if terminal I/O fails or the program cannot start.
+    pub fn run(mut self) -> Result<M, Error> {
         if !Self::is_interactive() || self.options.accessible {
-            return self.run_non_interactive();
+            return self.run_non_interactive().map_err(Error::from);
         }
 
         self.setup_terminal()?;
         let result = self.run_interactive();
         self.teardown_terminal()?;
 
-        result.map(|_| self.model)
+        result.map(|_| self.model).map_err(Error::from)
     }
 
     /// Run in interactive mode with full TUI.
@@ -444,12 +451,6 @@ impl<M: Model> Program<M> {
                 msg_fn: entry.msg_fn,
             });
         }
-    }
-
-    /// Process a command, returning true if we should quit.
-    fn process_command(&mut self, cmd: Cmd<M::Message>) -> io::Result<bool> {
-        let mut pending_ticks = Vec::new();
-        self.process_command_with_ticks(cmd, &mut pending_ticks)
     }
 
     /// Process a command with tick handling.
