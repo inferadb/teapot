@@ -1,6 +1,15 @@
 //! Form field types.
 
-use std::{path::PathBuf, sync::Arc};
+use std::{
+    path::PathBuf,
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
+};
+
+/// Counter for generating unique note field keys.
+static NOTE_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 use crate::{
     components::{Confirm, FilePicker, MultiSelect, Select, TextInput},
@@ -341,15 +350,8 @@ impl Field {
         title_fn: Option<DynamicString>,
         description_fn: Option<DynamicString>,
     ) -> Self {
-        let generated_key = key.unwrap_or_else(|| {
-            format!(
-                "_note_{}",
-                std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap_or_default()
-                    .as_nanos()
-            )
-        });
+        let generated_key = key
+            .unwrap_or_else(|| format!("_note_{}", NOTE_COUNTER.fetch_add(1, Ordering::Relaxed)));
 
         Field {
             key: generated_key,
