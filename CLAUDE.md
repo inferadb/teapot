@@ -55,11 +55,12 @@ pub enum Error {
 - `.unwrap()` in production code (allowed in tests)
 - `panic!`, `todo!()`, `unimplemented!()`
 
-## Testing
+## Development
 
 ```bash
-cargo +1.92 test                                    # Unit + doc tests
-cargo +1.92 clippy --all-targets -- -D warnings    # Lints
-cargo +nightly fmt                                  # Format (nightly required)
-cargo +nightly udeps --all-targets                  # Unused dependency detection
+just          # Run all checks (test, lint, format)
+just test     # Unit + doc tests
+just lint     # Clippy
+just fmt      # Format (nightly required)
+just udeps    # Unused dependency detection
 ```
